@@ -10,5 +10,7 @@ services:
       - /backend/mosquitto-broker/data/:/mosquitto/data
       - /backend/mosquitto-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
-      - MQTT_BROKER_MQTT_PORT:MQTT_BROKER_MQTT_INTERNAL
-      - MQTT_BROKER_WEBSOCKET_PORT:MQTT_BROKER_WEBSOCKER_INTERNAL
+      - ${MQTT_BROKER_MQTT_PORT}:${MQTT_BROKER_MQTT_INTERNAL}
+      - ${MQTT_BROKER_WEBSOCKET_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL}
+    depends_on:
+      - nginx #to fix
