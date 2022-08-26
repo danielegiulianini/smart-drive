@@ -1,12 +1,12 @@
 version: "3"
 
-#could use working_dir for specifying base dir and avoid relative paths
+#could not use working_dir for specifying base dir and avoid relative paths
 
 services:
   nginx-proxy:
     image: nginx
     volumes:
-      - ./templates:/etc/nginx/templates
+      - /backend/reverse-proxy/templates:/etc/nginx/templates
     ports:
       - "${REVERSE_PROXY_PORT}:${REVERSE_PROXY_INTERNAL_PORT}"
     networks:
