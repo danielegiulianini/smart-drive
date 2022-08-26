@@ -3,6 +3,13 @@ version: "3"
 #could use working_dir for specifying base dir and avoid relative paths
 
 services:
+  nginx-proxy:
+    image: nginx
+    volumes:
+      - ./templates:/etc/nginx/templates
+    ports:
+      - "${REVERSE_PROXY_PORT}:${REVERSE_PROXY_INTERNAL}"
+
   mosquitto:
     image: eclipse-mosquitto
     volumes:
@@ -13,4 +20,4 @@ services:
       - ${MQTT_BROKER_MQTT_PORT}:${MQTT_BROKER_MQTT_INTERNAL}
       - ${MQTT_BROKER_WEBSOCKET_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL}
     depends_on:
-      - nginx #to fix
+      - nginx-proxy
