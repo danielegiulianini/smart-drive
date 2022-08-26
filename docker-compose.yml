@@ -8,7 +8,9 @@ services:
     volumes:
       - ./templates:/etc/nginx/templates
     ports:
-      - "${REVERSE_PROXY_PORT}:${REVERSE_PROXY_INTERNAL}"
+      - "${REVERSE_PROXY_PORT}:${REVERSE_PROXY_INTERNAL_PORT}"
+    networks:
+      - backend
 
   mosquitto:
     image: eclipse-mosquitto
@@ -17,7 +19,15 @@ services:
       - /backend/mosquitto-broker/data/:/mosquitto/data
       - /backend/mosquitto-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
-      - ${MQTT_BROKER_MQTT_PORT}:${MQTT_BROKER_MQTT_INTERNAL}
-      - ${MQTT_BROKER_WEBSOCKET_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL}
+      - ${MQTT_BROKER_MQTT_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT}
+      - ${MQTT_BROKER_WEBSOCKET_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT}
     depends_on:
       - nginx-proxy
+    networks:
+      - backend
+
+  networks:
+      - backend
+      - frontend
+
+
