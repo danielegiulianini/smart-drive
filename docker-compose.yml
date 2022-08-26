@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    volumes:
+      - /backend/mosquitto-broker/log:/mosquitto/log
+      - /backend/mosquitto-broker/data/:/mosquitto/data
+      - /backend/mosquitto-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - 1883:1883
+      - 9001:9001
