@@ -1,5 +1,7 @@
 version: "3"
 
+#could use working_dir for specifying base dir and avoid relative paths
+
 services:
   mosquitto:
     image: eclipse-mosquitto
@@ -8,5 +10,5 @@ services:
       - /backend/mosquitto-broker/data/:/mosquitto/data
       - /backend/mosquitto-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
-      - 1883:1883
-      - 9001:9001
+      - MQTT_BROKER_MQTT_PORT:MQTT_BROKER_MQTT_INTERNAL
+      - MQTT_BROKER_WEBSOCKET_PORT:MQTT_BROKER_WEBSOCKER_INTERNAL
