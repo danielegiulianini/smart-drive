@@ -1,6 +1,0 @@
-stream {
-  server {
-      listen ${REVERSE_PROXY_INTERNAL_PORT};
-      proxy_pass mosquitto:${MQTT_BROKER_MQTT_INTERNAL_PORT};
-  }
-}

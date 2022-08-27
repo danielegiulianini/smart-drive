@@ -1,33 +1,32 @@
 version: "3"
 
-#could not use working_dir for specifying base dir and avoid relative paths
+#could use working_dir for specifying base dir and avoid relative paths inside each container
 
 services:
-  nginx-proxy:
-    image: nginx
+  nginx-proxy:  
+    image: tekn0ir/nginx-stream
+    ports:   
+      - ${REVERSE_PROXY_EXTERNAL_PORT}:${REVERSE_PROXY_INTERNAL_PORT}
     volumes:
-      - /backend/reverse-proxy/templates:/etc/nginx/templates
-    ports:
-      - "${REVERSE_PROXY_PORT}:${REVERSE_PROXY_INTERNAL_PORT}"
+      - ./backend/reverse-proxy/conf:/opt/nginx/stream.conf.d
     networks:
       - backend
 
   mosquitto:
     image: eclipse-mosquitto
     volumes:
-      - /backend/mosquitto-broker/log:/mosquitto/log
-      - /backend/mosquitto-broker/data/:/mosquitto/data
-      - /backend/mosquitto-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - /backend/mqtt-broker/log:/mosquitto/log
+      - /backend/mqtt-broker/data/:/mosquitto/data
+      - ./backend/mqtt-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
-      - ${MQTT_BROKER_MQTT_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT}
-      - ${MQTT_BROKER_WEBSOCKET_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT}
+      - ${MQTT_BROKER_MQTT_EXTERNAL_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT}
+    #  - ${MQTT_BROKER_WEBSOCKET_EXTERNAL_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT} not used
     depends_on:
       - nginx-proxy
     networks:
       - backend
 
-  networks:
-      - backend
-      - frontend
-
+networks:
+  backend:
+  frontend:
 
