@@ -3,16 +3,25 @@ version: "3"
 #could use working_dir for specifying base dir and avoid relative paths inside each container
 
 services:
+
+#-------------------------------------------------------------------------------------------
+#--api gateway
+#-------------------------------------------------------------------------------------------
+
   nginx-proxy:  
     image: tekn0ir/nginx-stream
     ports:   
-      - ${REVERSE_PROXY_EXTERNAL_PORT}:${REVERSE_PROXY_INTERNAL_PORT}
-      - "8082:8082"
+      - ${REVERSE_PROXY_MQTT_EXTERNAL_PORT}:${REVERSE_PROXY_MQTT_INTERNAL_PORT}
+      - ${REVERSE_PROXY_HTTP_EXTERNAL_PORT}:${REVERSE_PROXY_HTTP_INTERNAL_PORT}
     volumes:
       - ./backend/reverse-proxy/conf/stream:/opt/nginx/stream.conf.d
       - ./backend/reverse-proxy/conf/http:/opt/nginx/http.conf.d
     networks:
       - backend
+
+#-------------------------------------------------------------------------------------------
+#--MQTT broker
+#-------------------------------------------------------------------------------------------
 
   mosquitto:
     image: eclipse-mosquitto
@@ -21,12 +30,33 @@ services:
       - /backend/mqtt-broker/data/:/mosquitto/data
       - ./backend/mqtt-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
-      - ${MQTT_BROKER_MQTT_EXTERNAL_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT}
-    #  - ${MQTT_BROKER_WEBSOCKET_EXTERNAL_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT} not used
+      - ${MQTT_BROKER_MQTT_EXTERNAL_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT} #actually, in production no need to expose to outside anything!     #  - ${MQTT_BROKER_WEBSOCKET_EXTERNAL_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT} not used
     depends_on:
       - nginx-proxy
     networks:
       - backend
+
+#-------------------------------------------------------------------------------------------
+#--microservices
+#-------------------------------------------------------------------------------------------
+
+  users:
+    build:
+      context: ./backend/users
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}"
+    ports:   
+      - 8085:${USERS_MICROSERVICE_INTERNAL_PORT}
+    depends_on:
+      - nginx-proxy
+    networks:
+      - backend
+
+#-------------------------------------------------------------------------------------------
+#--DBs
+#-------------------------------------------------------------------------------------------
+
 
 networks:
   backend:
