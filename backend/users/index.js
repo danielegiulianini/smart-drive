@@ -5,5 +5,5 @@ var app = express();
 // on the request to root (localhost:3000/)
 app.get('/', function (req, res) {
    console.log("Ricevuto una richiesta GET");
-    res.send('<b>My</b> first express http server');
+   res.send('<b>My</b> first express http server');
 });
