@@ -7,8 +7,10 @@ services:
     image: tekn0ir/nginx-stream
     ports:   
       - ${REVERSE_PROXY_EXTERNAL_PORT}:${REVERSE_PROXY_INTERNAL_PORT}
+      - "8082:8082"
     volumes:
-      - ./backend/reverse-proxy/conf:/opt/nginx/stream.conf.d
+      - ./backend/reverse-proxy/conf/stream:/opt/nginx/stream.conf.d
+      - ./backend/reverse-proxy/conf/http:/opt/nginx/http.conf.d
     networks:
       - backend
 
