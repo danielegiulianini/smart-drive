@@ -45,9 +45,9 @@ services:
       context: ./backend/users
       dockerfile: Dockerfile
       args:
-        - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}"
+        - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}" 
     ports:   
-      - 8085:${USERS_MICROSERVICE_INTERNAL_PORT}
+      - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - nginx-proxy
     networks:
@@ -57,6 +57,14 @@ services:
 #--DBs
 #-------------------------------------------------------------------------------------------
 
+  mongodb-users:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${USERS_MICROSERVICE_INTERNAL_PORT}"
+      MONGO_INITDB_ROOT_PASSWORD: MongoMevn2021!
+    networks: 
+      - db
 
 networks:
   backend:
