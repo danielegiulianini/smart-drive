@@ -1,5 +1,5 @@
-const username = 'users';
-const password = 'users2022';
+const username = process.env.USERS_DB_ROOT_USERNAME;
+const password = process.env.USERS_DB_ROOT_PASSWORD;// || 'users2022';
 const host = 'mongodb-users';
 const port = process.env.USERS_DB_MONGO_INTERNAL_PORT || 27017; //default mongodb port
 const defaultAuthDb = 'admin';
