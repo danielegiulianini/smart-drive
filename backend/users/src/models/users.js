@@ -1,21 +1,20 @@
-const { createSchema } = require('./../utils/models.utils');
+const { createSchema } = require("./../utils/models.utils");
 
-const mongoose = require('mongoose');
-
-const profileSchema = createSchema('User', 'Users', mongoose => ({
+const profileSchema = createSchema("Profile", "Profiles", (mongoose) => ({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   surname: {
     type: String,
-    required: true
+    required: true,
   },
   username: {
-    type: String
+    type: String,
   },
   email: {
-    type: String
+    //added
+    type: String,
   },
   gender: {
     type: String,
@@ -24,9 +23,11 @@ const profileSchema = createSchema('User', 'Users', mongoose => ({
     type: String,
   },
   city: {
+    //added
     type: String,
   },
   country: {
+    //added
     type: String,
   },
   profilePictureUri: {
@@ -34,16 +35,19 @@ const profileSchema = createSchema('User', 'Users', mongoose => ({
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   lastLoginAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
+  //ecoscore? (here on in other microservice?)
+  //level?
+  //badges?
 }));
 
-module.exports = mongoose.model('Profile', profileSchema);
+module.exports = profileSchema;
