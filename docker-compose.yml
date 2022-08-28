@@ -50,6 +50,7 @@ services:
       - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - nginx-proxy
+      - mongodb-users
     networks:
       - backend
 
@@ -60,35 +61,35 @@ services:
   mongodb-users:
     image: mongo
     restart: always
-    volume:
-      - "users-volume:/data/db"
+    #volumes:
+      #- "users-volume:/data/db"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${USERS_DB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${USERS_DB_ROOT_PASSWORD}
     networks: 
       - db
 
-    mongodb-vehicles:
-      image: mongo
-      restart: always
-      volume:
-        - "vehicles-volume:/data/db"
-      environment:
-        MONGO_INITDB_ROOT_USERNAME: ${VEHICLES_DB_ROOT_USERNAME}
-        MONGO_INITDB_ROOT_PASSWORD: ${VEHICLES_DB_ROOT_PASSWORD}
-      networks: 
-        - db
+  mongodb-vehicles:
+    image: mongo
+    restart: always
+    #volumes:
+    # - "vehicles-volume:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${VEHICLES_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${VEHICLES_DB_ROOT_PASSWORD}
+    networks: 
+      - db
 
-    mongodb-trips:
-      image: mongo
-      restart: always
-      volume:
-        - "trips-volume:/data/db"
-      environment:
-        MONGO_INITDB_ROOT_USERNAME: ${TRIPS_DB_ROOT_USERNAME}
-        MONGO_INITDB_ROOT_PASSWORD: ${TRIPS_DB_ROOT_PASSWORD}
-      networks: 
-        - db
+  mongodb-trips:
+    image: mongo
+    restart: always
+    #volumes:
+    #  - "trips-volume:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${TRIPS_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${TRIPS_DB_ROOT_PASSWORD}
+    networks: 
+      - db
 
 networks:
   backend:
