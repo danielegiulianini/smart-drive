@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev-start": "npm install && npm update && nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,6 +12,7 @@
   "dependencies": {
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "find-config": "^1.0.0"
+    "find-config": "^1.0.0",
+    "mongoose": "^6.5.3"
   }
 }
