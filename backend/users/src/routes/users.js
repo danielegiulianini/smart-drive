@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const AuthMiddleware = require("./middleware/auth");
+const AuthMiddleware = require("./../middlewares/auth");
 const ProfileController = require("../controllers/users");
 
-//TODO: instead of the controller's handler could bind to the path an action method that does some prints (so removing them from tha handlers)
+//TODO: instead of the controller's handler (directly) could bind to the path an action method that 
+//does some prints (so removing them from tha handlers)
 
 router
-  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //set up middleware for post too? yes, because with firebase you have set it already
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //set up middleware for post too? yes, because with supabase you have set it already
   .route("/")
   .post(ProfileController.create);
 
