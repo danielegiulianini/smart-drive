@@ -7,6 +7,16 @@ const connectionUri = require("./config/db.config.js");
 var express = require("express");
 var app = express();
 
+//cors library abstracts header-writing
+const cors = require('cors');
+const corsOptions = {
+  origin: true, //set origin to true to reflect the request origin (stricter than wildcard *)
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
+
+
+
 // on the request to root (localhost:3000/)
 /*app.get("/user/", function (req, res) {
   console.log("Ricevuto una richiesta GET");
