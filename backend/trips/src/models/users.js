@@ -1,6 +1,9 @@
+//Modelling by Computed and Bucket (trips) Patterns combined 
+//from: https://www.mongodb.com/docs/manual/tutorial/model-iot-data/
+
 const { createSchema } = require("./../utils/models.utils");
 
-const profileSchema = createSchema("Profile", "Profiles", (mongoose) => ({
+const tripsSchema = createSchema("Trip", "Trips", (mongoose) => ({
   name: {
     type: String,
     required: true,
@@ -45,8 +48,6 @@ const profileSchema = createSchema("Profile", "Profiles", (mongoose) => ({
     type: Date,
     default: Date.now,
   },
-  //vehicles?
-
   //ecoscore? (here on in other microservice?)
   //level?
   //badges?

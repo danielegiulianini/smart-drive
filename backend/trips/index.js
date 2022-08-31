@@ -19,7 +19,7 @@ app.use(cors(corsOptions));
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-const port = 8083; //const port = Number(process.env.USERS_MICROSERVICE_INTERNAL_PORT);
+const port = 8083; //const port = Number(process.env.TRIPS_MICROSERVICE_INTERNAL_PORT);
 
 //retrieve connection string from config file (.env or inside config folder)
 const dbConfig = require("./src/config/db.config");

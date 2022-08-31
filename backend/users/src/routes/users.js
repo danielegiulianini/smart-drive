@@ -4,7 +4,7 @@ const router = express.Router();
 const AuthMiddleware = require("./../middlewares/auth");
 const ProfileController = require("../controllers/users");
 
-//TODO: instead of the controller's handler (directly) could bind to the path an action method that 
+//TODO: instead of the controller's handler (directly) could bind to the path an action method that
 //does some prints (so removing them from tha handlers)
 
 router
@@ -21,6 +21,8 @@ router
   .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
   .route("/:userId")
   .put(ProfileController.edit);
+
+//delete?
 
 module.exports = router;
 
