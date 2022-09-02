@@ -3,6 +3,7 @@
 
 const { createSchema } = require("../utils/models.utils");
 
+//most general data structure (including data from ECU or GPS or accelerometer)
 const tripsSchema = createSchema("Trip", "Trips", (mongoose) => ({
   //-----non-aggregate:-------
   sensorId: {
@@ -24,6 +25,26 @@ const tripsSchema = createSchema("Trip", "Trips", (mongoose) => ({
   userId: {
     type: String,
   },
+  measurements: [
+    {
+      timestamp: { type: Date },
+      rpm: { type: Number },
+      engineLoad: { type: Number },
+      speed: { type: Number },
+      position: {
+        x: { type: Number },
+        y: { type: Number },
+        z: { type: Number },
+      },
+      position: {
+        longitude: { type: Number },
+        latitude: { type: Number },
+      },
+      fuelRate: {
+        type: Number,
+      },
+    },
+  ],
   //-----aggregate:--------
   //>basic
   distanceTraveled: {
@@ -39,8 +60,33 @@ const tripsSchema = createSchema("Trip", "Trips", (mongoose) => ({
     type: Number,
   },
   //>descriptive statistics
+  averageRpm: {
+    type: Number,
+  },
+  averageEngineLoad: {
+    type: Number,
+  },
+  averageSpeed: {
+    type: Number,
+  },
+  averageAcceleration: {
+    type: Number,
+  },
+  maxRpm: {
+    type: Number,
+  },
+  maxEngineLoad: {
+    type: Number,
+  },
+  maxSpeed: {
+    type: Number,
+  },
+  maxAcceleration: {
+    x: { type: Number },
+    y: { type: Number },
+    z: { type: Number },
+  },
   //>ecoscore-related
-
   totalScore: {
     type: Number,
   },
