@@ -1,6 +1,6 @@
 const username = process.env.TRIPS_DB_ROOT_USERNAME;
 const password = process.env.TRIPS_DB_ROOT_PASSWORD;// || 'users2022';
-const host = "MongoUsers";
+const host = 'mongodb-users';
 const port = process.env.TRIPS_DB_MONGO_INTERNAL_PORT// || 27017; //default mongodb port
 const defaultAuthDb = 'admin';
 const options = [

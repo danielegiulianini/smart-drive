@@ -1,6 +1,10 @@
 //Modelling by Computed and Bucket (trips) Patterns combined
 //from: https://www.mongodb.com/docs/manual/tutorial/model-iot-data/
 
+
+//validators: unique, required
+
+
 const { createSchema } = require("../utils/models.utils");
 
 //most general data structure (including data from ECU or GPS or accelerometer)
