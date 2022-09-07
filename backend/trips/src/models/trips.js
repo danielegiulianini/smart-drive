@@ -1,14 +1,13 @@
 //Modelling by Computed and Bucket (trips) Patterns combined
 //from: https://www.mongodb.com/docs/manual/tutorial/model-iot-data/
 
-
 //validators: unique, required
-
 
 const { createSchema } = require("../utils/models.utils");
 
 //most general data structure (including data from ECU or GPS or accelerometer)
 const tripsSchema = createSchema("Trip", "Trips", (mongoose) => ({
+  //using default _id
   //-----non-aggregate:-------
   sensorId: {
     type: String,
@@ -30,8 +29,10 @@ const tripsSchema = createSchema("Trip", "Trips", (mongoose) => ({
     type: String,
   },
   measurements: [
+    //to put in other collection keeping the measurement id only here?
     {
       timestamp: { type: Date },
+      odometerValue: { type: Number },
       rpm: { type: Number },
       engineLoad: { type: Number },
       speed: { type: Number },
@@ -102,12 +103,22 @@ const tripsSchema = createSchema("Trip", "Trips", (mongoose) => ({
   },
   feedbackConsiderationScore: {
     type: Number,
+    default: 0, //default 0 (could be not recomputed)
   },
   totalScoreBreakdown: {
+    //for a cake chart
     speedScoreRatio: { type: Number },
-    accelerationScoreRatio: { type: Number },
+    rpmScoreRatio: { type: Number },
     feedbackConsiderationScoreRatio: { type: Number },
   },
+  feedbacks: [
+    {
+      text: { type: String },
+      minThreshold: { type: Number },
+      maxThreshold: { type: Number },
+      type: { type: String, enum: ["speed", "rpm", "feedbackConsideration"] },
+    },
+  ],
 }));
 
 module.exports = tripsSchema;
