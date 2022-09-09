@@ -11,14 +11,42 @@ const ProfileController = require("../controllers/users");
 
 //no delete nor post
 
+
+//vehicle models
 router
   .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
-  .route("/vehicleModels/:userId")
+  .route("/vehicleModels/:vehicleId")
   .get(ProfileController.get);
 
 router
   .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
-  .route("/userVehicles/:userId")
+  .route("/vehiclesModels/productionYears/")
+  .get(ProfileController.get);
+
+router
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
+  .route("/vehiclesModels/makes/")
+  .get(ProfileController.get);
+
+router
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
+  .route("/vehiclesModels/models/")
+  .get(ProfileController.get);
+
+router
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
+  .route("/vehiclesModels/series/")
+  .get(ProfileController.get);
+
+router
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
+  .route("/vehiclesModels/vehicleDetails/:vehicleId")
+  .get(ProfileController.get);
+
+//vehicle instance
+router
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
+  .route("/userVehicles/:vin")
   .get(ProfileController.getAll);
 
 module.exports = router;
