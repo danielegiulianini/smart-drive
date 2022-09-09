@@ -3,14 +3,13 @@ version: "3"
 #could use working_dir for specifying base dir and avoid relative paths inside each container
 
 services:
+  #-------------------------------------------------------------------------------------------
+  #--api gateway
+  #-------------------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------------------
-#--api gateway
-#-------------------------------------------------------------------------------------------
-
-  nginx-proxy:  
+  nginx-proxy:
     image: tekn0ir/nginx-stream
-    ports:   
+    ports:
       - ${REVERSE_PROXY_MQTT_EXTERNAL_PORT}:${REVERSE_PROXY_MQTT_INTERNAL_PORT}
       - ${REVERSE_PROXY_HTTP_EXTERNAL_PORT}:${REVERSE_PROXY_HTTP_INTERNAL_PORT}
     volumes:
@@ -19,9 +18,9 @@ services:
     networks:
       - backend
 
-#-------------------------------------------------------------------------------------------
-#--MQTT broker
-#-------------------------------------------------------------------------------------------
+  #-------------------------------------------------------------------------------------------
+  #--MQTT broker
+  #-------------------------------------------------------------------------------------------
 
   mosquitto:
     image: eclipse-mosquitto
@@ -36,17 +35,17 @@ services:
     networks:
       - backend
 
-#-------------------------------------------------------------------------------------------
-#--microservices
-#-------------------------------------------------------------------------------------------
+  #-------------------------------------------------------------------------------------------
+  #--microservices
+  #-------------------------------------------------------------------------------------------
 
   users:
     build:
       context: ./backend/users
       dockerfile: Dockerfile
       args:
-        - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}" 
-    ports:   
+        - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}"
+    ports:
       - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - nginx-proxy
@@ -59,7 +58,7 @@ services:
       context: ./backend/vehicles
       dockerfile: Dockerfile
       args:
-        - "PORT=${VEHICLES_MICROSERVICE_INTERNAL_PORT}" 
+        - "PORT=${VEHICLES_MICROSERVICE_INTERNAL_PORT}"
     ports:
       - 8085:${VEHICLES_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
     depends_on:
@@ -73,28 +72,28 @@ services:
       context: ./backend/images
       dockerfile: Dockerfile
       args:
-        - "PORT=${IMAGES_MICROSERVICE_INTERNAL_PORT}" 
-    ports:   
+        - "PORT=${IMAGES_MICROSERVICE_INTERNAL_PORT}"
+    ports:
       - 8085:${IMAGES_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - nginx-proxy
     networks:
       - backend
 
-#-------------------------------------------------------------------------------------------
-#--DBs
-#-------------------------------------------------------------------------------------------
+  #-------------------------------------------------------------------------------------------
+  #--DBs
+  #-------------------------------------------------------------------------------------------
 
   mongodb-users:
     image: mongo
     restart: always
     #volumes:
-      #- "users-volume:/data/db"
+    #- "users-volume:/data/db"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${USERS_DB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${USERS_DB_ROOT_PASSWORD}
-    networks: 
-      - db
+    networks:
+      - backend
 
   mongodb-vehicles:
     image: mongo
@@ -104,8 +103,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${VEHICLES_DB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${VEHICLES_DB_ROOT_PASSWORD}
-    networks: 
-      - db
+    networks:
+      - backend
 
   mongodb-trips:
     image: mongo
@@ -115,8 +114,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${TRIPS_DB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${TRIPS_DB_ROOT_PASSWORD}
-    networks: 
-      - db
+    networks:
+      - backend
 
   mongodb-images:
     image: mongo
@@ -126,11 +125,10 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${TRIPS_DB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${TRIPS_DB_ROOT_PASSWORD}
-    networks: 
-      - db
+    networks:
+      - backend
 
 networks:
   backend:
   frontend:
   db:
-
