@@ -1,5 +1,5 @@
 const username = "MongoVehicles"; //process.env.USERS_DB_ROOT_USERNAME;
-const password = '"MongoVehicles22$"'; //process.env.USERS_DB_ROOT_PASSWORD;
+const password = 'MongoVehicles22$'; //process.env.USERS_DB_ROOT_PASSWORD;
 const host = "mongodb-vehicles";
 const port = 27017; //process.env.USERS_DB_MONGO_INTERNAL_PORT; //default mongodb port
 const defaultAuthDb = "admin";
@@ -21,10 +21,9 @@ function getConnectionUri(
   options
 ) {
   return `mongodb${port ? "" : "+srv"}://${username}:${password}@${host}${
-    port ? ":" + port : ""
-  }/${defaultAuthDb}?${options.join("&")}`;
+    port ? ":" + port : ""}/${defaultAuthDb}?${options.join("&")}`;
 } //const getConnectionUri = require('../../sharedUtils/mongoDbUtils.js');
-
+  
 connectionUri = getConnectionUri(
   port,
   username,
