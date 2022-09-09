@@ -54,6 +54,33 @@ services:
     networks:
       - backend
 
+  vehicles:
+    build:
+      context: ./backend/vehicles
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${VEHICLES_MICROSERVICE_INTERNAL_PORT}" 
+    ports:
+      - 8085:${VEHICLES_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - nginx-proxy
+      - mongodb-vehicles
+    networks:
+      - backend
+
+  images:
+    build:
+      context: ./backend/images
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${IMAGES_MICROSERVICE_INTERNAL_PORT}" 
+    ports:   
+      - 8085:${IMAGES_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - nginx-proxy
+    networks:
+      - backend
+
 #-------------------------------------------------------------------------------------------
 #--DBs
 #-------------------------------------------------------------------------------------------
@@ -85,6 +112,17 @@ services:
     restart: always
     #volumes:
     #  - "trips-volume:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${TRIPS_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${TRIPS_DB_ROOT_PASSWORD}
+    networks: 
+      - db
+
+  mongodb-images:
+    image: mongo
+    restart: always
+    #volumes:
+    #  - "images-volume:/data/db"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${TRIPS_DB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${TRIPS_DB_ROOT_PASSWORD}
