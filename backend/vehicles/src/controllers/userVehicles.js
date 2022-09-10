@@ -9,8 +9,7 @@ const create = async (req, res) => {
   vehicleModelId,
   pictureUri,
   createdAt,
-  updatedAt,
-  lastLoginAt 
+  updatedAt
 }));
 */
   //filtering params contained in client's post request (can use pick too)
@@ -28,11 +27,9 @@ const create = async (req, res) => {
 
 //get all the associations (with filter on userId (query param))
 const getAll = (req, res) => {
-  // create an object made of just the parameters of the request query we need
-  const params = pick(req.query, ["id"]);
 
   userVehiclesService
-    .list(params)
+    .list(req.query.userId)
     .then((response) => {
       //should use a dto here (response containing sensitive info!)
       res.status(response.status).json(response.data);
@@ -47,7 +44,6 @@ const getAll = (req, res) => {
 //get a specific association (with filter on vin (req param))
 const get = (req, res) => {
   const vehicleIdentificationNumber = req.params.vehicleIdentificationNumber;
-  //const vehicleIdentificationNumber = req.query.vehicleIdentificationNumber;
 
   userVehiclesService
     .get(vehicleIdentificationNumber)
@@ -61,7 +57,6 @@ const edit = (req, res) => {
   //filtering params contained in client's post request (can use pick too)
   const vin = req.params.vehicleIdentificationNumber;
   let params = {
-    vehicleIdentificationNumber: req.body.vehicleIdentificationNumber,
     vehicleModelId: req.body.vehicleModelId,
     pictureUri: req.body.pictureUri,
   };
@@ -81,6 +76,7 @@ const remove = (req, res) => {
   userVehiclesService
     .remove(vin)
     .then((userVehicle) => res.status(200).json(userVehicle))
+    //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));
 };
 
