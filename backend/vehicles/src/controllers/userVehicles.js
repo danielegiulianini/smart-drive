@@ -1,11 +1,11 @@
 const userVehiclesService = require("../services/userVehicles");
-const pick = require("../utils/pick");
+const pick = require("../utils/jsObjectUtils");
 
 //post an association
 const create = async (req, res) => {
   //userVehicles params:
   /*
-  vehicleIdentificationNumber,
+  _id,
   vehicleModelId,
   pictureUri,
   createdAt,
@@ -14,7 +14,7 @@ const create = async (req, res) => {
 */
   //filtering params contained in client's post request (can use pick too)
   let params = {
-    vehicleIdentificationNumber: req.body.vehicleIdentificationNumber,
+    vehicleIdentificationNumber: req.body.vin,
     vehicleModelId: req.body.vehicleModelId,
     pictureUri: req.body.pictureUri,
   };
@@ -26,36 +26,31 @@ const create = async (req, res) => {
 };
 
 //get all the associations (with filter on userId (query param))
-const getAll = (req, res) => {
+const getAll = async (req, res) => {
+  console.log("(1)the userId passed is " + req.query.userId);
 
   userVehiclesService
     .list(req.query.userId)
-    .then((response) => {
-      //should use a dto here (response containing sensitive info!)
-      res.status(response.status).json(response.data);
-    })
-    .catch((error) => {
-      res
-        .status(error.response ? error.response.status : 500)
-        .json(error.response ? error.response.data : "Unexpected error");
-    });
+    .then((f) => res.status(200).json(f))
+    .catch((err) => res.status(400).json(err));
 };
 
 //get a specific association (with filter on vin (req param))
 const get = (req, res) => {
-  const vehicleIdentificationNumber = req.params.vehicleIdentificationNumber;
+  const vin = req.params.vin;
+  console.log("(1)the vin passed is " + vin);
 
   userVehiclesService
-    .get(vehicleIdentificationNumber)
+    .get(vin)
     .then((userVehicle) => res.status(200).json(userVehicle))
     //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));
 };
 
 //edit an association (with filter on vin (req param))
-const edit = (req, res) => {
+const edit = async (req, res) => {
   //filtering params contained in client's post request (can use pick too)
-  const vin = req.params.vehicleIdentificationNumber;
+  const vin = req.params.vin;
   let params = {
     vehicleModelId: req.body.vehicleModelId,
     pictureUri: req.body.pictureUri,
@@ -69,9 +64,9 @@ const edit = (req, res) => {
 };
 
 //delete an association (with filter on vin (req param))
-const remove = (req, res) => {
+const remove = async (req, res) => {
   //checking for unauthorized?
-  const vin = req.params.vehicleIdentificationNumber;
+  const vin = req.params.vin;
 
   userVehiclesService
     .remove(vin)
