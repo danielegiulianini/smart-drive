@@ -5,7 +5,7 @@ const { setResponseWithGetJsonDataFrom } = require("../utils/axiosUtils");
 //get years
 const getYears = async (req, res) => {
   setResponseWithGetJsonDataFrom(
-    "/https://www.fueleconomy.gov/ws/rest/vehicle/menu/year",
+    "https://www.fueleconomy.gov/ws/rest/vehicle/menu/year",
     {}, //no req.query's nor req.params' params
     res
   );
@@ -14,7 +14,7 @@ const getYears = async (req, res) => {
 //get makes (filtering model too)
 const getMakes = async (req, res) => {
   setResponseWithGetJsonDataFrom(
-    "/https://www.fueleconomy.gov/ws/rest/vehicle/menu/make",
+    "https://www.fueleconomy.gov/ws/rest/vehicle/menu/make",
     {
       params: {
         //must use QUERY params to speak to fueleconomy
@@ -28,7 +28,7 @@ const getMakes = async (req, res) => {
 //get models (filtering year and makes too)
 const getModels = async (req, res) => {
   setResponseWithGetJsonDataFrom(
-    "/https://www.fueleconomy.gov/ws/rest/vehicle/menu/model",
+    "https://www.fueleconomy.gov/ws/rest/vehicle/menu/model",
     {
       params: {
         //must use QUERY params to speak to fueleconomy
@@ -43,7 +43,7 @@ const getModels = async (req, res) => {
 //get series and vin (filtering year and and make and model too)
 const getSeries = async (req, res) => {
   setResponseWithGetJsonDataFrom(
-    "/https://www.fueleconomy.gov/ws/rest/vehicle/menu/model",
+    "https://www.fueleconomy.gov/ws/rest/vehicle/menu/model",
     {
       params: {
         //must use QUERY params to speak to fueleconomy
@@ -59,7 +59,7 @@ const getSeries = async (req, res) => {
 //get single detail filtered with vin
 const getVehiclesDetails = async (req, res) => {
   setResponseWithGetJsonDataFrom(
-    "/https://www.fueleconomy.gov/ws/rest/vehicle/" + req.params.vehicleId,
+    "https://www.fueleconomy.gov/ws/rest/vehicle/" + req.params.vehicleId,
     //must use vehicle ID to speak to fueleconomy
     {},
     res
