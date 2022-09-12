@@ -15,6 +15,12 @@ services:
     volumes:
       - ./backend/reverse-proxy/conf/stream:/opt/nginx/stream.conf.d
       - ./backend/reverse-proxy/conf/http:/opt/nginx/http.conf.d
+    depends_on:
+      - vehicles
+      - mosquitto
+      - users #to be added when implemented
+      - images #to be added when implemented
+      #- trips #to be added when implemented
     networks:
       - backend
 
@@ -29,9 +35,9 @@ services:
       - /backend/mqtt-broker/data/:/mosquitto/data
       - ./backend/mqtt-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
-      - ${MQTT_BROKER_MQTT_EXTERNAL_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT} #actually, in production no need to expose to outside anything!     #  - ${MQTT_BROKER_WEBSOCKET_EXTERNAL_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT} not used
+      - ${MQTT_BROKER_MQTT_EXTERNAL_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything!     #  - ${MQTT_BROKER_WEBSOCKET_EXTERNAL_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT} not used
     depends_on:
-      - nginx-proxy
+      - vehicles #maybe, as it's a broker with queues, this is actually not required!
     networks:
       - backend
 
@@ -46,9 +52,8 @@ services:
       args:
         - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}"
     ports:
-      - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
+      - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
-      - nginx-proxy
       - mongodb-users
     networks:
       - backend
@@ -59,10 +64,12 @@ services:
       dockerfile: Dockerfile
       args:
         - "PORT=${VEHICLES_MICROSERVICE_INTERNAL_PORT}"
+    #command: npm run dev
+    volumes:
+      - ./backend/vehicles:/usr/src/vehicles #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
     ports:
-      - 8085:${VEHICLES_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
+      - 8086:${VEHICLES_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
-      - nginx-proxy
       - mongodb-vehicles
     networks:
       - backend
@@ -74,9 +81,9 @@ services:
       args:
         - "PORT=${IMAGES_MICROSERVICE_INTERNAL_PORT}"
     ports:
-      - 8085:${IMAGES_MICROSERVICE_INTERNAL_PORT} #actually, in production no need to expose to outside anything apart from reverse-proxy!
+      - 8087:${IMAGES_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
-      - nginx-proxy
+      - mongodb-images
     networks:
       - backend
 
@@ -123,10 +130,12 @@ services:
     #volumes:
     #  - "images-volume:/data/db"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${TRIPS_DB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${TRIPS_DB_ROOT_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${IMAGES_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${IMAGES_DB_ROOT_PASSWORD}
     networks:
       - backend
+
+#volumes shared among services(containers):
 
 networks:
   backend:
