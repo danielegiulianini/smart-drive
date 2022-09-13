@@ -18,8 +18,9 @@ services:
     depends_on:
       - vehicles
       - mosquitto
-      - users #to be added when implemented
-      - images #to be added when implemented
+      - users
+      - images
+      - notifications
       #- trips #to be added when implemented
     networks:
       - backend
@@ -86,6 +87,21 @@ services:
       - 8087:${IMAGES_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - mongodb-images
+    networks:
+      - backend
+
+  notifications:
+    build:
+      context: ./backend/notifications
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT}"
+    volumes:
+      - ./backend/images:/usr/src/images #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
+    ports:
+      - 8085:${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - mosquitto
     networks:
       - backend
 
