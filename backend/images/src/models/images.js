@@ -1,10 +1,14 @@
-const { createSchema } = require("./../utils/models.utils");
+const mongoose = require("mongoose");
 
-const imageSchema = createSchema("Image", "Images", (mongoose) => ({
+const imagesSchema = mongoose.Schema({
   mimeType: {
     type: String,
     required: true,
   },
-}));
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-module.exports = imageSchema;
+module.exports = mongoose.model("images", imagesSchema);

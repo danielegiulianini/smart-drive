@@ -1,1 +1,3 @@
-module.exports = imagesDestinationFolder = "./uploads/";
+imagesDestinationFolder = "./uploads/";
+
+module.exports = imagesDestinationFolder;

@@ -1,5 +1,5 @@
 const username = "MongoImages"; //process.env.IMAGES_DB_ROOT_USERNAME;
-const password = '"MongoImages22$"'; //process.env.IMAGES_DB_ROOT_PASSWORD;
+const password = "MongoImages22$"; //process.env.IMAGES_DB_ROOT_PASSWORD;
 const host = "mongodb-images";
 const port = 27017; //process.env.IMAGES_DB_MONGO_INTERNAL_PORT; //default mongodb port
 const defaultAuthDb = "admin";

@@ -3,7 +3,7 @@ FROM node:18.8.0-alpine
 #ARG NAME #TO BE USED when refactoring dockerfile between services!
 ARG PORT
 
-# Create microservice directory #TO BE REFACTORED BY LEVERAGING DOCKER S ARG!
+# Create microservice directory #TO BE REFACTORED BY LEVERAGING DOCKER above mentioned ARG!
 WORKDIR /usr/src/images
 
 VOLUME /var/log/nginx
