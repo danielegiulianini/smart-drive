@@ -6,7 +6,7 @@ const storeImage = (req, res) => {
     if (err) {
       res.status(400).send("Something went wrong in uploading image!"); //error is set by multer
     }
-    res.send(req.file.url);
+    res.send(req.file.url);//return to user the image uri
   });
 };
 

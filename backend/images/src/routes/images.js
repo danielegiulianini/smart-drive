@@ -9,16 +9,18 @@ const ImageService = require("../services/images.upload");
 //does some prints (so removing them from tha handlers)
 
 //routes' base url: images/
+var path = require('path');
 
-const imagesDestinationFolder = require("./../config/images.config");
+const imagesDestinationFolder = path.join(__dirname, require("./../config/images.config"));
 console.log("limage dest folder is: >>>>>>>>>>>>>>" + imagesDestinationFolder);
 
 router
   //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) commented for testing
-  .route("/")
+  .route("/:imageId")
   .get(function (req, res, next) {
     console.log("received get request");
     console.log("Request URL:", req.originalUrl);
+    console.log("searching in " + imagesDestinationFolder);
     next();
   }, express.static(imagesDestinationFolder));
 
@@ -32,7 +34,6 @@ router
     console.log("received post request");
     next();
   }, ImageController.storeImage);
-
 
 //delete?
 
