@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "npm install && npm update && nodemon -L index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,6 +12,7 @@
   "dependencies": {
     "amqplib": "^0.10.3",
     "express": "^4.18.1",
+    "mqtt": "^4.3.7",
     "nodemon": "^2.0.19"
   }
 }
