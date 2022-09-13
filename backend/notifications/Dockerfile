@@ -1,0 +1,22 @@
+FROM node:18.8.0-alpine
+
+#ARG NAME #TO BE USED when refactoring dockerfile between services!
+ARG PORT
+
+# Create microservice directory #TO BE REFACTORED BY LEVERAGING DOCKER S ARG!
+WORKDIR /usr/src/notifications
+
+# Install microservice dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
+
+RUN npm install
+# If building for production: RUN npm ci --only=production
+
+# Bundle microservice source
+#COPY . .
+
+#could use "npm start" too as CMD (after setting "start" script in scripts section of micros' package.json)
+CMD [ "npm", "run", "dev" ]   
+#CMD [ "npm", "index.js" ] if building for production
