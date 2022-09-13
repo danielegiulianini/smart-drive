@@ -15,7 +15,7 @@ RUN npm install
 # If building for production: RUN npm ci --only=production
 
 # Bundle microservice source
-#COPY . .
+COPY . .
 
 #could use "npm start" too as CMD (after setting "start" script in scripts section of micros' package.json)
 CMD [ "npm", "run", "dev" ]   
