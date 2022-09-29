@@ -1,10 +1,7 @@
-const { createSchema } = require("./../utils/models.utils");
+const mongoose = require("mongoose");
 
-//model name (used for ?), collection name
-const profileSchema = createSchema(
-  "Profile",
-  "Profiles",
-  (mongoose) => ({
+const profileSchema = mongoose.Schema(
+  {
     _id: {
       type: String,
       required: true,
@@ -51,13 +48,14 @@ const profileSchema = createSchema(
       type: Date,
       default: Date.now,
     },
-    //vehicles: [{ type: String }], //actually can put this association in vehicles since I must fetch from it too
 
     //ecoscore? (here on in other microservice?) (default to 0)
     //level?(default to 0)
     //badges?(default to empty (!= null))
-  }),
+  },
   { _id: false }
 );
 
 module.exports = profileSchema;
+
+//vehicles: [{ type: String }], //actually can put this association in vehicles since I must fetch from it too
