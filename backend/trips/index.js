@@ -2,7 +2,7 @@
 //require('dotenv').config({ path: require('find-config')('.env'), debug: true }); //require('dotenv').config({path:__dirname + '/./../../../.env'});
 
 const connectionUri = require("./src/config/db.config.js");
-const { setupRoutes } = require("./routes/mqttRoutes");
+const { setupRoutes } = require("./src/routes/mqttRoutes");
 // Require express and create an instance of it
 var express = require("express");
 var app = express();
@@ -26,7 +26,6 @@ const dbConfig = require("./src/config/db.config");
 const dbUtil = require("./src/utils/mongooseUtils");
 
 const mqtt = require("mqtt");
-
 const mqttConfig = require("./src/config/mqtt.config");
 
 async function startServer() {
@@ -36,14 +35,7 @@ async function startServer() {
 
   //mi connetto al gateway o direttamente al broker interno?
   //read configs from config file
-  const client = mqtt.connect(connectUrl, {
-    clientId,
-    clean: true,
-    connectTimeout: 4000,
-    username: "emqx",
-    password: "public",
-    reconnectPeriod: 1000,
-  });
+  const client = mqtt.connect(mqttConfig.brokerConnectUrl, mqttConfig.options);
 
   console.log("Setting up routes ...");
 
@@ -52,7 +44,11 @@ async function startServer() {
   setupRoutes(client);
   console.log("routes bound");
 
-  app.listen(port, () => console.log(`Server listening on port ${port} for HTTP requests and subscribed for MQTT data`));
+  app.listen(port, () =>
+    console.log(
+      `trips backend listening on port ${port} for HTTP requests and subscribed for MQTT data`
+    )
+  );
 }
 
 startServer();
