@@ -1,7 +1,6 @@
 //not actually needed (since not copied .env file into container)
 //require('dotenv').config({ path: require('find-config')('.env'), debug: true }); //require('dotenv').config({path:__dirname + '/./../../../.env'});
 
-const connectionUri = require("./src/config/db.config.js");
 const { setupRoutes } = require("./src/routes/mqttRoutes");
 // Require express and create an instance of it
 var express = require("express");
@@ -34,15 +33,15 @@ async function startServer() {
   console.log("Connected!");
 
   //mi connetto al gateway o direttamente al broker interno?
-  //read configs from config file
   const client = mqtt.connect(mqttConfig.brokerConnectUrl, mqttConfig.options);
 
   console.log("Setting up routes ...");
-
   const routes = require("./routes");
+  //http routes
   app.use("/api/v1", routes);
+  //mqtt routes
   setupRoutes(client);
-  console.log("routes bound");
+  console.log("routes bound.");
 
   app.listen(port, () =>
     console.log(
