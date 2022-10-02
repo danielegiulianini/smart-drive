@@ -33,31 +33,33 @@ const tripsSchema = mongoose.Schema({
       //>actually used:
       timestamp: { type: Date },
       rpm: { type: Number },
-      engineLoad: { type: Number },
-      speed: { type: Number },
-      odometerValue: { type: Number },
+      kph: { type: Number },
+      odometer: { type: Number },
 
-      //>these for future extensions
+      //>these for future extensions:
+      position: {
+        longitude: { type: Number },
+        latitude: { type: Number },
+      },
+      engineLoad: { type: Number },
       acceleration: {
         x: { type: Number },
         y: { type: Number },
         z: { type: Number },
-      },
-      position: {
-        longitude: { type: Number },
-        latitude: { type: Number },
       },
       fuelRate: {
         type: Number,
       },
     },
   ],
-  //-----aggregate:--------
+  //-----aggregate (materialized for performance): --------
   //>basic
   distanceTraveled: {
+    //km (as OBD)
     type: Number,
   },
   duration: {
+    //seconds (as OBD)
     type: Number,
   },
   transactionsCount: {
@@ -73,7 +75,7 @@ const tripsSchema = mongoose.Schema({
   averageEngineLoad: {
     type: Number,
   },
-  averageSpeed: {
+  averageKph: {
     type: Number,
   },
   averageAcceleration: {
@@ -85,7 +87,7 @@ const tripsSchema = mongoose.Schema({
   maxEngineLoad: {
     type: Number,
   },
-  maxSpeed: {
+  maxKph: {
     type: Number,
   },
   maxAcceleration: {
@@ -100,7 +102,7 @@ const tripsSchema = mongoose.Schema({
   speedScore: {
     type: Number,
   },
-  accelerationScore: {
+  rpmScore: {
     type: Number,
   },
   feedbackConsiderationScore: {
@@ -114,13 +116,11 @@ const tripsSchema = mongoose.Schema({
     feedbackConsiderationScoreRatio: { type: Number },
   },
   feedbacks: [
+    //for computing feedback consideration score
     {
-      id: { typee: String },
+      id: { type: String },
       text: { type: String },
       timestamp: { type: Date },
-      minThreshold: { type: Number },
-      maxThreshold: { type: Number },
-      type: { type: String, enum: ["speed", "rpm", "feedbackConsideration"] },
     },
   ],
 });
