@@ -21,7 +21,7 @@ services:
       - users
       - images
       - notifications
-      #- trips #to be added when implemented
+      - trips #to be added when implemented
     networks:
       - backend
 
@@ -55,6 +55,7 @@ services:
     ports:
       - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
+      - mosquitto
       - mongodb-users
     networks:
       - backend
@@ -117,6 +118,7 @@ services:
       - ${TRIPS_MICROSERVICE_EXTERNAL_PORT}:${TRIPS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - mosquitto
+      - mongodb-trips
     networks:
       - backend
 
