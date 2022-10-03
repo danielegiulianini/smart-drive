@@ -18,6 +18,17 @@ app.use(cors(corsOptions));
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
+//const expressValidator = require('express-validator')
+//app.use(expressValidator())
+//this is required for returning status codes too
+//app.use(function(err, req, res, next) {
+//  if (err instanceof ValidationError) {
+//    return res.status(err.statusCode).json(err)
+//  }
+//
+//  return res.status(500).json(err)
+//})
+
 const port = 8083; //const port = Number(process.env.TRIPS_MICROSERVICE_INTERNAL_PORT);
 
 //retrieve connection string from config file (.env or inside config folder)
@@ -36,7 +47,7 @@ async function startServer() {
   const client = mqtt.connect(mqttConfig.brokerConnectUrl, mqttConfig.options);
 
   console.log("Setting up routes ...");
-  const routes = require("./routes");
+  const routes = require("./src/routes");
   //http routes
   app.use("/api/v1", routes);
   //mqtt routes
