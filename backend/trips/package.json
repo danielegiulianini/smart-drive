@@ -11,7 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^1.35.7",
+    "cors": "^2.8.5",
     "express": "^4.18.1",
-    "mqtt": "^4.3.7"
+    "mqtt": "^4.3.7",
+    "nodemon": "^2.0.20"
   }
 }
