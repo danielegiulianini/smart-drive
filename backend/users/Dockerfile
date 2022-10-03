@@ -6,6 +6,8 @@ ARG PORT
 # Create microservice directory #TO BE REFACTORED BY LEVERAGING DOCKER S ARG!
 WORKDIR /usr/src/users
 
+VOLUME /var/log/nginx
+
 # Install microservice dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
@@ -18,4 +20,6 @@ RUN npm install
 COPY . .
 
 #could use "npm start" too as CMD (after setting "start" script in scripts section of micros' package.json)
-CMD [ "node", "index.js" ]
+CMD [ "npm", "run", "dev" ]   
+
+#CMD [ "node", "index.js" ]
