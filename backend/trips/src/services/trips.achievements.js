@@ -12,7 +12,7 @@ const getAchievements = (trip) => {
   //PRIMO trip (completato)
   //badges derivanti dal confronto con soglie fisse
   //   >soglie fisse (anche su punti parziali, #guide con caratteristiche (es auto a metano), minuti, km, consecutive active days/weeks/months, active days in a year, in a month, in a week, in a day, since ever
-  //     trips in a ... , scores..., x giri con auto elettrica, prestazione assoluta o media (COSTANZA)
+  //     trips in a ... , scores..., x giri con auto elettrica, min/max (PRESTAZIONE ASSOLUTA in singolo trip) o media/somma (COSTANZA)
   //badges derivanti dal confronto con altri (revocabili, non lasciano traccia, MOLTO ONEROSI)
   //   >record di qualsiasi parametro (time, score, rpm medio, active days)
   //    > since when (last month, since your join, since ever)
@@ -29,10 +29,10 @@ const getAchievements = (trip) => {
 };
 
 //============encouraging app usage=================
-const weeksDrivenInARow = (tripsOfUser) => {
+/*const weeksDrivenInARow = (tripsOfUser) => {
   //not trivial: per ogni week controllo se quella prec è la sua precedente?
   groupBy(tripsOfUser, (trip) => getWeekNumber(new Date())).length;
-};
+};*/
 
 const monthsDrivenInAYear = (userId) => {
   /*groupBy(
@@ -100,8 +100,9 @@ const tripsInAWeek = (userId) => {
   return tripsPerWeek ? tripsPerWeek[0] : 0;
 };
 
-const drivesInADay = (trip) => {
+const tripsInADay = (trip) => {
   const tripsPerDay = Trip.aggregate([
+    { $match: { userId: userId } }, //filter only data of requested trip
     {
       $group: {
         _id: { $dateToString: { format: "%Y-%m-%d", date: "$at" } },
@@ -129,13 +130,7 @@ const electricTrips = async (userId) => {
   //for every vin retrieve its engine type
   for (v of vins) {
     //todo check if array contains vins only!
-    userVehiclesUrl = "http://vehicles:8087/api/v1/userVehicles/" + v; //read from config files
-    const response = await axios.get(userVehiclesUrl, {});
-    vehiclesModelUrl =
-      "http://vehicles:8087/api/v1/vehiclesModels/vehicleDetails/" +
-      response.data.vehicleId;
-    const response2 = await axios.get(vehiclesModelUrl, {});
-    if (response2.engineType == "electric") {
+    if ((await fetchFuelType(v)).includes("Electricity")) {
       //todo check both engineType key and value!
       electricTripsCount++;
     }
@@ -147,16 +142,56 @@ const electricTrips = async (userId) => {
   // }
 };
 
-const gplDrives = (trip) => {
-  trip.measurements.filter((date) => date.toDateString()).length;
+const fetchFuelType = async (vin) => {
+  userVehiclesUrl = "http://vehicles:8087/api/v1/userVehicles/" + vin; //read from config files
+  const response = await axios.get(userVehiclesUrl, {});
+  vehiclesModelUrl =
+    "http://vehicles:8087/api/v1/vehiclesModels/vehicleDetails/" +
+    response.data.vehicleId;
+  const vehicleDetails = await axios.get(vehiclesModelUrl, {});
+  return vehicleDetails.fuelType + vehicleDetails.fuelType1;
 };
 
+/*
+const gplDrives = (trip) => {
+  //trip.measurements.filter((date) => date.toDateString()).length;
+};*/
+
 //all the scores for performance reason
-const scoresInAMonth = (trip) => {};
+const scoresGatheredInAMonth = (trip) => {};
 
-const scoresInADay = (trip) => {};
+const scoresGatheredInADay = (trip) => {};
 
-const scoresSinceJoined = (trip) => {};
+//milestone
+const scoresGatheredSinceJoined = (trip) => {};
+
+const personalBestsSinceJoined = (userId) => {
+  //parziali, totale, min, max di km, score, minuti,
+  const tripsPerDay = Trip.aggregate([
+    //{ $match: { userId: userId } }, //filter only data of requested trip
+    {
+      $group: {
+        _id: { userId: userId },
+        totalTrips: { $sum: 1 },
+
+        totalEcoScore: { $sum: "totalScore" },
+        totalSpeedEcoScore: { $sum: "speedScore" },
+        totalRpmEcoScore: { $sum: 1 },
+        totalFeedbackConsiderationEcoScore: { $sum: 1 },
+
+        maxEcoScorePerTrip: { $max: 1 },
+        maxSpeedEcoScorePerTrip: { $max: 1 },
+        maxRpmEcoScorePerTrip: { $max: 1 },
+        maxFeedbackConsiderationEcoScorePerTrip: { $max: 1 },
+        maxKmPerTrip: { $sum: 1 },
+        maxTripMinutesDuration: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { tripsPerDay: -1 },
+    },
+  ]);
+};
 
 //this could be invoked by an independent route too
 const assignAchievements = async (userId) => {
