@@ -65,8 +65,8 @@ const get = async (req, res) => {
 
 const getAll = async (req, res) => {
   tripsService
-    .get(userId) //todo CORREGGERE
-    .then((trip) => res.status(200).json(trip))
+    .list()
+    .then((trips) => res.status(200).json(trips))
     .catch((err) => res.status(400).json(err));
   /*try {
     const trip = await tripsService.add(req.body);
@@ -76,7 +76,7 @@ const getAll = async (req, res) => {
   }*/
 };
 
-//no possibility to edit or delete trip externally ...
+//no possibility to edit or delete trip externally (so not exposing remove)...
 
 module.exports = {
   create,
