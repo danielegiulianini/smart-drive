@@ -52,7 +52,7 @@ const close = async (req, res) => {
 
 const get = async (req, res) => {
   tripsService
-    .get(userId)
+    .get(req.tripId)
     .then((trip) => res.status(200).json(trip))
     .catch((err) => res.status(400).json(err));
   /*try {
