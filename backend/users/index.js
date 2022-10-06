@@ -1,11 +1,10 @@
 //not actually needed (since not copied .env file into container)
 //require('dotenv').config({ path: require('find-config')('.env'), debug: true }); //require('dotenv').config({path:__dirname + '/./../../../.env'});
 
-const connectionUri = require("./src/config/db.config.js");
-
 // Require express and create an instance of it
 var express = require("express");
 var app = express();
+const { setupRoutes } = require("./src/routes/mqttRoutes");
 
 //cors library abstracts header-writing
 const cors = require("cors");
@@ -30,12 +29,17 @@ async function startServer() {
   await dbUtil.connect(dbConfig);
   console.log("Connected!");
 
+  const client = mqtt.connect(mqttConfig.brokerConnectUrl, mqttConfig.options);
+
   console.log("Setting up routes ...");
-  const routes = require("./routes");
+  const routes = require("./src/routes");
   app.use("/api/v1", routes);
+  setupRoutes(client);
   console.log("routes bound");
 
-  app.listen(port, () => console.log(`Server listening on port ${port}!`));
+  app.listen(port, () =>
+    console.log(`users backend listening on port ${port}!`)
+  );
 }
 
 startServer();
