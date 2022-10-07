@@ -4,6 +4,8 @@ const { setResponseWithGetJsonDataFrom } = require("../utils/axiosUtils");
 
 //get years
 const getYears = async (req, res) => {
+  console.log("a request for years arrived");
+
   setResponseWithGetJsonDataFrom(
     "https://www.fueleconomy.gov/ws/rest/vehicle/menu/year",
     {}, //no req.query's nor req.params' params
@@ -13,6 +15,8 @@ const getYears = async (req, res) => {
 
 //get makes (filtering model too)
 const getMakes = async (req, res) => {
+  console.log("a request for makes arrived");
+
   setResponseWithGetJsonDataFrom(
     "https://www.fueleconomy.gov/ws/rest/vehicle/menu/make",
     {
@@ -27,6 +31,8 @@ const getMakes = async (req, res) => {
 
 //get models (filtering year and makes too)
 const getModels = async (req, res) => {
+  console.log("a request for models arrived");
+
   setResponseWithGetJsonDataFrom(
     "https://www.fueleconomy.gov/ws/rest/vehicle/menu/model",
     {
@@ -42,6 +48,7 @@ const getModels = async (req, res) => {
 
 //get series and vin (filtering year and and make and model too)
 const getSeries = async (req, res) => {
+  console.log("a request for series arrived");
   setResponseWithGetJsonDataFrom(
     "https://www.fueleconomy.gov/ws/rest/vehicle/menu/model",
     {
@@ -58,6 +65,8 @@ const getSeries = async (req, res) => {
 
 //get single detail filtered with vin
 const getVehiclesDetails = async (req, res) => {
+  console.log("a request for vehicleDetails arrived");
+
   setResponseWithGetJsonDataFrom(
     "https://www.fueleconomy.gov/ws/rest/vehicle/" + req.params.vehicleId,
     //must use vehicle ID to speak to fueleconomy

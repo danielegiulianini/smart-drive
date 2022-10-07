@@ -65,7 +65,7 @@ const edit = async (req, res) => {
 
 //delete an association (with filter on vin (req param))
 const remove = async (req, res) => {
-  //checking for unauthorized?
+  //checking for unauthorized? (rbac access control)
   const vin = req.params.vin;
 
   userVehiclesService
