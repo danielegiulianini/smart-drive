@@ -45,6 +45,7 @@ async function startServer() {
 
   //mi connetto al gateway o direttamente al broker interno?
   const client = mqtt.connect(mqttConfig.brokerConnectUrl, mqttConfig.options);
+  
 
   console.log("Setting up routes ...");
   const routes = require("./src/routes");
