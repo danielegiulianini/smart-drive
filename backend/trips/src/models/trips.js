@@ -1,9 +1,9 @@
 //Modelling by Computed and Bucket (trips) Patterns combined
 //from: https://www.mongodb.com/docs/manual/tutorial/model-iot-data/
 
-//validators: unique, required
+const mongoose = require("mongoose");
 
-const { createSchema } = require("../utils/models.utils");
+//validators: unique, required
 
 //most general data structure (including data from ECU or GPS or accelerometer)
 const tripsSchema = mongoose.Schema({
@@ -17,13 +17,13 @@ const tripsSchema = mongoose.Schema({
     required: true,
   },
   startTimestamp: {
-    Date,
+    type: Date,
     default: Date.now, //By default, mongoose only applies defaults when you CREATE a new document
   },
   endTimestamp: {
-    Date,
+    type: Date,
   },
-  //for avoiding join when requesting users' trips
+  //for avoiding distributed join when requesting users' trips
   userId: {
     type: String,
   },
@@ -72,22 +72,23 @@ const tripsSchema = mongoose.Schema({
   averageRpm: {
     type: Number,
   },
-  averageEngineLoad: {
-    type: Number,
-  },
   averageKph: {
-    type: Number,
-  },
-  averageAcceleration: {
     type: Number,
   },
   maxRpm: {
     type: Number,
   },
-  maxEngineLoad: {
+  maxKph: {
     type: Number,
   },
-  maxKph: {
+  //>>these for future extensions:
+  averageEngineLoad: {
+    type: Number,
+  },
+  averageAcceleration: {
+    type: Number,
+  },
+  maxEngineLoad: {
     type: Number,
   },
   maxAcceleration: {

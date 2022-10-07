@@ -1,9 +1,7 @@
-//handle measurements and creation of trips
-//findOneAndUpdate
-
+//handle measurements and creation/completion of trips
 const Trip = require("../models/trips");
 
-const add = async (trip) => {
+const addTrip = async (trip) => {
   //params sent by frontend must not contain _id for not overriding trips already in the DB.
   //here handling the case it contains it too
   console.log(`Adding trip: ${JSON.stringify(trip)}`);
@@ -33,26 +31,46 @@ const addMeasurement = async (vin, newMeasurementParams) => {
 
   if (currentTrip) {
     const tripId = currentTrip._id;
-    //opt. 1: Friend.measurements.push(friend); anche questa dovrebbe andare !
+    //opt. 1: Friend.measurements.push(friend); Friend.save() //anche questa modalità dovrebbe andare !
 
     //opt. 2:
-    Friend.findOneAndUpdate(
+    Trip.findOneAndUpdate(
       { _id: tripId },
-      { $push: { measurements: newMeasurementParams } },
-      function (error, success) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log(
-            `Updating trip ${tripId} with data: ${JSON.stringify(
-              newMeasurementParams
-            )}`
-          );
-        }
-      }
-    );
+      { $push: { measurements: newMeasurementParams } }
+    )
+      .then((e) => {
+        console.log(
+          `Updating trip ${tripId} with data: ${JSON.stringify(
+            newMeasurementParams
+          )}`
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   } else {
     console.log("no trips to post measurements to are there.");
+  }
+
+  return trip;
+};
+
+//handle closing trip (invoked by HTTP)  by adding the endTimestamp
+const close = async (tripId) => {
+  // if it was already closed? override it? (no need for atomicity of findOneAndUpdate since is very
+  // rare to access (reand and write) the same trip from different frontends)
+  const tripToEnd = await Trip.findOne({
+    _id: tripId,
+  });
+  if (!tripToEnd) {
+    throw new TypeError(`The trip ${trip._id} doesn't exist.`);
+  } else {
+    if (tripToEnd.endTimestamp) {
+      throw new TypeError(`The trip ${trip._id} has already been closed.`);
+    } else {
+      tripToEnd.endTimestamp = new Date();
+      await user.save(); //must save here??
+    }
   }
 };
 
@@ -74,27 +92,9 @@ const get = async (userId) => {
   return Trip.findById(userId);
 };
 
-//handle closing trip (invoked by HTTP)  by adding the endTimestamp
-const close = async (tripId, endTimestamp) => {
-  // if it was already closed? override it? (no need for atomicity of findOneAndUpdate since is very
-  // rare to access (reand and write) the same trip from different frontends)
-  const tripToEnd = await Trip.findOne({
-    _id: tripId,
-  });
-  if (!tripToEnd) {
-    throw new TypeError(`The trip ${trip._id} already exists.`);
-  } else {
-    if (tripToEnd.endTimestamp) {
-      throw new TypeError(`The trip ${trip._id} has already been closed.`);
-    } else {
-      tripToEnd.endTimestamp = endTimestamp; //to be updated...
-    }
-  }
-};
-
 module.exports = {
   list,
-  add,
+  addTrip,
   get,
   addMeasurement,
   remove,

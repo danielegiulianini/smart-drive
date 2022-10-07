@@ -1,6 +1,8 @@
 //handles score assignment
 const Trip = require("../models/trips");
 
+//todo: remove all the preceding $ from property names!
+
 //computes all the things (ENTRY POINT for close trip event)
 const computeAndAssignScores = async (tripId) => {
   const scores = computeScores(tripId);
@@ -9,12 +11,11 @@ const computeAndAssignScores = async (tripId) => {
   const trip = Trip.findOne({
     _id: tripId,
   });
-  trip.speedLimitScore = scores.speedLimitScore; /* */
-  trip.speedLimitScore = scores.speedLimitScore; /* */
-  trip.totalScore =
-    0.5 * scores.speedLimitScore + 0.5 * scores.accelerationScore;
+  trip.speedScore = scores.speedScore; /* */
+  trip.rpmScore = scores.rpmScore; /* */
+  trip.totalScore = 0.5 * scores.speedScore + 0.5 * scores.speedScore;
 
-  bus.publish(userId, scores); //TODO  assign scores to user micro  //or by rest
+  //bus.publish(userId, scores); //TODO  assign scores to user micro  //or by rest
 
   //saving one time only here
   return await trip.save();
@@ -24,11 +25,11 @@ const computeAndAssignScores = async (tripId) => {
 const computeScores = async (tripId) => {
   return Object.assign(
     computeRpmScore(tripId, slidingWindowSizeForRpmInSeconds),
-    computeSpeedLimitScore(tripId, slidingWindowSizeForSpeedLimitInSeconds)
+    computeSpeedScore(tripId, slidingWindowSizeForSpeedLimitInSeconds)
   );
 };
 
-const computeSpeedLimitScore = async (
+const computeSpeedScore = async (
   tripId,
   slidingWindowSize,
   windowsSize
@@ -159,5 +160,4 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
 
 module.exports = {
   computeAndAssignScores,
-  computeScores,
 };

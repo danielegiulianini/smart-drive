@@ -35,24 +35,17 @@ const port = 8083; //const port = Number(process.env.TRIPS_MICROSERVICE_INTERNAL
 const dbConfig = require("./src/config/db.config");
 const dbUtil = require("./src/utils/mongooseUtils");
 
-const mqtt = require("mqtt");
-const mqttConfig = require("./src/config/mqtt.config");
-
 async function startServer() {
   console.log("Connecting to db...");
   await dbUtil.connect(dbConfig);
   console.log("Connected!");
-
-  //mi connetto al gateway o direttamente al broker interno?
-  const client = mqtt.connect(mqttConfig.brokerConnectUrl, mqttConfig.options);
-  
 
   console.log("Setting up routes ...");
   const routes = require("./src/routes");
   //http routes
   app.use("/api/v1", routes);
   //mqtt routes
-  setupRoutes(client);
+  setupRoutes();
   console.log("routes bound.");
 
   app.listen(port, () =>

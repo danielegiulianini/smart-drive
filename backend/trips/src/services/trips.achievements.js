@@ -146,6 +146,7 @@ const assignAchievements = async (userId) => {
     .catch((err) => console.log("error during electricTrips"));
 
   const performances = await performancesInAMonth(userId);
+
   const maxEcoScorePerTrip = Math.max(
     ...performances.map((o) => o.maxEcoScorePerTrip)
   );
@@ -154,6 +155,26 @@ const assignAchievements = async (userId) => {
   } else if (maxEcoScorePerTrip > 5) {
     achievementsEvents.push("electric_5");
   } else if (maxEcoScorePerTrip > 1) {
+    achievementsEvents.push("electric_1");
+  }
+  const maxSpeedScorePerTrip = Math.max(
+    ...performances.map((o) => o.maxSpeedScorePerTrip)
+  );
+  if (maxSpeedScorePerTrip > 10) {
+    achievementsEvents.push("electric_10");
+  } else if (maxSpeedScorePerTrip > 5) {
+    achievementsEvents.push("electric_5");
+  } else if (maxSpeedScorePerTrip > 1) {
+    achievementsEvents.push("electric_1");
+  }
+  const maxRpmScorePerTrip = Math.max(
+    ...performances.map((o) => o.maxRpmScorePerTrip)
+  );
+  if (maxRpmScorePerTrip > 10) {
+    achievementsEvents.push("electric_10");
+  } else if (maxRpmScorePerTrip > 5) {
+    achievementsEvents.push("electric_5");
+  } else if (maxRpmScorePerTrip > 1) {
     achievementsEvents.push("electric_1");
   }
   const totalEcoScore = Math.max(...performances.map((o) => o.totalEcoScore));
@@ -185,8 +206,7 @@ const assignAchievements = async (userId) => {
     achievementsEvents.push("electric_1");
   }
 
-  //publish dell'evento... allo user service: client, topic, payload (to move to controller)
-  publish(userId, achievementsEvents, {}); //assign badges to users micro
+  return achievementsEvents;
 };
 
 //============encouraging eco-driving=================
@@ -214,9 +234,7 @@ const electricTrips = async (userId) => {
   // }
 };
 
-//
 //const gplDrives = (trip) => {
-//};
 
 module.exports = {
   assignAchievements,

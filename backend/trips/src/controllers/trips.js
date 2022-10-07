@@ -1,4 +1,4 @@
-const publisher = require("../utils/publisher");
+const publisher = require("../utils/publishSubscribe");
 
 const tripsService = require("../services/trips.dataAcquisition");
 const scoresService = require("../services/trips.scores");
