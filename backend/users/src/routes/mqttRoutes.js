@@ -6,24 +6,33 @@ const publisher = require("../utils/publishSubscribe");
 const notificationsTopicPrefix = "notifications/";
 
 const achievementEventsTopicPrefix = "achievementsEvents/";
-const achievementEventsRegex = new RegExp("^" + achievementEventsTopicPrefix + "\/[^/]+$");
-const achievementEventsTopics = achievementEventsTopicPrefix + "+/";
+const achievementEventsRegex = new RegExp(
+  "^" + achievementEventsTopicPrefix + "[^/]+$"
+);
+const achievementEventsTopics = achievementEventsTopicPrefix + "+";
 
 const scoreUpdatedEventsTopicPrefix = "scoreUpdatedEvents/";
-const scoreUpdatedEventsRegex = new RegExp("^" + scoreUpdatedEventsTopicPrefix + "\/[^/]+$");
-const scoreUpdatedEventsTopics = scoreUpdatedEventsRegex + "+/";
+const scoreUpdatedEventsRegex = new RegExp(
+  "^" + scoreUpdatedEventsTopicPrefix + "[^/]+$"
+);
+const scoreUpdatedEventsTopics = scoreUpdatedEventsRegex + "+";
 
 const setupRoutes = () => {
-  publisher.subscribe([achievementEventsTopics, scoreUpdatedEventsTopics], () => {
-    console.log(`Subscribed to topic '${topic}'`);
-  });
+  publisher.subscribe(
+    [achievementEventsTopics, scoreUpdatedEventsTopics],
+    () => {
+      console.log(
+        `Subscribed to topic '${achievementEventsTopics} and '${scoreUpdatedEventsTopics}'`
+      );
+    }
+  );
 
-  publisher.on("connect", () => {
+  publisher.onConnect(() => {
     //every time car is turn off and turn on: a connect event is triggered
     //ignoring connection event
-    console.log("trips mqtt client connected");
+    console.log("mqtt client connected");
   });
-  publisher.on("message", (topic, payload) => {
+  publisher.onMessage((topic, payload) => {
     const payloadAsObject = JSON.parse(payload);
 
     if (achievementEventsRegex.test(topic)) {
@@ -46,7 +55,7 @@ const setupRoutes = () => {
         );
       } catch {
         console.log(
-          "error in processing message with payload: " + payload + "at trips"
+          "error in processing message with payload: " + payload + "at users"
         ); //log the error (cannot respond to client)
       }
     } else if (scoreUpdatedEventsRegex.test(topic)) {
