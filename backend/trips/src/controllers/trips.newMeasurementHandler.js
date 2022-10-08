@@ -5,7 +5,7 @@ const publisher = require("../utils/publishSubscribe");
 //to be read from (global) config (constants) file
 const drivingNotificationsTopicPrefix = "drivingNotifications/";
 
-const handleNewMeasurement = async (vin, payload) => {
+const handleNewMeasurement = async (vin, measurementPayload) => {
   //no need for destructuring for validation (mongoose's strict option cut exceeding fields off)
   /*let params = {
         _id: payload.tokenUserId,
@@ -19,13 +19,19 @@ const handleNewMeasurement = async (vin, payload) => {
       };*/
 
   try {
-    trip = dataAcquisitionService.addMeasurement(vin, payload);
-
+    //only saving data in driving mode
+    trip = await dataAcquisitionService.addMeasurement(vin, measurementPayload);
+    console.log("the trip is:");
+    console.log(trip);
     if (trip) {
       //give advice to user via phone!... (I assume it's connected while nodemcu is sending here!)
+      const feedback = await drivingAssistantService.getAndAssignFeedback(
+        trip._id,
+        measurementPayload
+      );
       //publish(topic, message)
       publisher.publish(drivingNotificationsTopicPrefix + trip.userId, {
-        feedback: await drivingAssistantService.getAndAssignFeedback(trip._id),
+        feedback: feedback,
       });
     }
   } catch (error) {
@@ -33,4 +39,4 @@ const handleNewMeasurement = async (vin, payload) => {
   }
 };
 
-module.exports = handleNewMeasurement;
+module.exports = { handleNewMeasurement };

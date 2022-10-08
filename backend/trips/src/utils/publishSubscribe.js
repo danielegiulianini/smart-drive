@@ -11,7 +11,7 @@ PublishSubscribe.prototype.subscribe = function (topicsArray, callback) {
 };
 
 PublishSubscribe.prototype.onConnect = function (callback) {
-  this.client.on("message", callback);
+  this.client.on("connect", callback);
 };
 
 PublishSubscribe.prototype.onMessage = function (callback) {
@@ -27,4 +27,3 @@ PublishSubscribe.prototype.publish = function (topic, message) {
 };
 
 module.exports = new PublishSubscribe();
-

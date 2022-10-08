@@ -26,7 +26,8 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   //- it there is: update it
 
   const currentTrip = await Trip.findOne(
-    { $and: [{ vehicleIdentificationNumber: vin }, { endTimestamp: null }] } //returning both: 1. documents with existing endTImestamp but set to null and 2. without it
+    { $and: [{ vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
+    { endTimestamp: null }] } //returning both: 1. documents with existing endTImestamp but set to null and 2. without it
   );
 
   if (currentTrip) {
@@ -51,8 +52,6 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   } else {
     console.log("no trips to post measurements to are there.");
   }
-
-  return trip;
 };
 
 //handle closing trip (invoked by HTTP)  by adding the endTimestamp
