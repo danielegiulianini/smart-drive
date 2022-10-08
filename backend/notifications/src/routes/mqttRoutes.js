@@ -1,19 +1,28 @@
 //handles mqtt routing based on topics (topic-based routing)
 const NotificationsController = require("./../controllers/NotificationsController");
-const topic = "notifications"; // (no starting /)
+const publishSubscribe = require("../utils/publishSubscribe");
 
-const setupRoutes = (client) => {
-  client.on("connect", () => {
+//to be read from (global) config (constants) file
+const notificationsTopixPrefix = "notifications";
+const notificationEventsRegex = new RegExp(
+  "^" + notificationsTopixPrefix + "/[^/]+$"
+); //^notifications\/[^/]+$
+const notificationsTopics = notificationsTopixPrefix + "/+/";
+
+const setupRoutes = () => {
+  publishSubscribe.onConnect(() => {
     console.log("notifications backend connected to mqtt broker");
 
-    client.subscribe([topic], () => {
+    publishSubscribe.subscribe([notificationsTopics], () => {
       console.log(`notifications backend subscribed to topic '${topic}'`);
     });
   });
 
-  client.on("message", (topic, payload) => {
-    NotificationsController.onMessageArrived(payload);
-    console.log("Received notification message:", topic, payload.toString());
+  publishSubscribe.onMessage((topic, payload) => {
+    if (notificationEventsRegex.test(topic)) {
+      NotificationsController.onMessageArrived(payload);
+      console.log("Received notification message:", topic, payload.toString());
+    }
   });
 };
 
