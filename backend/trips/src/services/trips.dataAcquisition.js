@@ -25,32 +25,18 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   //- if there's no trips open? discard
   //- it there is: update it
 
-  const currentTrip = await Trip.findOne(
-    { $and: [{ vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
-    { endTimestamp: null }] } //returning both: 1. documents with existing endTImestamp but set to null and 2. without it
-  );
+  const currentTrip = await Trip.findOne({
+    $and: [
+      { vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
+      { endTimestamp: null }, //returning both: 1. documents with existing endTImestamp but set to null and 2. without it
+    ],
+  });
 
   if (currentTrip) {
-    const tripId = currentTrip._id;
-    //opt. 1: Friend.measurements.push(friend); Friend.save() //anche questa modalità dovrebbe andare !
-
-    //opt. 2:
-    Trip.findOneAndUpdate(
-      { _id: tripId },
-      { $push: { measurements: newMeasurementParams } }
-    )
-      .then((e) => {
-        console.log(
-          `Updating trip ${tripId} with data: ${JSON.stringify(
-            newMeasurementParams
-          )}`
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    currentTrip.measurements.push(newMeasurementParams);
+    await currentTrip.save();
   } else {
-    console.log("no trips to post measurements to are there.");
+    console.log("no trips to post published measurements to are there.");
   }
 };
 
@@ -68,7 +54,7 @@ const close = async (tripId) => {
       throw new TypeError(`The trip ${trip._id} has already been closed.`);
     } else {
       tripToEnd.endTimestamp = new Date();
-      await user.save(); //must save here??
+      await user.save();
     }
   }
 };
