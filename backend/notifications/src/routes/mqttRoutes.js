@@ -3,11 +3,11 @@ const NotificationsController = require("./../controllers/NotificationsControlle
 const publishSubscribe = require("../utils/publishSubscribe");
 
 //to be read from (global) config (constants) file
-const notificationsTopixPrefix = "notifications";
+const notificationsTopixPrefix = "notifications/";
 const notificationEventsRegex = new RegExp(
-  "^" + notificationsTopixPrefix + "/[^/]+$"
+  "^" + notificationsTopixPrefix + "[^/]+$"
 ); //^notifications\/[^/]+$
-const notificationsTopics = notificationsTopixPrefix + "/+/";
+const notificationsTopics = notificationsTopixPrefix + "+";
 
 const setupRoutes = () => {
   publishSubscribe.onConnect(() => {

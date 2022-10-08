@@ -1,14 +1,11 @@
 //handles mqtt routing based on topics (topic-based routing)
 const TripController = require("../controllers/trips.newMeasurementHandler");
 const publishSubscribe = require("../utils/publishSubscribe");
-//import publishSubscribe from '../utils/publishSubscribe';
 
 //to be read from (global) config (constants) file
-const vehiclesTopixPrefix = "vehicles";
-
-const vehiclesEventsRegex = new RegExp("^" + vehiclesTopixPrefix + "\/[^/]+$"); //^vehicles\/[^/]+$
-
-const vehiclesTopics = vehiclesTopixPrefix + "/+/"; // vehicles/<VIN>/ (1. no starting / 2. + is one-level wildcard)
+const vehiclesTopixPrefix = "vehicles/";
+const vehiclesEventsRegex = new RegExp("^" + vehiclesTopixPrefix + "[^/]+$"); //^vehicles\/[^/]+$
+const vehiclesTopics = vehiclesTopixPrefix + "+"; // vehicles/<VIN>/ (1. no starting / 2. + is one-level wildcard)
 
 const setupRoutes = () => {
   publishSubscribe.subscribe([vehiclesTopics], () => {
