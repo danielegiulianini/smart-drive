@@ -1,45 +1,82 @@
+const AchievementsService = require("../services/achievements");
+const publisher = require("../utils/publishSubscribe");
+
 //handles mqtt routing based on topics (topic-based routing)
-//import config 
+//to be read from (global (with other micros)) config (constants) file
+const notificationsTopicPrefix = "notifications/";
 
+const achievementEventsTopicPrefix = "achievementsEvents/";
+const achievementEventsRegex = new RegExp("^" + achievementEventsTopicPrefix + "\/[^/]+$");
+const achievementEventsTopics = achievementEventsTopicPrefix + "+/";
 
+const scoreUpdatedEventsTopicPrefix = "scoreUpdatedEvents/";
+const scoreUpdatedEventsRegex = new RegExp("^" + scoreUpdatedEventsTopicPrefix + "\/[^/]+$");
+const scoreUpdatedEventsTopics = scoreUpdatedEventsRegex + "+/";
 
-
-const topic = "notifications"; // vehicles/<VIN>/ (1. no starting / 2. + is one-level wildcard)
-/*
-const setupRoutes = (client) => {
-  client.subscribe([topic], () => {
+const setupRoutes = () => {
+  publisher.subscribe([achievementEventsTopics, scoreUpdatedEventsTopics], () => {
     console.log(`Subscribed to topic '${topic}'`);
   });
 
-  client.on("connect", () => {
+  publisher.on("connect", () => {
     //every time car is turn off and turn on: a connect event is triggered
     //ignoring connection event
-    console.log("Connected");
+    console.log("trips mqtt client connected");
   });
-  client.on("message", (topic, payload) => {
-    //here calling "MQTT"controller as for HTTP
-    //TripController.addMeasurement(extractVinFromTopic(topic), payload);
+  publisher.on("message", (topic, payload) => {
+    const payloadAsObject = JSON.parse(payload);
 
-    //check topic for:
-    //-achievements
+    if (achievementEventsRegex.test(topic)) {
+      try {
+        const userId = topic.substring(
+          topic,
+          achievementEventsTopicPrefix.length
+        );
+        const achievementsUnlocked = AchievementsService.unlockAchievements(
+          userId,
+          payloadAsObject.badgesIds
+        );
 
-    //maybe publish to notification service?!
-    publish("achievementUnlocked", achievement, user._id);
-    //points updated
-    //maybe publish to notification service?!
-    publish("achievementUnlocked", achievement, user._id);
+        publisher.publish(
+          notificationsTopicPrefix + userId,
+          achievementsUnlocked.map((achievementName) => ({
+            subject: "New achievements unlocked",
+            body: "You unlocked badge:" + achievementName,
+          }))
+        );
+      } catch {
+        console.log(
+          "error in processing message with payload: " + payload + "at trips"
+        ); //log the error (cannot respond to client)
+      }
+    } else if (scoreUpdatedEventsRegex.test(topic)) {
+      try {
+        const userId = topic.substring(
+          topic,
+          scoreUpdatedEventsTopicPrefix.length
+        );
+
+        AchievementsService.unlockAchievements(
+          userId,
+          payloadAsObject.badgesIds
+        ).then(() => {
+          publisher.publish(notificationsTopicPrefix + userId, {
+            totalScoreDelta: payloadAsObject.ecoScoreDelta,
+          });
+        });
+      } catch {
+        //possible errors in deserializing...
+        console.log(
+          "error in processing message with payload: " + payload + "at trips"
+        ); //log the error (cannot respond to client)
+      }
+    } else {
+      console.log("users mqtt client ignoring message");
+    }
 
     console.log("Received Message:", topic, payload.toString());
   });
 };
-*/
-const extractVinFromTopic = (topic) => {
-  const myRe = new RegExp("[^/]+(?=/$|$)");
-  return myRe.exec(topic)[0]; //exec returns an array (first arg is the matched pattern)
-};
-
-
-
 
 module.exports = {
   setupRoutes,

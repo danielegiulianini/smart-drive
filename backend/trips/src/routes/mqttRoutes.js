@@ -5,7 +5,8 @@ const publishSubscribe = require("../utils/publishSubscribe");
 
 //to be read from (global) config (constants) file
 const vehiclesTopixPrefix = "vehicles";
-const vehiclesEventsRegex = "^" + vehiclesTopixPrefix + "[^/]+$";
+
+const vehiclesEventsRegex = new RegExp("^" + vehiclesTopixPrefix + "\/[^/]+$"); //^vehicles\/[^/]+$
 
 const vehiclesTopics = vehiclesTopixPrefix + "/+/"; // vehicles/<VIN>/ (1. no starting / 2. + is one-level wildcard)
 
@@ -20,11 +21,11 @@ const setupRoutes = () => {
   });
   publishSubscribe.onMessage((topic, payload) => {
     //here calling "MQTT"controller as for HTTP
-    if (vehiclesEventsRegex.test(topic)) {
-      console.log(
-        `received msg at trips server of topic '${topic}' with content '${payload.toString()}'`
-      );
+    console.log(
+      `received msg at trips server of topic '${topic}' with content '${payload.toString()}'`
+    );
 
+    if (vehiclesEventsRegex.test(topic)) {
       const vin = topic.substring(topic, vehiclesTopixPrefix.length);
       TripController.handleNewMeasurement(vin, payload);
     }
