@@ -22,9 +22,11 @@ afterEach(async () => {
 });
 
 //fixtures
+const fakeVin = "JH4DA3450HS011682";
+
 const fakeTripData = {
   sensorId: "fakeSensorId",
-  vehicleIdentificationNumber: "fakeVehicleIdentificationNumber",
+  vehicleIdentificationNumber: fakeVin,
   //startTimestamp
   //endTimestamp
   userId: "fakeUserId",
@@ -48,7 +50,7 @@ describe("a trip", () => {
       validateStringEquality(savedTrip.userId, fakeTripData.userId);
     });
 
-    it("should trigger an error if added twice", async () => {
+    /*it("should trigger an error if added twice", async () => {
       expect.assertions(2);
       expect(async () => {
         savedTrip = await TripsService.addTrip(fakeTripData);
@@ -56,15 +58,16 @@ describe("a trip", () => {
       })
         .rejects //needed for testing async code
         .toThrow(Error);
-    });
+    });*/
   });
 
   describe("when closed", () => {
     //service methods
     it("should set the end timestamp accordingly", async () => {
       let savedTrip = await TripsService.addTrip(fakeTripData);
-      savedTrip = await TripsService.close(savedTrip._id);
-      validateNotEmpty(savedTrip.endTimestamp);
+      await TripsService.close(savedTrip._id);
+      let savedTrip2 = await TripsService.get(savedTrip._id);
+      validateNotEmpty(savedTrip2.endTimestamp);
     });
 
     it("should trigger an error if never added", async () => {
@@ -79,9 +82,7 @@ describe("a trip", () => {
         const savedTrip = await TripsService.addTrip(fakeTripData);
         await TripsService.close(savedTrip._id);
         await TripsService.close(savedTrip._id);
-      })
-        .rejects
-        .toThrow(Error);
+      }).rejects.toThrow(Error);
     });
   });
 });
@@ -115,21 +116,54 @@ describe("a trip", () => {
 */
 
 //fixtures
+const fakeRpm = "1920";
+const fakeKph = "89";
+const fakeOdometer = "12";
+
 const fakeMeasurementData = {
-  rpm: "1920.00",
-  kph: "89.00",
-  odometer: "12",
+  rpm: fakeRpm,
+  kph: fakeKph,
+  odometer: fakeOdometer,
 };
-const fakeVin = "JH4DA3450HS011682";
 
 describe("a measurement", () => {
   //aggiungo un measurement e me lo ritrovo  con i dati che ho inserito
   describe("when added", () => {
     it("should get its timestamp set accordingly", async () => {
-      const savedTrip = await TripsService.addMeasurement(
-        fakeVin,
-        fakeMeasurementData
+      let savedTrip = await TripsService.addTrip(fakeTripData);
+
+      await TripsService.addMeasurement(fakeVin, fakeMeasurementData); //add measurement should attach measurements to the (unique) trip with that fakeVin
+
+      const fetchedTrip = await TripsService.get(savedTrip._id);
+
+      /*
+      FROM: https://medium.com/@andrei.pfeiffer/jest-matching-objects-in-array-50fe2f4d6b98 
+      const state = [
+  { type: 'START', data: 'foo' },
+  { type: 'START', data: 'baz' },
+  { type: 'END', data: 'foo' },
+]*/
+      expect(fetchedTrip.measurements).toEqual(
+        // 1
+        expect.arrayContaining([
+          // 2
+          expect.objectContaining({
+            // 3
+            rpm: parseInt(fakeRpm), // 4
+            kph: parseInt(fakeKph),
+            odometer: parseInt(fakeOdometer),
+          }),
+        ])
       );
+
+      /*
+       you expect that:
+1.  your Array equals
+2. an Array that contains
+3. an Object that contains
+4. the following properties
+
+*/
       /*DA RIVEDERE: expect(savedTrip.measurements).toContain(fakeMeasurementData);
       validateNotEmpty(savedMeasurement.timestamp);*/
     });

@@ -19,6 +19,8 @@ afterEach(async () => {
   await dropCollections();
 });
 
+
+/*
 //THIS IS IMPORTANT
 test("List all users have read a book", async () => {
   const books = await bookReadService.list(volumeId);
@@ -26,3 +28,4 @@ test("List all users have read a book", async () => {
   expect(books).toBeDefined();
   expect(books.length).toBeGreaterThanOrEqual(0);
 });
+*/
