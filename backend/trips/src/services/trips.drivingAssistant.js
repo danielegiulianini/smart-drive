@@ -1,6 +1,7 @@
 const trips = require("../models/trips");
 const Trip = require("../models/trips");
 const TripStatsService = require("../services/trips.stats");
+const sortByProperty = require("../utils/arrays.utils");
 
 //this writes to db
 const getAndAssignFeedback = async (tripId, measurementPayload) => {
@@ -12,16 +13,6 @@ const getAndAssignFeedback = async (tripId, measurementPayload) => {
     await trip.save();
   }
   return feedbacks ? feedbacks[0] : null;
-};
-
-const sortByProperty = (array, propertyName) => {
-  array.sort((a, b) =>
-    a[propertyName] > b[propertyName]
-      ? 1
-      : b[propertyName] > a[propertyName]
-      ? -1
-      : 0
-  );
 };
 
 const millis_in_seconds = 1000;
@@ -92,8 +83,35 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   //compare with speedlimits
 
   //5. =========================== not exceeding driving time without rest =============
-  //if there is not a break (no data for periods as car turn off) or there is no period with v == 0 in last x minutes => feedback
+  
+  //(if amount of rest (computed estimating holes in data as microncontroller is not sending 
+  //(assuming known and stable sampling frequency from microncontroller)) in the last hour is 
+  //less than a threshold => feedback)
+  const notRestingWindowInSeconds = 60 * 60;
+  const restBreakDurationInSecondsNeeded = 60; //rest needed:  1 minute
 
+  const samplingPeriodInSeconds = 5; //here assuming to control microncontroller sampling period
+  const nonRestDuration =
+    sortByProptrip.measurements
+      .filter(
+        (measurement) =>
+          measurement.timestamp >
+          new Date() - notRestingWindowInSeconds * millis_in_seconds
+      )
+      .count() * samplingPeriodInSeconds;
+
+  const restBreakDurationInSecondsActuallyPerformed =
+    notRestingWindowInSeconds - nonRestDuration;
+
+  const hasDriverRestRecently =
+    restBreakDurationInSecondsActuallyPerformed >=
+    restBreakDurationInSecondsNeeded;
+  if (!hasDriverRestRecently) {
+    feedbacks.push({
+      text: "It's time to take a rest from driving.",
+      priority: 3,
+    });
+  }
   //4. =========================== keep safe following distance ========================
   //PIR needed
 
