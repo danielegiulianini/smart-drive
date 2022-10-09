@@ -1,22 +1,25 @@
-//all the things here are already set up
-//add some test data (with predictable corresponding services return values)
+//tests utils
+const {
+  validateNotEmpty,
+  validateStringEquality,
+  validateMongoDuplicationError,
+} = require("../../utils/validators.utils");
+const {
+  dbConnect,
+  dbDisconnect,
+  dropCollections,
+} = require("../../utils/dbHandler.utils");
 
-beforeAll(async () => {
-  try {
-    await dbUtil.connect();
-  } catch (err) {
-    console.log(err);
-  }
+//to-test data
+const Trip = require("../../models/trips");
+
+beforeAll(async () => dbConnect());
+afterAll(async () => dbDisconnect());
+afterEach(async () => {
+  await dropCollections();
 });
 
-afterAll(async () => {
-  try {
-    await dbUtil.disconnect();
-  } catch (err) {
-    console.log(err);
-  }
-});
-
+//THIS IS IMPORTANT
 test("List all users have read a book", async () => {
   const books = await bookReadService.list(volumeId);
 

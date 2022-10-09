@@ -4,17 +4,25 @@ const {
   validateStringEquality,
   validateMongoDuplicationError,
 } = require("../../utils/validators.utils");
-const { dbConnect, dbDisconnect } = require("../../utils/dbHandler.utils");
+const {
+  dbConnect,
+  dbDisconnect,
+  dropCollections,
+} = require("../../utils/dbHandler.utils");
 
 //to-test data
 const Trip = require("../../models/trips");
 const TripsService = require("../../services/trips.dataAcquisition");
+const trips = require("../../models/trips");
 
 beforeAll(async () => dbConnect());
 afterAll(async () => dbDisconnect());
+afterEach(async () => {
+  await dropCollections();
+});
 
 //fixtures
-const fakedTripData = {
+const fakeTripData = {
   sensorId: "fakeSensorId",
   vehicleIdentificationNumber: "fakeVehicleIdentificationNumber",
   //startTimestamp
@@ -22,55 +30,61 @@ const fakedTripData = {
   userId: "fakeUserId",
 };
 
-describe("a trip", () =>
+describe("a trip", () => {
   describe("when added", () => {
     //service methods
     it("should be persisted correctly", async () => {
       //aggiungo un trip e me lo ritrovo con i dati che ho inserito
-      savedTrip = TripsService.addTrip(fakedTripData);
+      savedTrip = await TripsService.addTrip(fakeTripData);
+
       validateNotEmpty(savedTrip);
 
-      validateStringEquality(savedTrip.sensorId, fakedTripData.sensorId);
+      validateStringEquality(savedTrip.sensorId, fakeTripData.sensorId);
       validateStringEquality(
         savedTrip.vehicleIdentificationNumber,
-        fakedTripData.vehicleIdentificationNumber
+        fakeTripData.vehicleIdentificationNumber
       );
       validateNotEmpty(savedTrip.startTimestamp);
-      validateStringEquality(savedTrip.userId, fakedTripData.userId);
+      validateStringEquality(savedTrip.userId, fakeTripData.userId);
     });
 
     it("should trigger an error if added twice", async () => {
-      expect.assertions(4);
-      expect(() => {
-        savedTrip = TripsService.addTrip(fakedTripData);
-        savedTrip = TripsService.addTrip(fakedTripData);
-      }).toThrow(Error);
+      expect.assertions(2);
+      expect(async () => {
+        savedTrip = await TripsService.addTrip(fakeTripData);
+        savedTrip = await TripsService.addTrip(fakeTripData);
+      })
+        .rejects //needed for testing async code
+        .toThrow(Error);
+    });
+  });
+
+  describe("when closed", () => {
+    //service methods
+    it("should set the end timestamp accordingly", async () => {
+      let savedTrip = await TripsService.addTrip(fakeTripData);
+      savedTrip = await TripsService.close(savedTrip._id);
+      validateNotEmpty(savedTrip.endTimestamp);
     });
 
-    describe("when closed", () => {
-      //service methods
-      it("should set the end timestamp accordingly", async () => {
-        let savedTrip = TripsService.add(fakedTripData);
-        savedTrip = TripsService.close(savedTrip._id);
-        validateNotEmpty(savedTrip.endTimestamp);
-      });
-
-      it("should trigger an error if never added", async () => {
-        expect(() => {
-          TripsService.close("tripIdNotExisting");
-          savedTrip = TripsService.addTrip(fakedTripData);
-        }).toThrow(Error);
-      });
-
-      it("should trigger an error if already closed", async () => {
-        expect(() => {
-          const savedTrip = TripsService.addTrip(fakedTripData);
-          TripsService.close(savedTrip._id);
-          TripsService.close(savedTrip._id);
-        }).toThrow(Error);
-      });
+    it("should trigger an error if never added", async () => {
+      expect(async () => {
+        await TripsService.close("41224d776a326fb40f000001"); //a valid ObjectId id (for not throwing CastError)
+        savedTrip = await TripsService.addTrip(fakeTripData);
+      }).rejects.toThrow(Error);
     });
-  }));
+
+    it("should trigger an error if already closed", async () => {
+      expect(async () => {
+        const savedTrip = await TripsService.addTrip(fakeTripData);
+        await TripsService.close(savedTrip._id);
+        await TripsService.close(savedTrip._id);
+      })
+        .rejects
+        .toThrow(Error);
+    });
+  });
+});
 
 /*
   measurements: [
@@ -101,19 +115,27 @@ describe("a trip", () =>
 */
 
 //fixtures
-const fakedMeasurementData = {
-  firstName: "Dummy",
-  lastName: "User",
-  username: "dummyUser",
-  email: "dummy@user.com",
-  password: "********",
-  role: "student",
+const fakeMeasurementData = {
+  rpm: "1920.00",
+  kph: "89.00",
+  odometer: "12",
 };
+const fakeVin = "JH4DA3450HS011682";
 
-describe("a measurement when posted", () => {
+describe("a measurement", () => {
   //aggiungo un measurement e me lo ritrovo  con i dati che ho inserito
+  describe("when added", () => {
+    it("should get its timestamp set accordingly", async () => {
+      const savedTrip = await TripsService.addMeasurement(
+        fakeVin,
+        fakeMeasurementData
+      );
+      /*DA RIVEDERE: expect(savedTrip.measurements).toContain(fakeMeasurementData);
+      validateNotEmpty(savedMeasurement.timestamp);*/
+    });
 
-  it("should be persisted correctly", async () => {});
+    it("should get its values persisted correctly", async () => {});
+  });
 });
 
 /*
