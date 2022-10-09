@@ -53,14 +53,14 @@ const computeOtherStats = async (tripId, fromTimestamp) => {
   //all in one query mongoose
   let stats = Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
-    { $match: fromTimestamp ? { timestamp: { $gte: dateStart } } : true }, //filter only data inside sliding window (if provided, otherwise don't filter)
     { $unwind: "$measurements" }, //$unwind the services array before grouping, else group will give you array of arrays
     //or a filter + javascript manipulation (more flexible) instead of this last group
+    { $match: fromTimestamp ? { timestamp: { $gte: fromTimestamp } } : true }, //filter only data inside sliding window (if provided, otherwise don't filter)
     {
       $group: {
         //2nd grouping for getting total (trip), specific metric
         _id: {
-          _id,
+          _id: "_id",
         },
         //summary fields of raw data
         maxRpm: { $sum: "$maxRpm" },
@@ -75,5 +75,6 @@ const computeOtherStats = async (tripId, fromTimestamp) => {
 };
 
 module.exports = {
+  computeOtherStats,
   computeAndUpdateStats,
 };
