@@ -1,18 +1,18 @@
 const trips = require("../models/trips");
 const Trip = require("../models/trips");
 const TripStatsService = require("../services/trips.stats");
-const sortByProperty = require("../utils/arrays.utils");
+const { sortByProperty } = require("../utils/arrays.utils");
 
 //this writes to db
 const getAndAssignFeedback = async (tripId, measurementPayload) => {
-  const feedbacks = getFeedbacks(tripId, measurementPayload);
+  const newFeedbacks = await getFeedbacks(tripId, measurementPayload);
 
-  if (feedbacks) {
+  if (newFeedbacks) {
     let trip = await Trip.findById(tripId);
-    trip.feedbacks.push(sortByProperty(await feedbacks, "priority")); //ritorno quello con più prorità più alta
+    trip.feedbacks.push(sortByProperty(newFeedbacks, "priority")); //ritorno quello con più prorità più alta
     await trip.save();
   }
-  return feedbacks ? feedbacks[0] : null;
+  return newFeedbacks ? newFeedbacks[0] : null;
 };
 
 const millis_in_seconds = 1000;
@@ -65,7 +65,6 @@ const getFeedbacks = async (tripId, measurementPayload) => {
 
   //3. =========================== reduce unnecessary emissions (idling) ===============
   //(spegni il motore se è da più di 10 secondi che sei fermo (v=0))
-
   const idleWindowInSeconds = 10;
   if (
     TripStatsService.computeOtherStats(
@@ -83,22 +82,20 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   //compare with speedlimits
 
   //5. =========================== not exceeding driving time without rest =============
-  
-  //(if amount of rest (computed estimating holes in data as microncontroller is not sending 
-  //(assuming known and stable sampling frequency from microncontroller)) in the last hour is 
+
+  //(if amount of rest (computed estimating holes in data as microncontroller is not sending
+  //(assuming known and stable sampling frequency from microncontroller)) in the last hour is
   //less than a threshold => feedback)
   const notRestingWindowInSeconds = 60 * 60;
   const restBreakDurationInSecondsNeeded = 60; //rest needed:  1 minute
 
   const samplingPeriodInSeconds = 5; //here assuming to control microncontroller sampling period
   const nonRestDuration =
-    sortByProptrip.measurements
-      .filter(
-        (measurement) =>
-          measurement.timestamp >
-          new Date() - notRestingWindowInSeconds * millis_in_seconds
-      )
-      .count() * samplingPeriodInSeconds;
+    trip.measurements.filter(
+      (measurement) =>
+        measurement.timestamp >
+        new Date() - notRestingWindowInSeconds * millis_in_seconds
+    ).length * samplingPeriodInSeconds;
 
   const restBreakDurationInSecondsActuallyPerformed =
     notRestingWindowInSeconds - nonRestDuration;
