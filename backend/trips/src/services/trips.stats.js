@@ -1,13 +1,12 @@
 //generate some stats data from data acquisition (numeri singoli che riassumono tutto il trip)
-const { startSession } = require("../models/trips");
 const Trip = require("../models/trips");
 
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
-  computeStats(tripId, fromTimestamp).then((stats) => {
+  return computeStats(tripId, fromTimestamp).then((stats) => {
     //materializing stats for performances reason (should increase transaction count too)
-    return Profile.findOneAndUpdate(
+    return Trip.findOneAndUpdate(
       {
         _id: userId,
       },
@@ -17,7 +16,7 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
         maxKph: stats.maxKph,
         avgKph: stats.avgKph,
         distanceTraveled: stats.distanceTraveled,
-        duration: stats.duration
+        duration: stats.duration,
       },
       {
         new: true, //returning updated user
@@ -26,20 +25,18 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
   });
 };
 
-
 const computeStats = async (tripId, fromTimestamp) => {
-  Promises.all([
+  return Promise.all([
     computeDistanceAndTimeTraveledStats(tripId),
-    computeEngineStats(tripId, fromTimestamp)]
-  ).then(([durationStats, engineStats]) => {
-  return Object.assign(durationStats, engineStats)
+    computeEngineStats(tripId, fromTimestamp),
+  ]).then(([durationStats, engineStats]) => {
+    return Object.assign(durationStats, engineStats);
   });
 };
 
-
 //take it from odometer ot from OpenStreetData by getting distance of every 2 positions values: the first!
 const computeDistanceAndTimeTraveledStats = async (tripId) => {
-  Trip.findOne({}, tripId)
+  return Trip.findOne({}, tripId)
     //sorting here?
     .then((trip) => {
       if (trip.measurements.length > 0) {
@@ -58,7 +55,7 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
 
 const computeEngineStats = async (tripId, fromTimestamp) => {
   //all in one query mongoose
-  let stats = Trip.aggregate([
+  let stats = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" }, //$unwind the services array before grouping, else group will give you array of arrays
     //or a filter + javascript manipulation (more flexible) instead of this last group
