@@ -119,7 +119,7 @@ const tripsSchema = mongoose.Schema({
   feedbacks: [
     //for computing feedback consideration score
     {
-      id: { type: String },
+      //id: { type: String },
       text: { type: String },
       timestamp: { type: Date },
     },
