@@ -1,10 +1,11 @@
 //generate some stats data from data acquisition (numeri singoli che riassumono tutto il trip)
+const { startSession } = require("../models/trips");
 const Trip = require("../models/trips");
 
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
-  return computeStats(tripId, fromTimestamp).then((stats) => {
+  computeStats(tripId, fromTimestamp).then((stats) => {
     //materializing stats for performances reason (should increase transaction count too)
     return Profile.findOneAndUpdate(
       {
@@ -15,6 +16,8 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
         avgRpm: stats.avgRpm,
         maxKph: stats.maxKph,
         avgKph: stats.avgKph,
+        distanceTraveled: stats.distanceTraveled,
+        duration: stats.duration
       },
       {
         new: true, //returning updated user
@@ -23,8 +26,19 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
   });
 };
 
+
+const computeStats = async (tripId, fromTimestamp) => {
+  Promises.all([
+    computeDistanceAndTimeTraveledStats(tripId),
+    computeEngineStats(tripId, fromTimestamp)]
+  ).then(([durationStats, engineStats]) => {
+  return Object.assign(durationStats, engineStats)
+  });
+};
+
+
 //take it from odometer ot from OpenStreetData by getting distance of every 2 positions values: the first!
-const computeDistanceAndTimeTraveled = async (tripId) => {
+const computeDistanceAndTimeTraveledStats = async (tripId) => {
   Trip.findOne({}, tripId)
     //sorting here?
     .then((trip) => {
@@ -42,14 +56,7 @@ const computeDistanceAndTimeTraveled = async (tripId) => {
     });
 };
 
-const computeStats = async (tripId, fromTimestamp) => {
-  return Object.assign(
-    computeDistanceAndTimeTraveled(tripId),
-    computeOtherStats(tripId, fromTimestamp)
-  );
-};
-
-const computeOtherStats = async (tripId, fromTimestamp) => {
+const computeEngineStats = async (tripId, fromTimestamp) => {
   //all in one query mongoose
   let stats = Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
@@ -75,6 +82,6 @@ const computeOtherStats = async (tripId, fromTimestamp) => {
 };
 
 module.exports = {
-  computeOtherStats,
+  computeOtherStats: computeEngineStats,
   computeAndUpdateStats,
 };
