@@ -24,7 +24,7 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
       {
         new: true, //returning updated user
       }
-    );
+    ).then(statsDocs => statsDocs.length > 0 ? statsDocs[0] : null)
   });
 };
 
@@ -70,6 +70,7 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
 
 const computeEngineStats = async (tripId, fromTimestamp) => {
   console.log("calling computeEngineStats with tripId: " + tripId);
+  console.log("calling computeEngineStats with fromTimestamp: " + fromTimestamp);
 
   let queryStages = [
     { $match: { _id: tripId } }, //filter only data of requested trip
@@ -94,19 +95,19 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   if (fromTimestamp) {
     //splice(start, deleteCount)
     console.log("splicing...");
-    queryStages.splice(3, 0, {
-      $match: { timestamp: { $gte: fromTimestamp } },
+    queryStages.splice(2, 0, {
+      $match: { "measurements.timestamp": { $gte: fromTimestamp } },
     });
   }
 
   console.log("the resulting query stage:");
   console.log(queryStages);
-  
+
   //all in one query mongoose
-  let stats = await Trip.aggregate(queryStages);
+  let statsDocs = await Trip.aggregate(queryStages);
   console.log("le stats ritornano:");
-  console.log(stats);
-  return stats.length > 0 ? stats[0] : null;
+  console.log(statsDocs);
+  return statsDocs.length > 0 ? statsDocs[0] : null;
 };
 
 module.exports = {
