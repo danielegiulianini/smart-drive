@@ -21,7 +21,7 @@ const addTrip = async (trip) => {
 //handle measurements pushing (invoked by MQTT)
 const addMeasurement = async (vin, newMeasurementParams) => {
   //must assign the measure to its trip, so:
-  //1. retrieve the current-trip's id (the last trip without a end date for this VIN)
+  //1. retrieve the current-trip's (the last trip without a end date for this VIN)
   //- if there's no trips open? discard
   //- it there is: update it
 
@@ -33,7 +33,10 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   });
 
   if (currentTrip) {
+    newMeasurementParams.timestamp = new Date();
     currentTrip.measurements.push(newMeasurementParams);
+
+    //must set timestamp of measurement
     await currentTrip.save();
   } else {
     console.log("no trips to post published measurements to are there.");
@@ -48,23 +51,23 @@ const close = async (tripId) => {
     _id: tripId,
   });
   if (!tripToEnd) {
-    throw new TypeError(`The trip ${trip._id} doesn't exist.`);
+    throw new TypeError(`The trip ${tripId} doesn't exist.`);
   } else {
     if (tripToEnd.endTimestamp) {
-      throw new TypeError(`The trip ${trip._id} has already been closed.`);
+      throw new TypeError(`The trip ${tripToEnd._id} has already been closed.`);
     } else {
       tripToEnd.endTimestamp = new Date();
-      await user.save();
+      await tripToEnd.save();
     }
   }
 };
 
 //no possibility to edit or delete trip externally ...
-const remove = async (userId) => {
+/*const remove = async (userId) => {
   return Trip.deleteOne({
     _id: userId,
   });
-};
+};*/
 
 //read-only:
 const list = async () => {
@@ -82,6 +85,6 @@ module.exports = {
   addTrip,
   get,
   addMeasurement,
-  remove,
+  //remove,
   close,
 };
