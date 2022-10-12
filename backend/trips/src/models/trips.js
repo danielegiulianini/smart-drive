@@ -69,10 +69,10 @@ const tripsSchema = mongoose.Schema({
     type: Number,
   },
   //>descriptive statistics
-  averageRpm: {
+  avgRpm: {
     type: Number,
   },
-  averageKph: {
+  avgKph: {
     type: Number,
   },
   maxRpm: {
@@ -108,7 +108,7 @@ const tripsSchema = mongoose.Schema({
   },
   feedbackConsiderationScore: {
     type: Number,
-    default: 0, //default 0 (could be not recomputed)
+    // default: 0, //default 0 (could be not recomputed)
   },
   totalScoreBreakdown: {
     //for a cake chart
