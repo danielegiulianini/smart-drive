@@ -13,7 +13,6 @@ const {
 //to-test data
 const Trip = require("../../models/trips");
 const TripsService = require("../../services/trips.dataAcquisition");
-const trips = require("../../models/trips");
 
 beforeAll(async () => dbConnect());
 afterAll(async () => dbDisconnect());
