@@ -4,11 +4,14 @@ const Trip = require("../models/trips");
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
+  console.log("calling computeAndUpdateStats with params:");
+  console.log(tripId);
+  console.log(fromTimestamp);
   return computeStats(tripId, fromTimestamp).then((stats) => {
     //materializing stats for performances reason (should increase transaction count too)
     return Trip.findOneAndUpdate(
       {
-        _id: userId,
+        _id: tripId,
       },
       {
         maxRpm: stats.maxRpm,
@@ -30,36 +33,48 @@ const computeStats = async (tripId, fromTimestamp) => {
     computeDistanceAndTimeTraveledStats(tripId),
     computeEngineStats(tripId, fromTimestamp),
   ]).then(([durationStats, engineStats]) => {
+    console.log("the engine stats");
+    console.log(engineStats);
+    console.log("the duration stats");
+    console.log(durationStats);
     return Object.assign(durationStats, engineStats);
   });
 };
 
 //take it from odometer ot from OpenStreetData by getting distance of every 2 positions values: the first!
 const computeDistanceAndTimeTraveledStats = async (tripId) => {
-  return Trip.findOne({}, tripId)
-    //sorting here?
-    .then((trip) => {
-      if (trip.measurements.length > 0) {
-        return {
-          duration: trip.endTimestamp - trip.startTimestamp,
-          distance:
-            trip.measurements[-1].odometer - trip.measurements[0].odometer,
-        };
-      } else
-        return {
-          duration: 0,
-          distance: 0,
-        };
-    });
+  return (
+    Trip.findOne({}, tripId)
+      //sorting here?
+      .then((trip) => {
+        if (trip.measurements.length > 0) {
+          const odometerAvailable =
+            trip.measurements[trip.measurements.length - 1].odometer &&
+            trip.measurements[0].odometer;
+
+          return {
+            duration: (trip.endTimestamp - trip.startTimestamp) / 1000, // divide by 1000 as Date records timestamp in milliseconds
+            distance: odometerAvailable
+              ? trip.measurements[trip.measurements.length - 1].odometer -
+                trip.measurements[0].odometer
+              : null, //returning undefined if odometer not available
+          };
+        } else
+          return {
+            duration: 0,
+            distance: 0,
+          };
+      })
+  );
 };
 
 const computeEngineStats = async (tripId, fromTimestamp) => {
-  //all in one query mongoose
-  let stats = await Trip.aggregate([
+  console.log("calling computeEngineStats with tripId: " + tripId);
+
+  let queryStages = [
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" }, //$unwind the services array before grouping, else group will give you array of arrays
     //or a filter + javascript manipulation (more flexible) instead of this last group
-    { $match: fromTimestamp ? { timestamp: { $gte: fromTimestamp } } : true }, //filter only data inside sliding window (if provided, otherwise don't filter)
     {
       $group: {
         //2nd grouping for getting total (trip), specific metric
@@ -67,18 +82,34 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
           _id: "_id",
         },
         //summary fields of raw data
-        maxRpm: { $sum: "$maxRpm" },
-        avgRpm: { $sum: "$avgRpm" },
-        maxKph: { $sum: "$maxKph" },
-        avgKph: { $sum: "$avgKph" },
+        maxRpm: { $max: "$measurements.rpm" }, //dot notation needed if working with subdocuments
+        avgRpm: { $avg: "$measurements.rpm" },
+        maxKph: { $max: "$measurements.kph" },
+        avgKph: { $avg: "$measurements.kph" },
       },
     },
-  ]);
+  ];
 
-  return stats;
+  //adding match stage (as third) in query to filter values by timestamp if provided
+  if (fromTimestamp) {
+    //splice(start, deleteCount)
+    console.log("splicing...");
+    queryStages.splice(3, 0, {
+      $match: { timestamp: { $gte: fromTimestamp } },
+    });
+  }
+
+  console.log("the resulting query stage:");
+  console.log(queryStages);
+  
+  //all in one query mongoose
+  let stats = await Trip.aggregate(queryStages);
+  console.log("le stats ritornano:");
+  console.log(stats);
+  return stats.length > 0 ? stats[0] : null;
 };
 
 module.exports = {
-  computeOtherStats: computeEngineStats,
+  computeEngineStats,
   computeAndUpdateStats,
 };
