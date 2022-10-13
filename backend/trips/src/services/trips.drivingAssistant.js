@@ -13,7 +13,7 @@ const getAndAssignFeedback = async (tripId, measurementPayload) => {
 
   if (newFeedbacks.length > 0) {
     let trip = await Trip.findById(tripId);
-    trip.feedbacks.push(sortByProperty(newFeedbacks, "priority")); //ritorno quello con più prorità più alta
+    trip.feedbacks.push(sortByProperty(newFeedbacks, "priority")[0]); //ritorno quello con più prorità più alta
     await trip.save();
   }
   return newFeedbacks ? newFeedbacks[0] : null;
@@ -66,7 +66,8 @@ const getFeedbacks = async (tripId, measurementPayload) => {
 
   const engStats = await TripStatsService.computeEngineStats(
     tripId,
-    moment().subtract(rpmWindowInSeconds, "seconds").utcOffset(0, true).format() //.toDate().toISOString();      //new Date() - rpmWindowInSeconds
+    moment()//.subtract(rpmWindowInSeconds, "seconds") THIS IS NEEDED OR NOT???
+    .utcOffset(0, true).format() //.toDate().toISOString();      //new Date() - rpmWindowInSeconds
   );
   if (engStats.avgRpm > 3000) {
     console.log("ZZZZZZZ rpm exceeding");
