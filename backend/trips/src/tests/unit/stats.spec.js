@@ -33,6 +33,18 @@ const nonConstantRpmValues = [
 ];
 const rpmDatasets = [constantRpmValues, nonConstantRpmValues];
 
+const constantKphValues = [...Array(10)].map((_, i) => {
+  return { kph: 50.0 };
+});
+const nonConstantKphValues = [
+  { kph: 100.2 },
+  { kph: 100.0 },
+  { kph: 0.0 },
+  { kph: 70.1 },
+  { kph: 108.6 },
+];
+const kphDatasets = [constantKphValues, nonConstantKphValues];
+
 beforeAll(async () => dbConnect());
 afterAll(async () => dbDisconnect());
 afterEach(async () => {
@@ -48,16 +60,21 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function randomIntFromInterval(min, max) {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const rndInt = randomIntFromInterval(1, 6);
+
 //actual tests
 describe("a stats calculator", () => {
   //rpm
   describe("when asked for the average of rpm values associated to a trip", () => {
     //service methods: computeAndUpdateStats
+
     it("should return the actual average value", async () => {
       for (dataset of rpmDatasets) {
-        console.log("testing with data:");
-        console.log(dataset);
-
         let savedTrip = await createTripWithMeasurements(dataset);
         //closing it (stats are computed only when trip is finished)
         await TripsService.close(savedTrip._id);
@@ -91,57 +108,105 @@ describe("a stats calculator", () => {
     });
   });
 
-  //kph
-  /*describe("when asking for the average of trips' kph values", () => {
-    //service methods
+  describe("when asked for the maximum of rpm values associated to a trip", () => {
+    //service methods: computeAndUpdateStats
+    it("should return the actual maximum value", async () => {
+      for (dataset of rpmDatasets) {
+        let savedTrip = await createTripWithMeasurements(dataset);
+        //closing it (stats are computed only when trip is finished)
+        await TripsService.close(savedTrip._id);
+
+        let stats = await TripsStatsService.computeEngineStats(savedTrip._id); //AndUpdateStats(savedTrip._id);
+
+        console.log("stats obtained:");
+        console.log(stats);
+
+        //number, numDigits?
+        expect(stats.maxRpm).toBeCloseTo(
+          Math.max(...dataset.map((measurement) => measurement.rpm)),
+          3
+        );
+      }
+    });
+
     it("should persist it", async () => {
-      const rpmExceedingTrip = await TripsService.addTrip(fakeTripData);
-
-      const rpmFeedbackDeservingMeasurementsArray =
-        rpmFeedbackDeservingMeasurements();
-      console.log("testing with data:");
-      console.log(rpmFeedbackDeservingMeasurementsArray);
-
-      //adding measurements to trip
-      rpmExceedingTrip.measurements.concat(
-        rpmFeedbackDeservingMeasurementsArray
+      let savedTrip = await createTripWithMeasurements(constantRpmValues);
+      //closing it (stats are computed only when trip is finished)
+      await TripsService.close(savedTrip._id);
+      const stats = await TripsStatsService.computeAndUpdateStats(
+        savedTrip._id
       );
-      await rpmExceedingTrip.save();
-
-      const feedback = await DrivingAssistantService.getAndAssignFeedback(
-        rpmExceedingTrip._id,
-        rpmFeedbackDeservingMeasurementsArray[0]
+      console.log(stats);
+      const fetchedTrip = await Trip.findById(savedTrip._id);
+      expect(fetchedTrip.maxRpm).toBeCloseTo(
+        stats.maxRpm, //average(savedTrip.measurements.map((measurement) => measurement.rpm)),
+        3
       );
-
-      validateStringEquality(feedback.text, "Be smoother with the throttle.");
     });
   });
 
-  //distance traveled
-  describe("when asking for the distance traveled of trip' kph values", () => {
+  //kph
+  describe("when asking for the average of trips' kph values", () => {
     //service methods
-    it("should persist it", async () => {
-      const rpmExceedingTrip = await TripsService.addTrip(fakeTripData);
+    it("should return the actual average value", async () => {
+      for (dataset of kphDatasets) {
+        console.log("testing with data:");
+        console.log(dataset);
 
-      const rpmFeedbackDeservingMeasurementsArray =
-        rpmFeedbackDeservingMeasurements();
-      console.log("testing with data:");
-      console.log(rpmFeedbackDeservingMeasurementsArray);
+        let savedTrip = await createTripWithMeasurements(dataset);
+        //closing it (stats are computed only when trip is finished)
+        await TripsService.close(savedTrip._id);
 
-      //adding measurements to trip
-      rpmExceedingTrip.measurements.concat(
-        rpmFeedbackDeservingMeasurementsArray
-      );
-      await rpmExceedingTrip.save();
+        let stats = await TripsStatsService.computeEngineStats(savedTrip._id); //AndUpdateStats(savedTrip._id);
 
-      const feedback = await DrivingAssistantService.getAndAssignFeedback(
-        rpmExceedingTrip._id,
-        rpmFeedbackDeservingMeasurementsArray[0]
-      );
+        console.log("stats obtained:");
+        console.log(stats);
 
-      validateStringEquality(feedback.text, "Be smoother with the throttle.");
+        //number, numDigits?
+        expect(stats.avgKph).toBeCloseTo(
+          average(savedTrip.measurements.map((measurement) => measurement.kph)),
+          3
+        );
+      }
     });
-  });*/
+  });
+
+  describe("when asked for the maximum of kph values associated to a trip", () => {
+    //service methods: computeAndUpdateStats
+    it("should return the actual maximum value", async () => {
+      for (dataset of kphDatasets) {
+        let savedTrip = await createTripWithMeasurements(dataset);
+        //closing it (stats are computed only when trip is finished)
+        await TripsService.close(savedTrip._id);
+
+        let stats = await TripsStatsService.computeEngineStats(savedTrip._id); //AndUpdateStats(savedTrip._id);
+
+        console.log("stats obtained:");
+        console.log(stats);
+
+        //number, numDigits?
+        expect(stats.maxKph).toBeCloseTo(
+          Math.max(...dataset.map((measurement) => measurement.kph)),
+          3
+        );
+      }
+    });
+
+    it("should persist it", async () => {
+      let savedTrip = await createTripWithMeasurements(constantKphValues);
+      //closing it (stats are computed only when trip is finished)
+      await TripsService.close(savedTrip._id);
+      const stats = await TripsStatsService.computeAndUpdateStats(
+        savedTrip._id
+      );
+      console.log(stats);
+      const fetchedTrip = await Trip.findById(savedTrip._id);
+      expect(fetchedTrip.maxKph).toBeCloseTo(
+        stats.maxKph, //average(savedTrip.measurements.map((measurement) => measurement.rpm)),
+        3
+      );
+    });
+  });
 
   //duration
   describe("when asked for the duration of a trip", () => {
@@ -154,7 +219,6 @@ describe("a stats calculator", () => {
       const stats = await TripsStatsService.computeAndUpdateStats(
         savedTrip._id
       );
-      console.log("the duration computed is " + stats.duration);
       expect(stats.duration).toBeCloseTo(tripApproximateDuration / 1000, 0);
     });
   });
@@ -185,66 +249,51 @@ describe("a stats calculator", () => {
   });
 
   //general
-  describe("when specifing a timestamp from which to compute the average", () => {
+  describe("when specifing a timestamp from which to compute the average rpm", () => {
     //service methods
     it("should consider only the ones after it", async () => {
-      //assigning timestamps to measurements
-      const dataset = constantRpmValues;
-      let timestampFromWhichToCompute;
-      for (var i = 0; i < dataset.length; i++) {
-        dataset[i].timestamp = new Date();
-        console.log("assigning timestamp:" + dataset[i].timestamp);
+      //manually assigning timestamps to measurements
 
-        await sleep(50);
-        if (i == dataset.length / 2) {
-          console.log("assigninf time");
-          timestampFromWhichToCompute = dataset[i].timestamp;
+      for (dataset of rpmDatasets) {
+        const sleepBetweenMeasurementsInMillis = 50;
+        for (var i = 0; i < dataset.length; i++) {
+          dataset[i].timestamp = new Date();
+          await sleep(sleepBetweenMeasurementsInMillis);
         }
-      }
-      /*const startingTimestamp = new Date("2017-10-25T12:00:00Z");
-      for (var i = 0; i < dataset.length; i++) {
-        const measurementTimestamp = new Date(
-          startingTimestamp.getTime() + i * 1000 * 60
+        //randomly choose the timestamp from which to consider data
+        const timestampFromWhichToCompute =
+          dataset[randomIntFromInterval(0, dataset.length - 2)].timestamp;
+        //saving trip
+        let savedTrip = await createTripWithMeasurements(dataset);
+        await TripsService.close(savedTrip._id); //closing it (stats are computed only when trip is finished)
+
+        //comouting stats
+        let stats = await TripsStatsService.computeEngineStats(
+          savedTrip._id,
+          timestampFromWhichToCompute
         );
-        console.log("assigning timestamp:" + measurementTimestamp);
-        dataset[i].timestamp = measurementTimestamp; //1 measurement for every minute
+
+        const avgValue = average(
+          savedTrip.measurements
+            .filter(
+              (measurement) =>
+                measurement.timestamp >= timestampFromWhichToCompute
+            )
+            .map((measurement) => measurement.rpm)
+        );
+
+        console.log("i tiemstam filtered by js: ");
+        console.log(
+          savedTrip.measurements
+            .filter(
+              (measurement) =>
+                measurement.timestamp >= timestampFromWhichToCompute
+            )
+            .map((measurement) => measurement.rpm)
+        );
+        //number, numDigits?
+        expect(stats.avgRpm).toBeCloseTo(avgValue, 3);
       }
-      const timestampFromWhichToCompute =
-        startingTimestamp + dataset.length / 2; //consider only half of values for stats
-        */
-
-      //saving trip
-      let savedTrip = await createTripWithMeasurements(dataset);
-      await TripsService.close(savedTrip._id); //closing it (stats are computed only when trip is finished)
-
-      //comouting stats
-      let stats = await TripsStatsService.computeEngineStats(
-        savedTrip._id,
-        timestampFromWhichToCompute
-      );
-
-      console.log("stats obtained:");
-      console.log(stats);
-
-      const avgValue = average(
-        savedTrip.measurements
-          .filter(
-            (measurement) =>
-              measurement.timestamp >= timestampFromWhichToCompute
-          )
-          .map((measurement) => measurement.rpm)
-      );
-      console.log("i values per lavgvalues: ");
-      console.log(savedTrip.measurements);
-      console.log("i valuesfiltered: ");
-      console.log(
-        savedTrip.measurements.filter(
-          (measurement) => measurement.timestamp >= timestampFromWhichToCompute
-        )
-      );
-      console.log("avgvalue is:" + avgValue);
-      //number, numDigits?
-      expect(stats.avgRpm).toBeCloseTo(avgValue, 3);
     });
   });
 });
