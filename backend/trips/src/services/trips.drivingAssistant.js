@@ -3,11 +3,15 @@ const Trip = require("../models/trips");
 const TripStatsService = require("../services/trips.stats");
 const { sortByProperty } = require("../utils/arrays.utils");
 
+const moment = require("moment");
+
 //this writes to db
 const getAndAssignFeedback = async (tripId, measurementPayload) => {
   const newFeedbacks = await getFeedbacks(tripId, measurementPayload);
+  console.log("new feedbacks are:");
+  console.log(newFeedbacks);
 
-  if (newFeedbacks) {
+  if (newFeedbacks.length > 0) {
     let trip = await Trip.findById(tripId);
     trip.feedbacks.push(sortByProperty(newFeedbacks, "priority")); //ritorno quello con più prorità più alta
     await trip.save();
@@ -22,7 +26,8 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   let feedbacks = [];
 
   const trip = await Trip.findById(tripId);
-
+  console.log("TTTTTTmeasurement of the trip are: ");
+  console.log(trip.measurements);
   /* measurement:
      timestamp: { type: Date },
       rpm: { type: Number },
@@ -48,11 +53,23 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   //se velocità è sopra ad un limite e ho già dato tempo di adattarsi al feedback... allora
   //oppure se la media delle velocità è > X e l'ultimo consiglio risale da X secs fa ...
   //1. =========================== rpm ========================================
-  const rpmWindowInSeconds = 10;
-  if (
-    TripStatsService.computeOtherStats(tripId, new Date() - rpmWindowInSeconds)
-      .avgRpm > 3000
-  ) {
+  const rpmWindowInSeconds = 300;
+  const now = moment();
+  console.log("without subtactung: " + moment().utcOffset(0, true).format());
+  console.log(
+    "WITH subtactung: " +
+      moment()
+        .subtract(rpmWindowInSeconds, "seconds")
+        .utcOffset(0, true)
+        .format()
+  );
+
+  const engStats = await TripStatsService.computeEngineStats(
+    tripId,
+    moment().subtract(rpmWindowInSeconds, "seconds").utcOffset(0, true).format() //.toDate().toISOString();      //new Date() - rpmWindowInSeconds
+  );
+  if (engStats.avgRpm > 3000) {
+    console.log("ZZZZZZZ rpm exceeding");
     feedbacks.push({ text: "Be smoother with the throttle.", priority: 2 });
   }
   /*
@@ -67,7 +84,7 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   //(spegni il motore se è da più di 10 secondi che sei fermo (v=0))
   const idleWindowInSeconds = 10;
   if (
-    TripStatsService.computeOtherStats(
+    TripStatsService.computeEngineStats(
       tripId,
       new Date() - idleWindowInSeconds * millis_in_seconds
     ).avgKph == 0
