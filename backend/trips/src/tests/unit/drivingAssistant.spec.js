@@ -216,13 +216,13 @@ describe("a driving assistant", () => {
 
   describe("when vehicle is idling too much", () => {
     //service methods
-    it("should give a feedback for switching off the engine", async () => {
+    it.only("should give a feedback for switching off the engine", async () => {
       for (idlingDataset of idlingMeasurementsDatasets) {
         const savedTrip = await createFakeTripWithMeasurements(
           assignTimestampToMeasurementsUpTo(
             idlingDataset,
             now(), //moment().utcOffset(0, false).toDate(),
-            1 //1 minute
+            1 //1 second
           )
         );
         const feedback = await DrivingAssistantService.getAndAssignFeedback(
