@@ -1,5 +1,6 @@
 //handle measurements and creation/completion of trips
 const Trip = require("../models/trips");
+const moment = require("moment");
 
 const addTrip = async (trip) => {
   //params sent by frontend must not contain _id for not overriding trips already in the DB.
@@ -33,7 +34,7 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   });
 
   if (currentTrip) {
-    newMeasurementParams.timestamp = new Date();
+    newMeasurementParams.timestamp = moment().utcOffset(0, true).toDate(); //new Date();//NOT USING TIME ZONE SINCE MONGODB DOES NOT USE IT (in default endTimestamp)
     currentTrip.measurements.push(newMeasurementParams);
 
     //must set timestamp of measurement
@@ -56,10 +57,11 @@ const close = async (tripId) => {
     if (tripToEnd.endTimestamp) {
       throw new TypeError(`The trip ${tripToEnd._id} has already been closed.`);
     } else {
-      tripToEnd.endTimestamp = new Date();
+      tripToEnd.endTimestamp = new Date(); //moment().utcOffset(0, true).toDate();
       await tripToEnd.save();
     }
   }
+  return tripToEnd;
 };
 
 //no possibility to edit or delete trip externally ...
