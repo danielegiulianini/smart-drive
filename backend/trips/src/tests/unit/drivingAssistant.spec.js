@@ -1,6 +1,8 @@
 //THIS IS IMPORTANT
 
-const moment = require("moment");
+//const moment = require("moment");
+const { now } = require("../utils/time.utils");
+
 //tests utils
 const {
   validateNotEmpty,
@@ -21,14 +23,11 @@ const {
 const { arrayFilledWith } = require("../../utils/arrays.utils.js");
 
 //test utils
-function addMinutes(date, minutes) {
-  //return new Date(date.getTime() + minutes * 60000);
-  return moment(date).add(minutes, "m").utcOffset(0, true).toDate(); //.toDate().toISOString();
-}
-
-function subtractMinutes(date, minutes) {
-  return addMinutes(date, -minutes);
-}
+const {
+  now,
+  addMinutes,
+  subtractMinutes,
+} = require("../../utils/time.utils.js");
 
 const assignTimestampToMeasurementsFrom = (
   dataset,
@@ -46,16 +45,19 @@ const assignTimestampToMeasurementsFrom = (
 const assignTimestampToMeasurementsUpTo = (
   dataset,
   upTo,
-  intervalInMinutes
+  intervalBetweenMeasurementsInMinutes
 ) => {
   //for (var i = dataset.length; i > 0; i -= intervalInMinutes) {
   for (var i = 0; i < dataset.length; i++) {
     //al primo tolgo molto, all'ultimo poco...
     const measurementTimestamp = subtractMinutes(
       upTo,
-      (dataset.length - i) * intervalInMinutes
+      (dataset.length - i) * intervalBetweenMeasurementsInMinutes
     );
-    console.log("now subtracting:" + (dataset.length - i) * intervalInMinutes);
+    console.log(
+      "now subtracting:" +
+        (dataset.length - i) * intervalBetweenMeasurementsInMinutes
+    );
     console.log("assigning timestamp:" + measurementTimestamp);
     console.log("to measurement:");
     console.log(dataset[i]);
@@ -136,27 +138,14 @@ describe("a driving assistant", () => {
   describe("when rpm exceeds thresholds", () => {
     //service methods
     it.only("should give a feedback for reducing them", async () => {
-      console.log(
-        "the date with utfOffset with true" +
-          moment().utcOffset(0, true).toDate()
-      );
-      console.log(
-        "the date with utfOffset with false" +
-          moment().utcOffset(0, false).toDate()
-      );
-
       let rpmExceedingTrip = await createFakeTripWithMeasurements(
         assignTimestampToMeasurementsUpTo(
           rpmFeedbackDeservingMeasurements(), //actual data
-          moment()
-            //THIS IS NEEDED OR NOT???
-            .utcOffset(0, true)
-            .toDate(),
-          //.date(), //.format(),// new Date(), //ending date of measurements
+          now(), //moment().utcOffset(0, false).toDate(),
           1 //1 minute
         )
       );
-      rpmExceedingTrip = await TripsService.close(rpmExceedingTrip._id);
+      //rpmExceedingTrip = await TripsService.close(rpmExceedingTrip._id);
 
       console.log("il trip created:");
       console.log(rpmExceedingTrip);
@@ -171,7 +160,11 @@ describe("a driving assistant", () => {
 
     it("should persist the feedback given", async () => {
       const savedTrip = await createFakeTripWithMeasurements(
-        rpmFeedbackDeservingMeasurements()
+        assignTimestampToMeasurementsUpTo(
+          rpmFeedbackDeservingMeasurements(),
+          now(), // moment().utcOffset(0, false).toDate(),
+          1 //1 minute
+        )
       );
 
       //getting advice
@@ -188,7 +181,11 @@ describe("a driving assistant", () => {
     //service methods
     it("should NOT give feedback for them", async () => {
       const savedTrip = await createFakeTripWithMeasurements(
-        rpmFeedbackNotDeservingMeasurements()
+        assignTimestampToMeasurementsUpTo(
+          rpmFeedbackNotDeservingMeasurements(),
+          now(),//moment().utcOffset(0, false).toDate(),
+          1 //1 minute
+        )
       );
       const feedback = await DrivingAssistantService.getAndAssignFeedback(
         savedTrip._id,
@@ -205,7 +202,13 @@ describe("a driving assistant", () => {
     //service methods
     it("should give a feedback for switching off the engine", async () => {
       for (idlingDataset of idlingMeasurementsDatasets) {
-        const savedTrip = await createFakeTripWithMeasurements(idlingDataset);
+        const savedTrip = await createFakeTripWithMeasurements(
+          assignTimestampToMeasurementsUpTo(
+            idlingDataset,
+            now(), //moment().utcOffset(0, false).toDate(),
+            1 //1 minute
+          )
+        );
         const feedback = await DrivingAssistantService.getAndAssignFeedback(
           savedTrip._id,
           idlingDataset[0]
@@ -241,7 +244,17 @@ describe("a driving assistant", () => {
   describe("when trip is eligible for more than one feedback", () => {
     //service methods
     it("should give the one with most priority", async () => {
-      //todo
+      const idlingAndRpmExceedingDataset =
+        idlingDataset.concat(rpmExceedingTrip);
+
+      const savedTrip = await createFakeTripWithMeasurements(
+        idlingAndRpmExceedingDataset
+      );
+
+      const feedback = await DrivingAssistantService.getAndAssignFeedback(
+        savedTrip._id,
+        idlingAndRpmExceedingDataset[0]
+      );
     });
   });
 });

@@ -1,6 +1,8 @@
 //handle measurements and creation/completion of trips
 const Trip = require("../models/trips");
-const moment = require("moment");
+const { now } = require("../utils/time.utils");
+
+//const moment = require("moment");
 
 const addTrip = async (trip) => {
   //params sent by frontend must not contain _id for not overriding trips already in the DB.
@@ -57,7 +59,7 @@ const close = async (tripId) => {
     if (tripToEnd.endTimestamp) {
       throw new TypeError(`The trip ${tripToEnd._id} has already been closed.`);
     } else {
-      tripToEnd.endTimestamp = new Date(); //moment().utcOffset(0, true).toDate();
+      tripToEnd.endTimestamp = now(); //new Date(); //moment().utcOffset(0, true).toDate();
       await tripToEnd.save();
     }
   }

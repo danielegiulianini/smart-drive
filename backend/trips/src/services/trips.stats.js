@@ -7,28 +7,33 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
   console.log("calling computeAndUpdateStats with params:");
   console.log(tripId);
   console.log(fromTimestamp);
-  return computeStats(tripId, fromTimestamp).then((stats) => {
-    //materializing stats for performances reason (should increase transaction count too)
-    return Trip.findOneAndUpdate(
-      {
-        _id: tripId,
-      },
-      {
-        maxRpm: stats.maxRpm,
-        avgRpm: stats.avgRpm,
-        maxKph: stats.maxKph,
-        avgKph: stats.avgKph,
-        distanceTraveled: stats.distanceTraveled,
-        duration: stats.duration,
-      },
-      {
-        new: true, //returning updated user
-      }
-    ).then(statsDocs => statsDocs.length > 0 ? statsDocs[0] : null)
-  });
+  const stats = await computeStats(tripId, fromTimestamp);
+  console.log("putting in document values:");
+  console.log(stats);
+  //materializing stats for performances reason (should increase transaction count too)
+  const statsDocs = await Trip.findOneAndUpdate(
+    {
+      _id: tripId,
+    },
+    {
+      maxRpm: stats.maxRpm,
+      avgRpm: stats.avgRpm,
+      maxKph: stats.maxKph,
+      avgKph: stats.avgKph,
+      distanceTraveled: stats.distanceTraveled,
+      duration: stats.duration,
+    },
+    {
+      new: true, //returning updated user
+    }
+  );
+  console.log("nel then di computeandUopdateStats, statsdoc is :");
+  console.log(statsDocs);
+  return statsDocs;
 };
 
 const computeStats = async (tripId, fromTimestamp) => {
+  //computing in parallel
   return Promise.all([
     computeDistanceAndTimeTraveledStats(tripId),
     computeEngineStats(tripId, fromTimestamp),
@@ -41,6 +46,14 @@ const computeStats = async (tripId, fromTimestamp) => {
   });
 };
 
+/**
+ * Returns:
+ * 1. trip's duration in seconds (as OBD)
+ * 2. trip's distance traveled in km (as OBD standard PID)
+ *
+ * @param {*} tripId
+ * @returns
+ */
 //take it from odometer ot from OpenStreetData by getting distance of every 2 positions values: the first!
 const computeDistanceAndTimeTraveledStats = async (tripId) => {
   return (
@@ -53,10 +66,10 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
             trip.measurements[0].odometer;
 
           return {
-            duration: (trip.endTimestamp - trip.startTimestamp) / 1000, // divide by 1000 as Date records timestamp in milliseconds
+            duration: (trip.endTimestamp - trip.startTimestamp) / 1000, // divide by 1000 as Date records timestamp in milliseconds and seconds are returned
             distance: odometerAvailable
               ? trip.measurements[trip.measurements.length - 1].odometer -
-                trip.measurements[0].odometer
+                trip.measurements[0].odometer //in km as OBD
               : null, //returning undefined if odometer not available
           };
         } else
@@ -70,7 +83,26 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
 
 const computeEngineStats = async (tripId, fromTimestamp) => {
   console.log("calling computeEngineStats with tripId: " + tripId);
-  console.log("calling computeEngineStats with fromTimestamp: " + fromTimestamp);
+  console.log("calling computeEngineStats with fromTimestamp: ");
+  console.log(fromTimestamp);
+
+  const fiteredMeasur = await Trip.aggregate([
+    { $match: { _id: tripId } }, //filter only data of requested trip
+    { $unwind: "$measurements" },
+    { $match: { "measurements.timestamp": { $gte: fromTimestamp } } },
+  ]);
+  console.log("DDDDD I MEASUREMENTS FILTERED (with aggregate): ");
+  console.log(fiteredMeasur);
+
+  const meas2 = await Trip.find(
+    {
+      "measurements.timestamp": { $gte: fromTimestamp },
+    },
+    { lean: true }
+  );
+
+  /*console.log("EEEEE I MEASUREMENTS FILTERED(with find) : ");
+  console.log(meas2);*/
 
   let queryStages = [
     { $match: { _id: tripId } }, //filter only data of requested trip
@@ -95,6 +127,8 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   if (fromTimestamp) {
     //splice(start, deleteCount)
     console.log("splicing...");
+    console.log("il fromtimestamp2:");
+    console.log(fromTimestamp);
     queryStages.splice(2, 0, {
       $match: { "measurements.timestamp": { $gte: fromTimestamp } },
     });
@@ -112,5 +146,6 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
 
 module.exports = {
   computeEngineStats,
+  computeDistanceAndTimeTraveledStats,
   computeAndUpdateStats,
 };

@@ -4,6 +4,7 @@ const {
   validateStringEquality,
   validateMongoDuplicationError,
 } = require("../../utils/validators.utils");
+
 const {
   dbConnect,
   dbDisconnect,
@@ -66,6 +67,8 @@ describe("a trip", () => {
       let savedTrip = await TripsService.addTrip(fakeTripData);
       await TripsService.close(savedTrip._id);
       let fetchedTrip = await TripsService.get(savedTrip._id);
+
+
       validateNotEmpty(fetchedTrip.endTimestamp);
     });
 

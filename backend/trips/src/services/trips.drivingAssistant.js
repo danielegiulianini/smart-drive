@@ -2,8 +2,9 @@ const trips = require("../models/trips");
 const Trip = require("../models/trips");
 const TripStatsService = require("../services/trips.stats");
 const { sortByProperty } = require("../utils/arrays.utils");
+const { now } = require("../utils/time.utils");
 
-const moment = require("moment");
+//const moment = require("moment");
 
 //this writes to db
 const getAndAssignFeedback = async (tripId, measurementPayload) => {
@@ -26,8 +27,6 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   let feedbacks = [];
 
   const trip = await Trip.findById(tripId);
-  console.log("TTTTTTmeasurement of the trip are: ");
-  console.log(trip.measurements);
   /* measurement:
      timestamp: { type: Date },
       rpm: { type: Number },
@@ -53,24 +52,16 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   //se velocità è sopra ad un limite e ho già dato tempo di adattarsi al feedback... allora
   //oppure se la media delle velocità è > X e l'ultimo consiglio risale da X secs fa ...
   //1. =========================== rpm ========================================
-  const rpmWindowInSeconds = 300;
-  const now = moment();
-  console.log("without subtactung: " + moment().utcOffset(0, true).format());
-  console.log(
-    "WITH subtactung: " +
-      moment()
-        .subtract(rpmWindowInSeconds, "seconds")
-        .utcOffset(0, true)
-        .format()
-  );
-
+  const rpmWindowInSeconds = 30;
   const engStats = await TripStatsService.computeEngineStats(
     tripId,
-    moment()//.subtract(rpmWindowInSeconds, "seconds") THIS IS NEEDED OR NOT???
-    .utcOffset(0, true).format() //.toDate().toISOString();      //new Date() - rpmWindowInSeconds
+    /*moment()
+      .subtract(rpmWindowInSeconds, "seconds")
+      .utcOffset(0, false) //ignoring time zone
+      .toDate()*/
+    now()
   );
   if (engStats.avgRpm > 3000) {
-    console.log("ZZZZZZZ rpm exceeding");
     feedbacks.push({ text: "Be smoother with the throttle.", priority: 2 });
   }
   /*
@@ -87,7 +78,11 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   if (
     TripStatsService.computeEngineStats(
       tripId,
-      new Date() - idleWindowInSeconds * millis_in_seconds
+      /*moment()
+        .subtract(idleWindowInSeconds, "seconds")
+        .utcOffset(0, false)
+        .toDate()*/
+      now()
     ).avgKph == 0
   ) {
     feedbacks.push({
@@ -112,7 +107,11 @@ const getFeedbacks = async (tripId, measurementPayload) => {
     trip.measurements.filter(
       (measurement) =>
         measurement.timestamp >
-        new Date() - notRestingWindowInSeconds * millis_in_seconds
+        /* moment()
+          .subtract(notRestingWindowInSeconds, "seconds") //THIS IS NEEDED OR NOT???
+          .utcOffset(0, false)
+          .toDate()*/
+        now()
     ).length * samplingPeriodInSeconds;
 
   const restBreakDurationInSecondsActuallyPerformed =
