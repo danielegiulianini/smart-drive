@@ -8,7 +8,7 @@ const computeAndAssignScores = async (tripId) => {
   const scores = computeScores(tripId);
 
   //this inspects feedback consideration scores too (set by driving assistant) instead of re-examining offline all the data    ; assignStats(stats);
-  const trip = Trip.findOne({
+  const trip = await Trip.findOne({
     _id: tripId,
   });
   trip.speedScore = scores.speedScore; /* */
@@ -29,11 +29,7 @@ const computeScores = async (tripId) => {
   );
 };
 
-const computeSpeedScore = async (
-  tripId,
-  slidingWindowSize,
-  windowsSize
-) => {
+const computeSpeedScore = async (tripId, slidingWindowSize, windowsSize) => {
   //fecthing limits
   //stdev wrt limits
   //variance depends on windowSize
@@ -42,7 +38,7 @@ const computeSpeedScore = async (
 //joining here scores computation that can be computed with a single query performance reason)
 const computeRpmScore = async (tripId, windowsSizeInSeconds) => {
   const dateStart = new Date(Date.now() - slidingWindowSizeinSeconds);
-  const tripMetrics = Trip.aggregate([
+  const tripMetrics = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" }, //$unwind the services array before grouping, else group will give you array of arrays
     { $match: { timestamp: { $gte: dateStart } } }, //filter only data inside sliding window
@@ -87,7 +83,7 @@ const computeRpmScore = async (tripId, windowsSizeInSeconds) => {
 const computeFeedbackConsiderationScoreOffline = async (tripId) => {
   const windowDurationInSeconds = 15;
 
-  let feedbackConsMetric = Trip.aggregate([
+  let feedbackConsMetric = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$feedbacks" }, //$unwind the services array before grouping, else group will give you array of arrays
     {
