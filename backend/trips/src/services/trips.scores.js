@@ -1,5 +1,6 @@
 //handles score assignment
 const Trip = require("../models/trips");
+const { now, subtractSeconds } = require("../utils/time.utils");
 
 //todo: remove all the preceding $ from property names!
 
@@ -37,7 +38,7 @@ const computeSpeedScore = async (tripId, slidingWindowSize, windowsSize) => {
 
 //joining here scores computation that can be computed with a single query performance reason)
 const computeRpmScore = async (tripId, windowsSizeInSeconds) => {
-  const dateStart = new Date(Date.now() - slidingWindowSizeinSeconds);
+  const dateStart = subtractSeconds(now(), windowsSizeInSeconds); //new Date(Date.now() - slidingWindowSizeinSeconds);
   const tripMetrics = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" }, //$unwind the services array before grouping, else group will give you array of arrays
