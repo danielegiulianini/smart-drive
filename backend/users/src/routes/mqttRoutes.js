@@ -1,4 +1,6 @@
 const AchievementsService = require("../services/achievements");
+const LevelsService = require("../services/levels");
+
 const publisher = require("../utils/publishSubscribe");
 
 //handles mqtt routing based on topics (topic-based routing)
@@ -42,7 +44,7 @@ const setupRoutes = () => {
           achievementEventsTopicPrefix.length
         );
         const achievementsUnlocked = AchievementsService.unlockAchievements(
-          userId,
+          [userId],
           payloadAsObject.badgesIds
         );
 
@@ -65,12 +67,13 @@ const setupRoutes = () => {
           scoreUpdatedEventsTopicPrefix.length
         );
 
-        AchievementsService.unlockAchievements(
+        LevelsService.scoresChanged(
           userId,
-          payloadAsObject.badgesIds
-        ).then(() => {
+          payloadAsObject.totalScoreDelta
+        ).then((resObj) => {
           publisher.publish(notificationsTopicPrefix + userId, {
-            totalScoreDelta: payloadAsObject.ecoScoreDelta,
+            subject: "New level achieved!",
+            body: "You reached level:" + resObj.updatedUser.level,
           });
         });
       } catch {
