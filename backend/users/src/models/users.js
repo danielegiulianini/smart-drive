@@ -48,10 +48,15 @@ const profileSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-
-    //ecoscore? (here on in other microservice?) (default to 0)
-    //level?(default to 0)
-    //badges?(default to empty (!= null))
+    unlockedAchievements: [{ type: String }], //the achievements' ids
+    ecoscore: {
+      type: Number,
+      default: 0, //before a trip is made it must be visualizable anyway
+    },
+    level: {
+      type: Number,
+      default: 0, //before a trip is made it must be visualizable anyway
+    },
   },
   { _id: false }
 );
