@@ -6,14 +6,17 @@ const { now, subtractSeconds } = require("../utils/time.utils");
 
 //computes all the things (ENTRY POINT for close trip event)
 const computeAndAssignScores = async (tripId) => {
-  const scores = computeScores(tripId);
+  const scores = await computeScores(tripId);
+
+  console.log("scores returned: ");
+  console.log(scores);
 
   //this inspects feedback consideration scores too (set by driving assistant) instead of re-examining offline all the data    ; assignStats(stats);
   const trip = await Trip.findOne({
     _id: tripId,
   });
   trip.rpmScore = scores.rpmScore;
-  this.feedbackConsiderationScore = scores.feedbackConsiderationScore;
+  trip.feedbackConsiderationScore = scores.feedbackConsiderationScore;
   //trip.speedScore = scores.speedScore;
 
   trip.totalScore =
@@ -25,9 +28,13 @@ const computeAndAssignScores = async (tripId) => {
 
 //computeScores possibly reused by driving assistant
 const computeScores = async (tripId) => {
+  const e = await computeRpmScore(tripId);
+  const t = await computeFeedbackConsiderationScoreOffline(tripId);
+  console.log("il feddback cons: ");
+  console.log(t.feedbackConsiderationScore);
   return Object.assign(
-    computeRpmScore(tripId), //, slidingWindowSizeForRpmInSeconds),
-    computeFeedbackConsiderationScoreOffline(tripId)
+    e, //, slidingWindowSizeForRpmInSeconds),
+    t
     //computeSpeedScore(tripId, slidingWindowSizeForSpeedLimitInSeconds)
   );
 };
