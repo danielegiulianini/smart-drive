@@ -101,62 +101,6 @@ const computeRpmScore = async (tripId) => {
 const computeFeedbackConsiderationScoreOffline = async (tripId) => {
   const windowDurationInSeconds = 60;
 
-  /*let feedbackConsMetricStep1 = await Trip.aggregate([
-    { $match: { _id: tripId } }, //filter only data of requested trip
-    { $unwind: "$feedbacks" }, //$unwind the services array before grouping, else group will give you array of arrays
-    {
-      $group: {
-        //1st grouping (in temporal window) for getting individual (window) metric
-        _id: {
-          tripId: "_id",
-          year: { $year: "$feedbacks.timestamp" }, //group by expression
-          dayOfYear: { $dayOfYear: "$feedbacks.timestamp" }, //group by expression
-          hour: { $hour: "$feedbacks.timestamp" }, //group by expression
-          interval: {
-            $subtract: [
-              { $second: "$feedbacks.timestamp" },
-              {
-                $mod: [
-                  { $second: "$feedbacks.timestamp" },
-                  windowDurationInSeconds,
-                ],
-              },
-            ],
-          },
-          feedback: "$feedbacks.text",
-        },
-        duplicatesForWindow: { $sum: 1 }, //duplicatesForWindow + 1., actually
-      },
-    },
-    {
-      $group: {
-        //1st grouping (in temporal window) for getting individual (window) metric
-        _id: {
-          tripId: "$tripId",
-
-          year: "$year",
-          dayOfYear: "$dayOfYear",
-          hour: "$hour",
-          interval: "$interval",
-        },
-        duplicates: { $sum: { $subtract: ["$duplicatesForWindow", 1] } },
-      },
-    },
-    {
-      //getting global (trips wrt window) metrics
-      $group: {
-        _id: {
-          _id: "$tripId",
-        },
-        windowsCount: { $sum: 1 },
-        totalDuplicates: { $sum: "$duplicatesForWindow" },
-      },
-    },
-  ]);
-
-  console.log("dopo lo step 1 di feedbackcons:");
-  console.log(feedbackConsMetricStep1);*/
-
   let feedbackConsMetric = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$feedbacks" }, //$unwind the services array before grouping, else group will give you array of arrays
@@ -164,7 +108,7 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
       $group: {
         //1st grouping (in temporal window) for getting individual (window) metric
         _id: {
-          tripId: "_id",
+          tripId: "$_id",
           year: { $year: "$feedbacks.timestamp" }, //group by expression
           dayOfYear: { $dayOfYear: "$feedbacks.timestamp" }, //group by expression
           hour: { $hour: "$feedbacks.timestamp" }, //group by expression
@@ -181,7 +125,7 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
           },
           feedback: "$feedbacks.text",
         },
-        duplicatesForWindow: { $sum: 1 }, //duplicatesForWindow + 1., actually
+        duplicatesForWindow: { $sum: 1 }, //duplicatesForWindow + 1, actually
       },
     },
     {
@@ -189,7 +133,6 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
         //1st grouping (in temporal window) for getting individual (window) metric
         _id: {
           tripId: "$tripId",
-
           year: "$year",
           dayOfYear: "$dayOfYear",
           hour: "$hour",
@@ -202,54 +145,14 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
       //getting global (trips wrt window) metrics
       $group: {
         _id: {
-          _id: "$tripId",
+          tripId,
         },
         windowsCount: { $sum: 1 },
-        totalDuplicates: { $sum: "$duplicatesForWindow" },
+        totalDuplicates: { $sum: "$duplicates" },
       },
     },
   ]);
-  
-  /*await Trip.aggregate([
-    { $match: { _id: tripId } }, //filter only data of requested trip
-    { $unwind: "$feedbacks" }, //$unwind the services array before grouping, else group will give you array of arrays
-    {
-      $group: {
-        //1st grouping (in temporal window) for getting individual (window) metric
-        _id: {
-          tripId: "_id",
-          year: { $year: "$feedbacks.timestamp" }, //group by expression
-          dayOfYear: { $dayOfYear: "$feedbacks.timestamp" }, //group by expression
-          hour: { $hour: "$feedbacks.timestamp" }, //group by expression
-          interval: {
-            $subtract: [
-              { $second: "$feedbacks.timestamp" },
-              {
-                $mod: [
-                  { $second: "$feedbacks.timestamp" },
-                  windowDurationInSeconds,
-                ],
-              },
-            ],
-          },
-          feedbackId: "$feedbacks.id", //c'è bisogno dellanotazionea punto?
-        },
-        duplicatesForWindow: { $sum: 1 },
-      },
-    },
-    {
-      //or a filter + javascript manipulation (more flexible) instead of this last group
-      //2nd grouping for getting total (trip wrt window), specific metric
-      $group: {
-        _id: {
-          _id: "tripId",
-        },
-        windowsCount: { $sum: 1 },
-        totalDuplicates: { $sum: "$duplicatesForWindow" },
-        //metric: { $divide: [1, { $add: [$duplicatesForWindow, 1] }] }, //+1 for avoiding /0 division
-      },
-    },
-  ]);*/
+
   console.log("la feedbackConsMetric: ");
   console.log(feedbackConsMetric);
 
