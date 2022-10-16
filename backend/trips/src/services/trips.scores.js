@@ -90,7 +90,7 @@ const computeRpmScore = async (tripId) => {
   return {
     rpmScore:
       tripMetrics.length > 0
-        ? 100 - (tripMetrics[0].rpmScore / MAX_RPM_DEVIATION) * 100 //Math.round ?
+        ? 100 - (tripMetrics[0].rpmScore / MAX_RPM_DEVIATION) * 100 //Math.round ? to prevent decimals and over or under 100 and 0, rspctvl
         : 0,
   };
 };
@@ -101,6 +101,62 @@ const computeRpmScore = async (tripId) => {
 const computeFeedbackConsiderationScoreOffline = async (tripId) => {
   const windowDurationInSeconds = 60;
 
+  /*let feedbackConsMetricStep1 = await Trip.aggregate([
+    { $match: { _id: tripId } }, //filter only data of requested trip
+    { $unwind: "$feedbacks" }, //$unwind the services array before grouping, else group will give you array of arrays
+    {
+      $group: {
+        //1st grouping (in temporal window) for getting individual (window) metric
+        _id: {
+          tripId: "_id",
+          year: { $year: "$feedbacks.timestamp" }, //group by expression
+          dayOfYear: { $dayOfYear: "$feedbacks.timestamp" }, //group by expression
+          hour: { $hour: "$feedbacks.timestamp" }, //group by expression
+          interval: {
+            $subtract: [
+              { $second: "$feedbacks.timestamp" },
+              {
+                $mod: [
+                  { $second: "$feedbacks.timestamp" },
+                  windowDurationInSeconds,
+                ],
+              },
+            ],
+          },
+          feedback: "$feedbacks.text",
+        },
+        duplicatesForWindow: { $sum: 1 }, //duplicatesForWindow + 1., actually
+      },
+    },
+    {
+      $group: {
+        //1st grouping (in temporal window) for getting individual (window) metric
+        _id: {
+          tripId: "$tripId",
+
+          year: "$year",
+          dayOfYear: "$dayOfYear",
+          hour: "$hour",
+          interval: "$interval",
+        },
+        duplicates: { $sum: { $subtract: ["$duplicatesForWindow", 1] } },
+      },
+    },
+    {
+      //getting global (trips wrt window) metrics
+      $group: {
+        _id: {
+          _id: "$tripId",
+        },
+        windowsCount: { $sum: 1 },
+        totalDuplicates: { $sum: "$duplicatesForWindow" },
+      },
+    },
+  ]);
+
+  console.log("dopo lo step 1 di feedbackcons:");
+  console.log(feedbackConsMetricStep1);*/
+
   let feedbackConsMetric = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$feedbacks" }, //$unwind the services array before grouping, else group will give you array of arrays
@@ -108,15 +164,69 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
       $group: {
         //1st grouping (in temporal window) for getting individual (window) metric
         _id: {
-          year: { $year: "$measurements.timestamp" }, //group by expression
-          dayOfYear: { $dayOfYear: "$measurements.timestamp" }, //group by expression
-          hour: { $hour: "$measurements.timestamp" }, //group by expression
+          tripId: "_id",
+          year: { $year: "$feedbacks.timestamp" }, //group by expression
+          dayOfYear: { $dayOfYear: "$feedbacks.timestamp" }, //group by expression
+          hour: { $hour: "$feedbacks.timestamp" }, //group by expression
           interval: {
             $subtract: [
-              { $second: "$measurements.timestamp" },
+              { $second: "$feedbacks.timestamp" },
               {
                 $mod: [
-                  { $second: "$measurements.timestamp" },
+                  { $second: "$feedbacks.timestamp" },
+                  windowDurationInSeconds,
+                ],
+              },
+            ],
+          },
+          feedback: "$feedbacks.text",
+        },
+        duplicatesForWindow: { $sum: 1 }, //duplicatesForWindow + 1., actually
+      },
+    },
+    {
+      $group: {
+        //1st grouping (in temporal window) for getting individual (window) metric
+        _id: {
+          tripId: "$tripId",
+
+          year: "$year",
+          dayOfYear: "$dayOfYear",
+          hour: "$hour",
+          interval: "$interval",
+        },
+        duplicates: { $sum: { $subtract: ["$duplicatesForWindow", 1] } },
+      },
+    },
+    {
+      //getting global (trips wrt window) metrics
+      $group: {
+        _id: {
+          _id: "$tripId",
+        },
+        windowsCount: { $sum: 1 },
+        totalDuplicates: { $sum: "$duplicatesForWindow" },
+      },
+    },
+  ]);
+  
+  /*await Trip.aggregate([
+    { $match: { _id: tripId } }, //filter only data of requested trip
+    { $unwind: "$feedbacks" }, //$unwind the services array before grouping, else group will give you array of arrays
+    {
+      $group: {
+        //1st grouping (in temporal window) for getting individual (window) metric
+        _id: {
+          tripId: "_id",
+          year: { $year: "$feedbacks.timestamp" }, //group by expression
+          dayOfYear: { $dayOfYear: "$feedbacks.timestamp" }, //group by expression
+          hour: { $hour: "$feedbacks.timestamp" }, //group by expression
+          interval: {
+            $subtract: [
+              { $second: "$feedbacks.timestamp" },
+              {
+                $mod: [
+                  { $second: "$feedbacks.timestamp" },
                   windowDurationInSeconds,
                 ],
               },
@@ -132,17 +242,22 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
       //2nd grouping for getting total (trip wrt window), specific metric
       $group: {
         _id: {
-          _id: "_id",
+          _id: "tripId",
         },
         windowsCount: { $sum: 1 },
         totalDuplicates: { $sum: "$duplicatesForWindow" },
         //metric: { $divide: [1, { $add: [$duplicatesForWindow, 1] }] }, //+1 for avoiding /0 division
       },
     },
-  ]);
+  ]);*/
+  console.log("la feedbackConsMetric: ");
+  console.log(feedbackConsMetric);
 
+  const notMoreThan = (value, threshold) => {
+    return value > threshold ? threshold : value;
+  };
   const feedbackConsiderationScoreFormula = (windowsCount, totalDuplicates) => {
-    return (windowsCount / (totalDuplicates + 1)) * 100; //+1 for avoiding /0 division
+    return notMoreThan((windowsCount / (totalDuplicates + 1)) * 100, 100); //+1 for avoiding /0 division
   };
 
   return {
@@ -159,4 +274,5 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
 module.exports = {
   computeAndAssignScores,
   computeScores,
+  computeFeedbackConsiderationScoreOffline,
 };
