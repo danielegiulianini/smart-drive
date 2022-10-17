@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand --detectOpenHandles",
     "dev": "npm install && nodemon -L index.js",
     "start": "node index.js"
   },
@@ -18,6 +18,8 @@
     "mongoose": "^6.6.0"
   },
   "devDependencies": {
+    "jest": "^29.2.0",
+    "mongodb-memory-server": "^8.9.3",
     "nodemon": "^2.0.19"
   }
 }
