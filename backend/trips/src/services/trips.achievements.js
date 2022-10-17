@@ -209,7 +209,7 @@ const getAchievements = async (userId) => {
     achievementsEvents.push("ecoscore_single_trip_85");
   }
   const maxRpmScorePerTrip = Math.max(
-    ...performances.map((o) => o.maxRpmScorePerTrip)
+    ...performances.map((o) => o.maxRpmEcoScorePerTrip)
   );
   if (maxRpmScorePerTrip >= 95) {
     achievementsEvents.push("rpmScore_single_trip_95");
