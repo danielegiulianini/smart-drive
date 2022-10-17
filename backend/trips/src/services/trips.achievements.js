@@ -1,33 +1,33 @@
 //this file contains all the queries for unlocking achievements
 
-const trips = require("../models/trips");
+const Trip = require("../models/trips");
 
-const getAchievements = (trip) => {
-  //fetching trips
-  //some achievements always
-  //====all the queries searching for achievements:====
-  //PRIMO giro con auto diversa
-  //PRIMA auto elettrica aggiunta (o PRIMO viaggio con)
-  //PRIMA auto a metano aggiunta (o viaggio)
-  //PRIMO trip (completato)
-  //badges derivanti dal confronto con soglie fisse
-  //   >soglie fisse (anche su punti parziali, #guide con caratteristiche (es auto a metano), minuti, km, consecutive active days/weeks/months, active days in a year, in a month, in a week, in a day, since ever
-  //     trips in a ... , scores..., x giri con auto elettrica, min/max (PRESTAZIONE ASSOLUTA in singolo trip) o media/somma (COSTANZA)
-  //badges derivanti dal confronto con altri (revocabili, non lasciano traccia, MOLTO ONEROSI)
-  //   >record di qualsiasi parametro (time, score, rpm medio, active days)
-  //    > since when (last month, since your join, since ever)
-  //badges derivanti dal confronto con te stesso (PB etc.) => QUESTO NON INTERESSANTE x badge user! è più una cosa da 1.assegnare al trip 2.da mettere nella pag records
-  //   >punti conquistati in un giorno wrt tutti altri giorni                   COSTANZA
-  //   >punti conquistati in un mese wrt tutti altri mesi                       COSTANZA
-  //   >record di ecoscore in un trip wrt tutti altri trip                      PRESTAZIONE DI PICCO
-  //   >record di ecoscore in un trip wrt tutti altri trip della stagione (SB)  PRESTAZIONE DI PICCO
-  //   >record di ecoscore medio since ever wrt tutti altri (SB)                COSTANZA
-  //   >record di ecoscore medio since this year wrt tutti altri (SB)           COSTANZA
-  //   >record di ecoscore medio since this year wrt tutti altri (SB)           COSTANZA
-  //anniversary (dal primo trip)
-  //# of emissions-free sundays
-  //===================================================
-};
+//const getAchievements = (trip) => {
+//fetching trips
+//some achievements always
+//====all the queries searching for achievements:====
+//PRIMO giro con auto diversa
+//PRIMA auto elettrica aggiunta (o PRIMO viaggio con)
+//PRIMA auto a metano aggiunta (o viaggio)
+//PRIMO trip (completato)
+//badges derivanti dal confronto con soglie fisse
+//   >soglie fisse (anche su punti parziali, #guide con caratteristiche (es auto a metano), minuti, km, consecutive active days/weeks/months, active days in a year, in a month, in a week, in a day, since ever
+//     trips in a ... , scores..., x giri con auto elettrica, min/max (PRESTAZIONE ASSOLUTA in singolo trip) o media/somma (COSTANZA)
+//badges derivanti dal confronto con altri (revocabili, non lasciano traccia, MOLTO ONEROSI)
+//   >record di qualsiasi parametro (time, score, rpm medio, active days)
+//    > since when (last month, since your join, since ever)
+//badges derivanti dal confronto con te stesso (PB etc.) => QUESTO NON INTERESSANTE x badge user! è più una cosa da 1.assegnare al trip 2.da mettere nella pag records
+//   >punti conquistati in un giorno wrt tutti altri giorni                   COSTANZA
+//   >punti conquistati in un mese wrt tutti altri mesi                       COSTANZA
+//   >record di ecoscore in un trip wrt tutti altri trip                      PRESTAZIONE DI PICCO
+//   >record di ecoscore in un trip wrt tutti altri trip della stagione (SB)  PRESTAZIONE DI PICCO
+//   >record di ecoscore medio since ever wrt tutti altri (SB)                COSTANZA
+//   >record di ecoscore medio since this year wrt tutti altri (SB)           COSTANZA
+//   >record di ecoscore medio since this year wrt tutti altri (SB)           COSTANZA
+//anniversary (dal primo trip)
+//# of emissions-free sundays
+//===================================================
+//};
 
 const monthsDrivenInAYear = (userId) => {
   const monthsDrivenInYears = Trip.aggregate([
@@ -75,8 +75,8 @@ const performancesInInterval = async (
 ) => {
   //i risultati vanno poi ordinati secondo la prospettiva scelta
 
-  return Trip.aggregate([
-    { $match: { userId: userId } }, //filter only data of requested user
+  return await Trip.aggregate([
+    { $match: userIdAsKeyValueObject }, //{ userId: userId } }, //filter only data of requested user
     {
       $group: {
         _id: Object.assign(userIdAsKeyValueObject, IntervalAsKeyValueObject),
@@ -112,26 +112,26 @@ const performancesInInterval = async (
 };
 
 const performancesInADay = async (userId) => {
-  performancesInInterval(
+  return await performancesInInterval(
     { userId: userId },
     { $dateToString: { format: "%Y-%m-%d", date: "$startTimestamp" } }
   );
 };
 
 const performancesInAMonth = async (userId) => {
-  performancesInInterval(
+  return await performancesInInterval(
     { userId: userId },
     { $dateToString: { format: "%Y-%m", date: "$startTimestamp" } }
   );
 };
 
 //milestones
-const performancesSinceJoined = (userId) => {
-  performancesInInterval({ userId: userId });
+const performancesSinceJoined = async (userId) => {
+  return await performancesInInterval({ userId: userId });
 };
 
 //ENTRY POINT (this could be invoked by an independent route too)
-const assignAchievements = async (userId) => {
+const getAchievements = async (userId) => {
   achievementsEvents = []; //array of strings
 
   //============= eco-friendly behaviour ======================
@@ -149,7 +149,7 @@ const assignAchievements = async (userId) => {
 
   const performances = await performancesInAMonth(userId);
 
-  //max=> peak performance
+  //max => peak performance
   const maxEcoScorePerTrip = Math.max(
     ...performances.map((o) => o.maxEcoScorePerTrip)
   );
@@ -222,15 +222,13 @@ const assignAchievements = async (userId) => {
   }*/
 
   //============= app usage ======================
-  //first * things
-  //achievementsEvents.push("first_trip");
 
   const totalTrips = Math.max(...performances.map((o) => o.totalTrips));
   if (totalTrips > 100) {
     achievementsEvents.push("trips_100");
   } else if (totalTrips > 5) {
     achievementsEvents.push("trips_5");
-  } else if (trtotalTripsips > 1) {
+  } else if (totalTrips == 1) {
     achievementsEvents.push("trip_first");
   }
 
@@ -265,5 +263,5 @@ const electricTripsPerformedBy = async (userId) => {
 //const gplDrives = (trip) => {
 
 module.exports = {
-  assignAchievements,
+  getAchievements,
 };
