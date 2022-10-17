@@ -25,6 +25,7 @@ const getAchievements = (trip) => {
   //   >record di ecoscore medio since this year wrt tutti altri (SB)           COSTANZA
   //   >record di ecoscore medio since this year wrt tutti altri (SB)           COSTANZA
   //anniversary (dal primo trip)
+  //# of emissions-free sundays
   //===================================================
 };
 
@@ -113,14 +114,14 @@ const performancesInInterval = async (
 const performancesInADay = async (userId) => {
   performancesInInterval(
     { userId: userId },
-    { $dateToString: { format: "%Y-%m-%d", date: "$at" } }
+    { $dateToString: { format: "%Y-%m-%d", date: "$startTimestamp" } }
   );
 };
 
 const performancesInAMonth = async (userId) => {
   performancesInInterval(
     { userId: userId },
-    { $dateToString: { format: "%Y-%m-%d", date: "$at" } }
+    { $dateToString: { format: "%Y-%m", date: "$startTimestamp" } }
   );
 };
 
@@ -148,7 +149,7 @@ const assignAchievements = async (userId) => {
 
   const performances = await performancesInAMonth(userId);
 
-  //max=>singular performance
+  //max=> peak performance
   const maxEcoScorePerTrip = Math.max(
     ...performances.map((o) => o.maxEcoScorePerTrip)
   );
@@ -179,7 +180,8 @@ const assignAchievements = async (userId) => {
   } else if (maxSpeedScorePerTrip > 85) {
     achievementsEvents.push("speedScore_single_trip_85");
   }*/
-  //total=> preseverance
+
+  //total => perseverance (milestones)
   const totalEcoScore = Math.max(...performances.map((o) => o.totalEcoScore));
   if (totalEcoScore > 2000) {
     achievementsEvents.push("ecoscore_total_2000");
@@ -191,22 +193,22 @@ const assignAchievements = async (userId) => {
   const totalRpmScore = Math.max(
     ...performances.map((o) => o.totalSpeedEcoScore)
   );
-  if (totalSpeedEcoScore > 2000) {
+  if (totalRpmScore > 2000) {
     achievementsEvents.push("rpmScore_total_2000");
-  } else if (totalSpeedEcoScore > 500) {
+  } else if (totalRpmScore > 500) {
     achievementsEvents.push("rpmScore_total_500");
-  } else if (totalSpeedEcoScore > 100) {
+  } else if (totalRpmScore > 100) {
     achievementsEvents.push("rpmScore_total_100");
   }
   const totalFeedbackConsiderationScore = Math.max(
     ...performances.map((o) => o.totalSpeedEcoScore)
   );
-  if (totalSpeedEcoScore > 2000) {
-    achievementsEvents.push("speedScore_total_2000");
-  } else if (totalSpeedEcoScore > 500) {
-    achievementsEvents.push("speedScore_total_500");
-  } else if (totalSpeedEcoScore > 100) {
-    achievementsEvents.push("speedScore_total_100");
+  if (totalFeedbackConsiderationScore > 2000) {
+    achievementsEvents.push("feedbackConsiderationScore_total_2000");
+  } else if (totalFeedbackConsiderationScore > 500) {
+    achievementsEvents.push("feedbackConsiderationScore_total_500");
+  } else if (totalFeedbackConsiderationScore > 100) {
+    achievementsEvents.push("feedbackConsiderationScore_total_100");
   }
   /*const totalSpeedEcoScore = Math.max(
     ...performances.map((o) => o.totalSpeedEcoScore)
