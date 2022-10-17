@@ -34,7 +34,7 @@ const setupRoutes = () => {
     //ignoring connection event
     console.log("mqtt client connected");
   });
-  publisher.onMessage((topic, payload) => {
+  publisher.onMessage(async (topic, payload) => {
     const payloadAsObject = JSON.parse(payload);
 
     if (achievementEventsRegex.test(topic)) {
@@ -43,7 +43,7 @@ const setupRoutes = () => {
           topic,
           achievementEventsTopicPrefix.length
         );
-        const achievementsUnlocked = AchievementsService.unlockAchievements(
+        const achievementsUnlocked = await AchievementsService.unlockAchievements(
           [userId],
           payloadAsObject.badgesIds
         );
@@ -52,7 +52,7 @@ const setupRoutes = () => {
           notificationsTopicPrefix + userId,
           achievementsUnlocked.map((achievementName) => ({
             subject: "New achievements unlocked",
-            body: "You unlocked badge:" + achievementName,
+            body: "You unlocked badge: " + achievementName,
           }))
         );
       } catch {
@@ -73,14 +73,14 @@ const setupRoutes = () => {
         ).then((resObj) => {
           publisher.publish(notificationsTopicPrefix + userId, {
             subject: "New level achieved!",
-            body: "You reached level:" + resObj.updatedUser.level,
+            body: "You reached level: " + resObj.updatedUser.level,
           });
         });
       } catch {
         //possible errors in deserializing...
         console.log(
           "error in processing message with payload: " + payload + "at trips"
-        ); //log the error (cannot respond to client)
+        ); //log the error only (cannot respond to client)
       }
     } else {
       console.log("users mqtt client ignoring message");

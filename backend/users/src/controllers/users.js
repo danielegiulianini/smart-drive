@@ -1,7 +1,5 @@
 const profileService = require("../services/users");
 
-
-
 const create = async (req, res) => {
   //params contained in client's post request
   let params = {
@@ -27,16 +25,20 @@ const get = (req, res) => {
   profileService
     .get(userId)
     .then((profile) => res.status(200).json(profile))
+    //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));
 };
 
 const edit = (req, res) => {
   const userId = req.params.userId;
+
+  //params to be filtered before DB interaction for safety reason
   const params = req.body;
 
   profileService
     .edit(userId, params)
     .then((profile) => res.status(200).json(profile))
+    //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));
 };
 

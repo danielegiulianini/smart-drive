@@ -1,41 +1,29 @@
-subscribeAll = function (handlers) {
-  let subscriptions = /*Object.entries(handlers)*/handlers.map(([key, value]) =>
-    subscribe(key, value)
-  );
+const mqtt = require("mqtt");
+const mqttConfig = require("../config/mqtt.config");
 
-  return {
-    unsubscribe: () => subscriptions.forEach((s) => s.unsubscribe()),
-  };
+var PublishSubscribe = function () {
+  console.log("connecting mqtt client...");
+  this.client = mqtt.connect(mqttConfig.brokerConnectUrl, mqttConfig);
 };
 
-subscribe = function (eventName, handler) {
-  if (!events[eventName]) {
-    events[eventName] = [];
-  }
-
-  let handlerObject = { handle: handler };
-  events[eventName].push(handlerObject);//overriding 
-  console.log(`Subscribing to event ${eventName}`);
-  return {
-    unsubscribe: () => {
-      console.log(`Unsubscribing to event ${eventName}`);
-      events[eventName] = events[eventName].filter((x) => x !== handlerObject);
-    },
-  };
+PublishSubscribe.prototype.subscribe = function (topicsArray, callback) {
+  this.client.subscribe(topicsArray, callback);
 };
 
-publish = function (eventName, ...args) {
-  if (!events[eventName]) {
-    return;
-  }
-  console.log(
-    `Publishing event ${eventName} with ${events[eventName].length} subscribers`
-  );
-  events[eventName].forEach((h) => h.handle(...args));
+PublishSubscribe.prototype.onConnect = function (callback) {
+  this.client.on("connect", callback);
 };
 
-module.exports = {
-  subscribeAll,
-  subscribe,
-  publish,
+PublishSubscribe.prototype.onMessage = function (callback) {
+  this.client.on("message", callback);
 };
+
+PublishSubscribe.prototype.publish = function (topic, message) {
+  this.client.publish(topic, message, { qos: 0, retain: false }, (error) => {
+    if (error) {
+      console.error(error);
+    }
+  });
+};
+
+module.exports = new PublishSubscribe();

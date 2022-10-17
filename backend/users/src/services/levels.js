@@ -1,15 +1,28 @@
+const profileSchema = require("../models/users");
+
 //callback chiamata con l'aumento di punti
-const scoresChanged = async (userId, newTotalScore) => {
+const scoresChanged = async (userId, scoreDelta) => {
   //not reusing general edit function (in theory it should appply a filter for safety reason!)
-  return Profile.findOneAndUpdate(
+  //fetching previous score...
+  /*return Profile.findOneAndUpdate(
     {
       _id: userId,
     },
-    { totalScore: newTotalScore, level: getLevel(newTotalScore) },
+    { ecoScore: newTotalScore, level: getLevel(newTotalScore) },
     {
       new: true, //returning the new version
     }
-  );
+  );*/
+
+  //let possible exceptions bubble up
+  const user = await profileSchema.findById(userId);
+  const oldLevel = user.level;
+  user.ecoScore += scoreDelta;
+  user.level = getLevel(user.ecoScore);
+  return {
+    updatedUser: await user.save(),
+    levelChanged: oldLevel != user.level,
+  };
 };
 
 //contains the logic for scores-levels mapping

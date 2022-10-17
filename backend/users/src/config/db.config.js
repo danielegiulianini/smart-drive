@@ -25,6 +25,10 @@ function getConnectionUri(
   }/${defaultAuthDb}?${options.join("&")}`;
 } //const getConnectionUri = require('../../sharedUtils/mongoDbUtils.js');
 
+
+
+
+
 connectionUri = getConnectionUri(
   port,
   username,
