@@ -79,29 +79,30 @@ const performancesInInterval = async (
     {
       $group: {
         _id: Object.assign(userIdAsKeyValueObject, IntervalAsKeyValueObject),
+        //aggregate values
         totalTrips: { $sum: 1 },
 
-        totalEcoScore: { $sum: "totalScore" },
-        totalSpeedEcoScore: { $sum: "speedScore" },
-        totalRpmEcoScore: { $sum: "rpmScore" },
+        totalEcoScore: { $sum: "$totalScore" },
+        totalSpeedEcoScore: { $sum: "$speedScore" },
+        totalRpmEcoScore: { $sum: "$rpmScore" },
         totalFeedbackConsiderationEcoScore: {
-          $sum: "feedbackConsiderationScore",
+          $sum: "$feedbackConsiderationScore",
         },
         //totalKmPerTrip: { $max: "odometer" },
         totalTripMinutesDuration: {
-          $sum: { $subtract: ["endTimestamp", "startTimestamp"] },
+          $sum: { $subtract: ["$endTimestamp", "$startTimestamp"] },
         },
 
-        maxEcoScorePerTrip: { $max: "totalScore" },
-        maxSpeedEcoScorePerTrip: { $max: "speedScore" },
-        maxRpmEcoScorePerTrip: { $max: "rpmScore" },
+        maxEcoScorePerTrip: { $max: "$totalScore" },
+        maxSpeedEcoScorePerTrip: { $max: "$speedScore" },
+        maxRpmEcoScorePerTrip: { $max: "$rpmScore" },
         maxFeedbackConsiderationEcoScorePerTrip: {
-          $max: "feedbackConsiderationScore",
+          $max: "$feedbackConsiderationScore",
         },
         /*maxKmPerTrip: { $max: "odometer" },*/
         maxTripMinutesDuration: {
           $max: {
-            $sum: { $subtract: ["endTimestamp", "startTimestamp"] },
+            $sum: { $subtract: ["$endTimestamp", "$startTimestamp"] },
           },
         },
       },
@@ -123,7 +124,7 @@ const performancesInAMonth = async (userId) => {
   );
 };
 
-//milestone
+//milestones
 const performancesSinceJoined = (userId) => {
   performancesInInterval({ userId: userId });
 };
@@ -133,87 +134,112 @@ const assignAchievements = async (userId) => {
   achievementsEvents = []; //array of strings
 
   //============= eco-friendly behaviour ======================
-  electricTrips(userId)
+  electricTripsPerformedBy(userId)
     .then((electricTripsCount) => {
       if (electricTripsCount > 10) {
-        achievementsEvents.push("electric_10");
+        achievementsEvents.push("electric_trips_10");
       } else if (electricTripsCount > 5) {
-        achievementsEvents.push("electric_5");
+        achievementsEvents.push("electric_trips_5");
       } else if (electricTripsCount > 1) {
-        achievementsEvents.push("electric_1");
+        achievementsEvents.push("electric_trips_1");
       }
     })
     .catch((err) => console.log("error during electricTrips"));
 
   const performances = await performancesInAMonth(userId);
 
+  //max=>singular performance
   const maxEcoScorePerTrip = Math.max(
     ...performances.map((o) => o.maxEcoScorePerTrip)
   );
-  if (maxEcoScorePerTrip > 10) {
-    achievementsEvents.push("electric_10");
-  } else if (maxEcoScorePerTrip > 5) {
-    achievementsEvents.push("electric_5");
-  } else if (maxEcoScorePerTrip > 1) {
-    achievementsEvents.push("electric_1");
-  }
-  const maxSpeedScorePerTrip = Math.max(
-    ...performances.map((o) => o.maxSpeedScorePerTrip)
-  );
-  if (maxSpeedScorePerTrip > 10) {
-    achievementsEvents.push("electric_10");
-  } else if (maxSpeedScorePerTrip > 5) {
-    achievementsEvents.push("electric_5");
-  } else if (maxSpeedScorePerTrip > 1) {
-    achievementsEvents.push("electric_1");
+  if (maxEcoScorePerTrip > 95) {
+    achievementsEvents.push("ecoscore_single_trip_95");
+  } else if (maxEcoScorePerTrip > 92) {
+    achievementsEvents.push("ecoscore_single_trip_92");
+  } else if (maxEcoScorePerTrip > 85) {
+    achievementsEvents.push("ecoscore_single_trip_85");
   }
   const maxRpmScorePerTrip = Math.max(
     ...performances.map((o) => o.maxRpmScorePerTrip)
   );
-  if (maxRpmScorePerTrip > 10) {
-    achievementsEvents.push("electric_10");
-  } else if (maxRpmScorePerTrip > 5) {
-    achievementsEvents.push("electric_5");
-  } else if (maxRpmScorePerTrip > 1) {
-    achievementsEvents.push("electric_1");
+  if (maxRpmScorePerTrip > 95) {
+    achievementsEvents.push("rpmScore_single_trip_95");
+  } else if (maxRpmScorePerTrip > 92) {
+    achievementsEvents.push("rpmScore_single_trip_92");
+  } else if (maxRpmScorePerTrip > 85) {
+    achievementsEvents.push("rpmScore_single_trip_85");
   }
+  /* const maxSpeedScorePerTrip = Math.max(
+    ...performances.map((o) => o.maxSpeedScorePerTrip)
+  );
+  if (maxSpeedScorePerTrip > 95) {
+    achievementsEvents.push("speedScore_single_trip_95");
+  } else if (maxSpeedScorePerTrip > 92) {
+    achievementsEvents.push("speedScore_single_trip_95");
+  } else if (maxSpeedScorePerTrip > 85) {
+    achievementsEvents.push("speedScore_single_trip_85");
+  }*/
+  //total=> preseverance
   const totalEcoScore = Math.max(...performances.map((o) => o.totalEcoScore));
-  if (totalEcoScore > 10) {
-    achievementsEvents.push("electric_10");
-  } else if (totalEcoScore > 5) {
-    achievementsEvents.push("electric_5");
-  } else if (totalEcoScore > 1) {
-    achievementsEvents.push("electric_1");
+  if (totalEcoScore > 2000) {
+    achievementsEvents.push("ecoscore_total_2000");
+  } else if (totalEcoScore > 500) {
+    achievementsEvents.push("ecoscore_total_500");
+  } else if (totalEcoScore > 100) {
+    achievementsEvents.push("ecoscore_total_100");
   }
-  const totalSpeedEcoScore = Math.max(
+  const totalRpmScore = Math.max(
     ...performances.map((o) => o.totalSpeedEcoScore)
   );
-  if (totalSpeedEcoScore > 10) {
-    achievementsEvents.push("electric_10");
-  } else if (totalSpeedEcoScore > 5) {
-    achievementsEvents.push("electric_5");
-  } else if (totalSpeedEcoScore > 1) {
-    achievementsEvents.push("electric_1");
+  if (totalSpeedEcoScore > 2000) {
+    achievementsEvents.push("rpmScore_total_2000");
+  } else if (totalSpeedEcoScore > 500) {
+    achievementsEvents.push("rpmScore_total_500");
+  } else if (totalSpeedEcoScore > 100) {
+    achievementsEvents.push("rpmScore_total_100");
   }
+  const totalFeedbackConsiderationScore = Math.max(
+    ...performances.map((o) => o.totalSpeedEcoScore)
+  );
+  if (totalSpeedEcoScore > 2000) {
+    achievementsEvents.push("speedScore_total_2000");
+  } else if (totalSpeedEcoScore > 500) {
+    achievementsEvents.push("speedScore_total_500");
+  } else if (totalSpeedEcoScore > 100) {
+    achievementsEvents.push("speedScore_total_100");
+  }
+  /*const totalSpeedEcoScore = Math.max(
+    ...performances.map((o) => o.totalSpeedEcoScore)
+  );
+  if (totalSpeedEcoScore > 2000) {
+    achievementsEvents.push("speedScore_total_95");
+  } else if (totalSpeedEcoScore > 500) {
+    achievementsEvents.push("speedScore_total_95");
+  } else if (totalSpeedEcoScore > 100) {
+    achievementsEvents.push("speedScore_total_95");
+  }*/
 
   //============= app usage ======================
+  //first * things
+  //achievementsEvents.push("first_trip");
+
   const totalTrips = Math.max(...performances.map((o) => o.totalTrips));
-  if (totalTrips > 10) {
-    achievementsEvents.push("electric_10");
+  if (totalTrips > 100) {
+    achievementsEvents.push("trips_100");
   } else if (totalTrips > 5) {
-    achievementsEvents.push("electric_5");
+    achievementsEvents.push("trips_5");
   } else if (trtotalTripsips > 1) {
-    achievementsEvents.push("electric_1");
+    achievementsEvents.push("trip_first");
   }
 
   return achievementsEvents;
 };
 
-//============encouraging eco-driving=================
-const electricTrips = async (userId) => {
+//============encouraging eco-driving =================
+const electricTripsPerformedBy = async (userId) => {
   //db.collection.find(selectionObj,projectionObj)
   const vins = await Trip.find(
-    { userId: "userId" },
+    { userId: userId },
     { vehicleIdentificationNumber: 1 }
   );
   //axios call to map vins to engine type
