@@ -1,7 +1,7 @@
 //invoked by rabbitmq or rest...
 //and invoking notification
 
-const ProfileService = require("../services/users");
+const User = require("../services/users");
 
 //qui ho un db in memory che mantiene mapping id_achievement - achievements 8che poi
 //salvo ridondato e non normalizzato in un db per fornirlo più
@@ -25,7 +25,7 @@ async function unlockAchievements(userIds, ...achievements) {
     }
     await user.save();
   }
-  //not putting publish here but at higher level
+  //not putting publish here but at higher level to ease testing (no mocking needed)
 }
 module.exports = {
   unlockAchievements,
