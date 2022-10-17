@@ -73,13 +73,52 @@ const performancesInInterval = async (
   userIdAsKeyValueObject,
   IntervalAsKeyValueObject
 ) => {
+  /*console.log("the match stage:");
+  console.log({ $match: userIdAsKeyValueObject }); //{ userId: userId } }, //filter only data of requested user
   //i risultati vanno poi ordinati secondo la prospettiva scelta
+  console.log("the group stage:");
+  console.log({
+    $group: {
+      _id: Object.assign({ userId: "$_id" }, IntervalAsKeyValueObject),
+      //aggregate values
+      totalTrips: { $sum: 1 },
+
+      totalEcoScore: { $sum: "$totalScore" },
+      totalSpeedEcoScore: { $sum: "$speedScore" },
+      totalRpmEcoScore: { $sum: "$rpmScore" },
+      totalFeedbackConsiderationEcoScore: {
+        $sum: "$feedbackConsiderationScore",
+      },
+      //totalKmPerTrip: { $max: "odometer" },
+      totalTripMinutesDuration: {
+        $sum: { $subtract: ["$endTimestamp", "$startTimestamp"] },
+      },
+
+      maxEcoScorePerTrip: { $max: "$totalScore" },
+      maxSpeedEcoScorePerTrip: { $max: "$speedScore" },
+      maxRpmEcoScorePerTrip: { $max: "$rpmScore" },
+      maxFeedbackConsiderationEcoScorePerTrip: {
+        $max: "$feedbackConsiderationScore",
+      },
+      /*maxKmPerTrip: { $max: "odometer" },*/
+  /*maxTripMinutesDuration: {
+        $max: {
+          $sum: { $subtract: ["$endTimestamp", "$startTimestamp"] },
+        },
+      },
+    },
+  });
+  console.log("i filtered trips:");
+  console.log(await Trip.aggregate([{ $match: userIdAsKeyValueObject }]));
+  console.log("i filtered trips by findOne:");
+
+  console.log(await Trip.find({ userIdAsKeyValueObject }));*/
 
   return await Trip.aggregate([
     { $match: userIdAsKeyValueObject }, //{ userId: userId } }, //filter only data of requested user
     {
       $group: {
-        _id: Object.assign(userIdAsKeyValueObject, IntervalAsKeyValueObject),
+        _id: Object.assign({ userId: "$userId" }, IntervalAsKeyValueObject),
         //aggregate values
         totalTrips: { $sum: 1 },
 
@@ -114,14 +153,22 @@ const performancesInInterval = async (
 const performancesInADay = async (userId) => {
   return await performancesInInterval(
     { userId: userId },
-    { $dateToString: { format: "%Y-%m-%d", date: "$startTimestamp" } }
+    //{ $dateToString: { date: "$startTimestamp", format: "%Y-%m-%d" } }
+    {
+      year: { $year: "$startTimestamp" },
+      month: { $month: "$startTimestamp" },
+      day: { $day: "$startTimestamp" },
+    }
   );
 };
 
 const performancesInAMonth = async (userId) => {
   return await performancesInInterval(
     { userId: userId },
-    { $dateToString: { format: "%Y-%m", date: "$startTimestamp" } }
+    /*{
+      interval: { $dateToString: { date: "$startTimestamp", format: "%Y-%m" } },
+    }*/
+    { year: { $year: "$startTimestamp" }, month: { $month: "$startTimestamp" } }
   );
 };
 
@@ -132,42 +179,43 @@ const performancesSinceJoined = async (userId) => {
 
 //ENTRY POINT (this could be invoked by an independent route too)
 const getAchievements = async (userId) => {
-  achievementsEvents = []; //array of strings
+  const achievementsEvents = []; //array of strings
 
   //============= eco-friendly behaviour ======================
   electricTripsPerformedBy(userId)
     .then((electricTripsCount) => {
-      if (electricTripsCount > 10) {
+      if (electricTripsCount >= 10) {
         achievementsEvents.push("electric_trips_10");
-      } else if (electricTripsCount > 5) {
+      } else if (electricTripsCount >= 5) {
         achievementsEvents.push("electric_trips_5");
-      } else if (electricTripsCount > 1) {
+      } else if (electricTripsCount >= 1) {
         achievementsEvents.push("electric_trips_1");
       }
     })
     .catch((err) => console.log("error during electricTrips"));
 
   const performances = await performancesInAMonth(userId);
-
+  console.log("le performances:");
+  console.log(performances);
   //max => peak performance
   const maxEcoScorePerTrip = Math.max(
     ...performances.map((o) => o.maxEcoScorePerTrip)
   );
-  if (maxEcoScorePerTrip > 95) {
+  if (maxEcoScorePerTrip >= 95) {
     achievementsEvents.push("ecoscore_single_trip_95");
-  } else if (maxEcoScorePerTrip > 92) {
+  } else if (maxEcoScorePerTrip >= 92) {
     achievementsEvents.push("ecoscore_single_trip_92");
-  } else if (maxEcoScorePerTrip > 85) {
+  } else if (maxEcoScorePerTrip >= 85) {
     achievementsEvents.push("ecoscore_single_trip_85");
   }
   const maxRpmScorePerTrip = Math.max(
     ...performances.map((o) => o.maxRpmScorePerTrip)
   );
-  if (maxRpmScorePerTrip > 95) {
+  if (maxRpmScorePerTrip >= 95) {
     achievementsEvents.push("rpmScore_single_trip_95");
-  } else if (maxRpmScorePerTrip > 92) {
+  } else if (maxRpmScorePerTrip >= 92) {
     achievementsEvents.push("rpmScore_single_trip_92");
-  } else if (maxRpmScorePerTrip > 85) {
+  } else if (maxRpmScorePerTrip >= 85) {
     achievementsEvents.push("rpmScore_single_trip_85");
   }
   /* const maxSpeedScorePerTrip = Math.max(
@@ -183,31 +231,31 @@ const getAchievements = async (userId) => {
 
   //total => perseverance (milestones)
   const totalEcoScore = Math.max(...performances.map((o) => o.totalEcoScore));
-  if (totalEcoScore > 2000) {
+  if (totalEcoScore >= 2000) {
     achievementsEvents.push("ecoscore_total_2000");
-  } else if (totalEcoScore > 500) {
+  } else if (totalEcoScore >= 500) {
     achievementsEvents.push("ecoscore_total_500");
-  } else if (totalEcoScore > 100) {
+  } else if (totalEcoScore >= 100) {
     achievementsEvents.push("ecoscore_total_100");
   }
   const totalRpmScore = Math.max(
-    ...performances.map((o) => o.totalSpeedEcoScore)
+    ...performances.map((o) => o.totalRpmEcoScore)
   );
-  if (totalRpmScore > 2000) {
+  if (totalRpmScore >= 2000) {
     achievementsEvents.push("rpmScore_total_2000");
-  } else if (totalRpmScore > 500) {
+  } else if (totalRpmScore >= 500) {
     achievementsEvents.push("rpmScore_total_500");
-  } else if (totalRpmScore > 100) {
+  } else if (totalRpmScore >= 100) {
     achievementsEvents.push("rpmScore_total_100");
   }
   const totalFeedbackConsiderationScore = Math.max(
-    ...performances.map((o) => o.totalSpeedEcoScore)
+    ...performances.map((o) => o.totalFeedbackConsiderationEcoScore)
   );
-  if (totalFeedbackConsiderationScore > 2000) {
+  if (totalFeedbackConsiderationScore >= 2000) {
     achievementsEvents.push("feedbackConsiderationScore_total_2000");
-  } else if (totalFeedbackConsiderationScore > 500) {
+  } else if (totalFeedbackConsiderationScore >= 500) {
     achievementsEvents.push("feedbackConsiderationScore_total_500");
-  } else if (totalFeedbackConsiderationScore > 100) {
+  } else if (totalFeedbackConsiderationScore >= 100) {
     achievementsEvents.push("feedbackConsiderationScore_total_100");
   }
   /*const totalSpeedEcoScore = Math.max(
@@ -224,9 +272,9 @@ const getAchievements = async (userId) => {
   //============= app usage ======================
 
   const totalTrips = Math.max(...performances.map((o) => o.totalTrips));
-  if (totalTrips > 100) {
+  if (totalTrips >= 100) {
     achievementsEvents.push("trips_100");
-  } else if (totalTrips > 5) {
+  } else if (totalTrips >= 5) {
     achievementsEvents.push("trips_5");
   } else if (totalTrips == 1) {
     achievementsEvents.push("trip_first");

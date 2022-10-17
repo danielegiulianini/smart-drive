@@ -1,7 +1,7 @@
 //invoked by rabbitmq or rest...
 //and invoking notification
 
-const User = require("../services/users");
+const User = require("../models/users");
 
 //qui ho un db in memory che mantiene mapping id_achievement - achievements 8che poi
 //salvo ridondato e non normalizzato in un db per fornirlo più
