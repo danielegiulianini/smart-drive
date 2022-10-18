@@ -61,6 +61,5 @@ const profileSchema = mongoose.Schema(
   { _id: false }
 );
 
-module.exports = profileSchema;
-
+module.exports = mongoose.model("users", tripsSchema);
 //vehicles: [{ type: String }], //actually can put this association in vehicles since I must fetch from it too
