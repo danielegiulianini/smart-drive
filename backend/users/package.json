@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm install && npm update && nodemon -L index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --runInBand --detectOpenHandles"
   },
   "author": "",
   "license": "ISC",
@@ -17,7 +17,12 @@
     "find-config": "^1.0.0",
     "firebase-admin": "^11.0.1",
     "mongoose": "^6.5.3",
+    "mqtt": "^4.3.7",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^2.0.19"
+  },
+  "devDependencies": {
+    "jest": "^29.2.0",
+    "mongodb-memory-server": "^8.9.3"
   }
 }

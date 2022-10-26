@@ -144,6 +144,6 @@ describe("A Profile service", () => {
   //other tests:
   //- non deve ritornare users che non ho inserito
   //- removing a not-existing user triggers error...
-  //- check default values are applied
+  //- check default values are applied (in particular, for: scores levels, achievements)
   //...
 });

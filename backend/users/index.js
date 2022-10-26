@@ -28,13 +28,11 @@ async function startServer() {
   console.log("Connecting to db...");
   await dbUtil.connect(dbConfig);
   console.log("Connected!");
-
-  const client = mqtt.connect(mqttConfig.brokerConnectUrl, mqttConfig.options);
-
+  
   console.log("Setting up routes ...");
   const routes = require("./src/routes");
   app.use("/api/v1", routes);
-  setupRoutes(client);
+  setupRoutes();
   console.log("routes bound");
 
   app.listen(port, () =>

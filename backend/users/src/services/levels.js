@@ -1,4 +1,4 @@
-const profileSchema = require("../models/users");
+const Profile = require("../models/users");
 
 //callback chiamata con l'aumento di punti
 const scoresChanged = async (userId, scoreDelta) => {
@@ -15,7 +15,7 @@ const scoresChanged = async (userId, scoreDelta) => {
   );*/
 
   //let possible exceptions bubble up
-  const user = await profileSchema.findById(userId);
+  const user = await Profile.findById(userId);
   const oldLevel = user.level;
   user.ecoScore += scoreDelta;
   user.level = getLevel(user.ecoScore);

@@ -43,10 +43,11 @@ const setupRoutes = () => {
           topic,
           achievementEventsTopicPrefix.length
         );
-        const achievementsUnlocked = await AchievementsService.unlockAchievements(
-          [userId],
-          payloadAsObject.badgesIds
-        );
+        const achievementsUnlocked =
+          await AchievementsService.unlockAchievements(
+            [userId],
+            payloadAsObject.badgesIds
+          );
 
         publisher.publish(
           notificationsTopicPrefix + userId,
@@ -71,10 +72,12 @@ const setupRoutes = () => {
           userId,
           payloadAsObject.totalScoreDelta
         ).then((resObj) => {
-          publisher.publish(notificationsTopicPrefix + userId, {
-            subject: "New level achieved!",
-            body: "You reached level: " + resObj.updatedUser.level,
-          });
+          if (resObj.levelChanged) {
+            publisher.publish(notificationsTopicPrefix + userId, {
+              subject: "New level achieved!",
+              body: "You reached level: " + resObj.updatedUser.level,
+            });
+          }
         });
       } catch {
         //possible errors in deserializing...

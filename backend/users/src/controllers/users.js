@@ -1,4 +1,4 @@
-const profileService = require("../services/users");
+const ProfileService = require("../services/users");
 
 const create = async (req, res) => {
   //params contained in client's post request
@@ -13,7 +13,7 @@ const create = async (req, res) => {
     country: req.body.country,
   };
 
-  profileService
+  ProfileService
     .add(params)
     .then((profile) => res.status(201).json(profile)) //todo actions to be refactored since reused
     .catch((err) => res.status(400).json(err));
@@ -22,7 +22,7 @@ const create = async (req, res) => {
 const get = (req, res) => {
   const userId = req.params.userId;
 
-  profileService
+  ProfileService
     .get(userId)
     .then((profile) => res.status(200).json(profile))
     //should use a dto here (response containing sensitive info!)
@@ -35,7 +35,7 @@ const edit = (req, res) => {
   //params to be filtered before DB interaction for safety reason
   const params = req.body;
 
-  profileService
+  ProfileService
     .edit(userId, params)
     .then((profile) => res.status(200).json(profile))
     //should use a dto here (response containing sensitive info!)
