@@ -6,9 +6,10 @@ const mongoose = require("mongoose");
 //- diventa complicato gestire un array di veicoli con possibilmente delle statistiche associate innestato in user
 const userVehicleSchema = mongoose.Schema({
   _id: {
+    //the so-called vehicleIdentificationNumber
     type: String,
     required: true,
-  }, //the so-called vehicleIdentificationNumber
+  },
   vehicleModelId: { type: Number }, //not required:true since allowing user to insert not included data
   pictureUri: {
     type: String,

@@ -7,7 +7,7 @@ const add = async (userVehicle) => {
     .then((result) => {
       //could be in middleware too this validation (together with checknull)
       if (result) {
-        throw new TypeError(`The profile ${userVehicle._id} already exists`);
+        throw new TypeError(`The user vehicle ${userVehicle._id} already exists`);
       }
     })
     .then(() => UserVehicle.create(userVehicle));
