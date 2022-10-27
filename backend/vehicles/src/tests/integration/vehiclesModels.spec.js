@@ -46,7 +46,7 @@ describe("A Vehicle models service", () => {
   describe("when models of a a make of a given year are requested", () => {
     it("should return them correctly", async () => {
       const response = await request(app).get(
-        "/api/v1/vehicles/vehiclesModels/models/?year=2020&make=Tesla"
+        "/api/v1/vehicles/vehiclesModels/models?year=2020&make=Tesla"
       );
 
       expect(response.status).toBe(200);
@@ -59,7 +59,7 @@ describe("A Vehicle models service", () => {
   describe("when series of a model of a make of a given year are requested", () => {
     it("should return them correctly", async () => {
       const response = await request(app).get(
-        "/api/v1/vehicles/vehiclesModels/series/?year=2012&make=Tesla&model=32557"
+        "/api/v1/vehicles/vehiclesModels/series?year=2020&make=Tesla&model=Model 3 Long Range"
       );
 
       expect(response.status).toBe(200);
@@ -72,7 +72,7 @@ describe("A Vehicle models service", () => {
   describe("when details of a vehicle", () => {
     it("should return them correctly", async () => {
       const response = await request(app).get(
-        "/api/v1/vehicles/vehiclesModels/vehicleDetails/32557"
+        "/api/v1/vehicles/vehiclesModels/vehicleDetails/42274"
       );
 
       expect(response.status).toBe(200);
@@ -94,29 +94,3 @@ describe("A Vehicle models service", () => {
   });
 });
 
-/*
-//example:
-describe("Book service integration tests", () => {
-  test("Get first 5 results for 'Harry Potter' search", async () => {
-    const response = await request(app).get(
-      "/api/v1/books?query=Harry+Potter&limit=5"
-    ); //use the request function that we can use the app// save the response to body variable
-
-    expect(response.status).toBe(200);
-    expect(response.body.items.length).toBe(5);
-  });
-
-  test("Get the book 'Harry Potter e la pietra filosofale", async () => {
-    const response = await request(app).get("/api/v1/books/9CJWTbd-RYoC");
-
-    expect(response.status).toBe(200);
-    expect(response.body.id).toBe("9CJWTbd-RYoC");
-  });
-
-  test("Get a random Volume ID and expect to fail with 503", async () => {
-    const response = await request(app).get("/api/v1/books/notfoundtest123");
-
-    expect(response.status).toBe(503);
-  });
-});
-*/
