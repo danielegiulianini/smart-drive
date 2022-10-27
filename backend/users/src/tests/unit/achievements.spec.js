@@ -50,6 +50,7 @@ describe("A achievements service", () => {
       expect(fetchedUser.unlockedAchievements).toContain(achievement);
     });
   });
+  
   describe("when a user unlocks many ahchievements", () => {
     it("should persist all of them", async () => {
       const achievements = ["firstAchievement","secondAchievement"];

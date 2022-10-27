@@ -1,7 +1,27 @@
 const Profile = require("../models/users");
 
 const list = async () => {
-  return Profile.find();
+  //add filtering, sorting, paginating
+  const orderByColumn = req.query.order_by_column || "created_at";
+  const orderByDirection = req.query.order_by_direction || "desc";
+  //const page = req.query.page || 1;
+  const limit = req.query.limit || 20;
+
+  //remove the pagination and sorting letting filtering only (or directly pick the complementary of them)
+  const query = omit(
+    req.query,
+    "orderByColumn",
+    "orderByDirection",
+    "page",
+    "limit"
+  );
+
+  return (
+    Profile.find(query)
+      .sort({ [orderByColumn]: orderByDirection }) //ECMAScript 2015 (ES6)'s Computed property names
+      //.skip(limit * page)
+      .limit(limit)
+  );
 };
 
 const add = async (profile) => {
