@@ -29,10 +29,11 @@ const handleNewMeasurement = async (vin, measurementPayload) => {
         trip._id,
         measurementPayload
       );
-      //publish(topic, message)
-      publisher.publish(drivingNotificationsTopicPrefix + trip.userId, {
-        feedback: feedback,
-      });
+      if (feedback) {
+        publisher.publish(drivingNotificationsTopicPrefix + trip.userId, {
+          feedback: feedback,
+        });
+      }
     }
   } catch (error) {
     console.log(error); //returning error to arduino? you can't (mqtt is not request/response)

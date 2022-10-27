@@ -2,7 +2,7 @@ const trips = require("../models/trips");
 const Trip = require("../models/trips");
 const TripStatsService = require("../services/trips.stats");
 const { sortByProperty } = require("../utils/arrays.utils");
-const { now } = require("../utils/time.utils");
+const { now, subtractSeconds } = require("../utils/time.utils");
 
 //const moment = require("moment");
 
@@ -52,14 +52,14 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   //se velocità è sopra ad un limite e ho già dato tempo di adattarsi al feedback... allora
   //oppure se la media delle velocità è > X e l'ultimo consiglio risale da X secs fa ...
   //1. =========================== rpm ========================================
-  const rpmWindowInSeconds = 30;
+  const rpmWindowInSeconds = 10;
   const engStats = await TripStatsService.computeEngineStats(
     tripId,
     /*moment()
       .subtract(rpmWindowInSeconds, "seconds")
       .utcOffset(0, false) //ignoring time zone
       .toDate()*/
-    now()
+    subtractSeconds(now(), rpmWindowInSeconds)
   );
   if (engStats.avgRpm > 3000) {
     feedbacks.push({ text: "Be smoother with the throttle.", priority: 2 });
@@ -74,20 +74,11 @@ const getFeedbacks = async (tripId, measurementPayload) => {
 
   //3. =========================== reduce unnecessary emissions (idling) ===============
   //(spegni il motore se è da più di 10 secondi che sei fermo (v=0))
-  const idleWindowInSeconds = 10;
-  if (
-    TripStatsService.computeEngineStats(
-      tripId,
-      /*moment()
-        .subtract(idleWindowInSeconds, "seconds")
-        .utcOffset(0, false)
-        .toDate()*/
-      now()
-    ).avgKph == 0
-  ) {
+  //const idleWindowInSeconds = 10;
+  if (engStats.avgKph == 0) {
     feedbacks.push({
       text: "Turn the engine off to avoid unnecessary emissions.",
-      priority: 1,
+      priority: rpmWindowInSeconds,
     });
   }
 

@@ -74,8 +74,8 @@ const close = async (tripId) => {
 };*/
 
 //read-only:
-const list = async () => {
-  return Trip.find();
+const list = async (query) => {
+  return Trip.find(query);
 };
 
 //single trip

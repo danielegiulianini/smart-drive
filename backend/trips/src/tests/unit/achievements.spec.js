@@ -1,4 +1,5 @@
-////not all are unit tests (ex. eletric vehicles!)
+//notes:
+//not all are unit tests (ex. eletric vehicles!)
 //total
 //max
 //no checking for persistance
@@ -26,7 +27,7 @@ const {
   subtractSeconds,
 } = require("../../utils/time.utils.js");
 
-//to-test data
+//to-test services
 const Trip = require("../../models/trips");
 const TripsService = require("../../services/trips.dataAcquisition");
 const AchievementsService = require("../../services/trips.achievements");
@@ -38,28 +39,14 @@ afterEach(async () => {
 });
 
 //fixtures
-function fakeTripData(
-  sensorId = "fakeSensorId",
-  vehicleIdentificationNumber = "JH4DA3450HS011682",
-  userId = "fakeUserId",
-  startTimestamp = now(),
-  endTimestamp = now(),
-  totalScore = 0,
-  speedScore = 0,
-  rpmScore = 0,
-  feedbackConsiderationScore = 0
-) {
-  return {
-    sensorId: sensorId,
-    vehicleIdentificationNumber: vehicleIdentificationNumber,
-    startTimestamp: startTimestamp,
-    endTimestamp: endTimestamp,
-    userId: userId,
-    totalScore: totalScore,
-    speedScore: speedScore,
-    rpmScore: rpmScore,
-    feedbackConsiderationScore: feedbackConsiderationScore,
-  };
+function fakeTripDataWith(otherDataObject) {
+  return Object.assign(
+    {
+      sensorId: "fakeSensorId",
+      vehicleIdentificationNumber: "JH4DA3450HS011682",
+    },
+    otherDataObject
+  );
 }
 
 describe("An achievements calculator", () => {
@@ -68,7 +55,7 @@ describe("An achievements calculator", () => {
   describe("when a user performs its first trip", () => {
     it("should assign a total-trips achievement", async () => {
       const userId = "userId";
-      await TripsService.addTrip(fakeTripData((userId = userId)));
+      await TripsService.addTrip(fakeTripDataWith({ userId: userId }));
       const assignedAchievements = await AchievementsService.getAchievements(
         userId
       );
@@ -77,13 +64,13 @@ describe("An achievements calculator", () => {
   });
 
   describe("when a user performs 5 five trips since joined", () => {
-    it("", async () => {
+    it("should assign a total-trips achievement", async () => {
       const userId = "userId";
-      await TripsService.addTrip(fakeTripData((userId = userId)));
-      await TripsService.addTrip(fakeTripData((userId = userId)));
-      await TripsService.addTrip(fakeTripData((userId = userId)));
-      await TripsService.addTrip(fakeTripData((userId = userId)));
-      await TripsService.addTrip(fakeTripData((userId = userId)));
+      await TripsService.addTrip(fakeTripDataWith({ userId: userId }));
+      await TripsService.addTrip(fakeTripDataWith({ userId: userId }));
+      await TripsService.addTrip(fakeTripDataWith({ userId: userId }));
+      await TripsService.addTrip(fakeTripDataWith({ userId: userId }));
+      await TripsService.addTrip(fakeTripDataWith({ userId: userId }));
       //await TripsService.close(savedTrip._id);
       const assignedAchievements = await AchievementsService.getAchievements(
         userId
@@ -98,22 +85,22 @@ describe("An achievements calculator", () => {
     it("should assign a total-rpm-score achievement", async () => {
       const userId = "userId";
       await TripsService.addTrip(
-        fakeTripData((userId = userId), (rpmScore = 100))
+        fakeTripDataWith({ userId: userId, rpmScore: 100 })
       );
       await TripsService.addTrip(
-        fakeTripData((userId = userId), (rpmScore = 100))
+        fakeTripDataWith({ userId: userId, rpmScore: 100 })
       );
       await TripsService.addTrip(
-        fakeTripData((userId = userId), (rpmScore = 50))
+        fakeTripDataWith({ userId: userId, rpmScore: 50 })
       );
       await TripsService.addTrip(
-        fakeTripData((userId = userId), (rpmScore = 50))
+        fakeTripDataWith({ userId: userId, rpmScore: 50 })
       );
       await TripsService.addTrip(
-        fakeTripData((userId = userId), (rpmScore = 100))
+        fakeTripDataWith({ userId: userId, rpmScore: 100 })
       );
       await TripsService.addTrip(
-        fakeTripData((userId = userId), (rpmScore = 100))
+        fakeTripDataWith({ userId: userId, rpmScore: 100 })
       );
       const assignedAchievements = await AchievementsService.getAchievements(
         userId
@@ -127,16 +114,19 @@ describe("An achievements calculator", () => {
     it("should assign a total-feedbackConsideration-score achievement", async () => {
       const userId = "userId";
       await TripsService.addTrip(
-        fakeTripData((userId = userId), (rpmScore = 50))
+        fakeTripDataWith({ userId: userId, feedbackConsiderationScore: 50 })
       );
       await TripsService.addTrip(
-        fakeTripData((userId = userId), (rpmScore = 50))
+        fakeTripDataWith({ userId: userId, feedbackConsiderationScore: 50 })
       );
 
       const assignedAchievements = await AchievementsService.getAchievements(
         userId
       );
-      expect(assignedAchievements).toContain("feedbackConsiderationScore_total_100");
+
+      expect(assignedAchievements).toContain(
+        "feedbackConsiderationScore_total_100"
+      );
     });
   });
 
@@ -144,21 +134,25 @@ describe("An achievements calculator", () => {
   //rpm
   describe("when a user gathers a rpm score of 95 in a single trip", () => {
     it("should assign a max-rpm-score achievement", async () => {
+      const userId = "userId";
+
       await TripsService.addTrip(
-        fakeTripData(((userId = userId), (rpmScore = 96)))
+        fakeTripDataWith({ userId: userId, rpmScore: 96 })
       );
       const assignedAchievements = await AchievementsService.getAchievements(
         userId
       );
-      expect(assignedAchievements).toContain("ecoscore_single_trip_95");
+      expect(assignedAchievements).toContain("rpmScore_single_trip_95");
     });
   });
 
-  //global
+  //total score
   describe("when a user gathers a total score of 95 in a single trip", () => {
     it("should assign a max-total-score achievement", async () => {
+      const userId = "userId";
+
       await TripsService.addTrip(
-        fakeTripData(((userId = userId), (totalScore = 96)))
+        fakeTripDataWith({ userId: userId, totalScore: 96 })
       );
       const assignedAchievements = await AchievementsService.getAchievements(
         userId

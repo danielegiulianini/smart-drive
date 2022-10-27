@@ -1,3 +1,5 @@
+const { now } = require("../utils/time.utils");
+
 //tests utils
 const {
   validateNotEmpty,
@@ -31,7 +33,7 @@ const nonConstantRpmValues = [
   { rpm: 7000 },
   { rpm: 1000 },
 ];
-const rpmDatasets = [constantRpmValues, nonConstantRpmValues];
+const rpmDatasets = [/*constantRpmValues,*/ nonConstantRpmValues];
 
 const constantKphValues = [...Array(10)].map((_, i) => {
   return { kph: 50.0 };
@@ -257,12 +259,18 @@ describe("a stats calculator", () => {
       for (dataset of rpmDatasets) {
         const sleepBetweenMeasurementsInMillis = 50;
         for (var i = 0; i < dataset.length; i++) {
-          dataset[i].timestamp = new Date();
+          dataset[i].timestamp = now(); //moment().toDate(); // new Date(); //try here with moment
           await sleep(sleepBetweenMeasurementsInMillis);
         }
         //randomly choose the timestamp from which to consider data
-        const timestampFromWhichToCompute =
-          dataset[randomIntFromInterval(0, dataset.length - 2)].timestamp;
+        const randomIndex = randomIntFromInterval(0, dataset.length - 2);
+        const timestampFromWhichToCompute = dataset[randomIndex].timestamp;
+        console.log(
+          "the random index:" +
+            randomIndex +
+            ", so the timestampFromWhichToCompute:" +
+            timestampFromWhichToCompute
+        );
         //saving trip
         let savedTrip = await createTripWithMeasurements(dataset);
         await TripsService.close(savedTrip._id); //closing it (stats are computed only when trip is finished)
@@ -291,6 +299,7 @@ describe("a stats calculator", () => {
             )
             .map((measurement) => measurement.rpm)
         );
+
         //number, numDigits?
         expect(stats.avgRpm).toBeCloseTo(avgValue, 3);
       }

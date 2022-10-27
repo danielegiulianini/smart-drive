@@ -59,7 +59,7 @@ const tripsSchema = mongoose.Schema({
     type: Number,
   },
   duration: {
-    //seconds (as OBD)
+    //in seconds (as OBD)
     type: Number,
   },
   transactionsCount: {
@@ -82,10 +82,10 @@ const tripsSchema = mongoose.Schema({
     type: Number,
   },
   //>>these for future extensions:
-  averageEngineLoad: {
+  avgEngineLoad: {
     type: Number,
   },
-  averageAcceleration: {
+  avgAcceleration: {
     type: Number,
   },
   maxEngineLoad: {

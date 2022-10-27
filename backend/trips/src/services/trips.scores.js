@@ -8,10 +8,6 @@ const { now, subtractSeconds } = require("../utils/time.utils");
 const computeAndAssignScores = async (tripId) => {
   const scores = await computeScores(tripId);
 
-  console.log("scores returned: ");
-  console.log(scores);
-
-  //this inspects feedback consideration scores too (set by driving assistant) instead of re-examining offline all the data    ; assignStats(stats);
   const trip = await Trip.findOne({
     _id: tripId,
   });
@@ -28,14 +24,10 @@ const computeAndAssignScores = async (tripId) => {
 
 //computeScores possibly reused by driving assistant
 const computeScores = async (tripId) => {
-  const e = await computeRpmScore(tripId);
-  const t = await computeFeedbackConsiderationScoreOffline(tripId);
-  console.log("il feddback cons: ");
-  console.log(t.feedbackConsiderationScore);
   return Object.assign(
-    e, //, slidingWindowSizeForRpmInSeconds),
-    t
-    //computeSpeedScore(tripId, slidingWindowSizeForSpeedLimitInSeconds)
+    await computeRpmScore(tripId), //, slidingWindowSizeForRpmInSeconds),
+    await computeFeedbackConsiderationScoreOffline(tripId)
+    //await computeSpeedScore(tripId, slidingWindowSizeForSpeedLimitInSeconds)
   );
 };
 

@@ -9,6 +9,9 @@ const statsService = require("../services/trips.stats");
 const achievementEventsTopicPrefix = "achievementsEvents/";
 const scoreUpdatedEventsTopicPrefix = "scoreUpdatedEvents/";
 
+//for promise-based routes handlers, automatic error handling is provided by express by default
+//by chaining a .catch(next) call; this will not be needed since express 5.0.
+//See https://expressjs.com/en/guide/error-handling.html.
 const create = async (req, res) => {
   try {
     const trip = await tripsService.add(req.body);
@@ -29,19 +32,21 @@ const close = async (req, res) => {
     const trip = await tripsService.close(tripId);
     //triggering computations here possibly resulting in notifications (could also expose this funtionalities in an API to pull separately (instead of a push approach!):
     //1.compute and assign scores
-    //2.compute and assing statistics
+    //2.compute and assing statistics (check for PBs?)
     //3.check and assing achievements
     const tripTotalScore = await scoresService.computeAndAssignScores(tripId)
       .totalScore;
     publisher.publish(userId, scoreUpdatedEventsTopicPrefix + trip.userId, {
       totalScoreDelta: tripTotalScore,
     }); //assign scores to users micro
-    const achievementsEvents = await achievementsService.assignAchievements(
+    const achievementsEvents = await achievementsService.getAchievements(
       trip.userId
     );
-    publisher.publish(userId, achievementEventsTopicPrefix + trip.userId, {
-      badgeIds: achievementsEvents,
-    }); //assign badges to users micro
+    if (achievementsEvents.length > 0) {
+      publisher.publish(userId, achievementEventsTopicPrefix + trip.userId, {
+        badgesIds: achievementsEvents,
+      }); //assign badges to users micro
+    }
     await statsService.computeAndUpdateStats(tripId);
 
     res.status(201).json(trip); //todo actions to be refactored since reused
@@ -65,7 +70,7 @@ const get = async (req, res) => {
 
 const getAll = async (req, res) => {
   tripsService
-    .list()
+    .list(req.query)
     .then((trips) => res.status(200).json(trips))
     .catch((err) => res.status(400).json(err));
   /*try {

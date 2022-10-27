@@ -94,12 +94,12 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   console.log("DDDDD I MEASUREMENTS FILTERED (with aggregate): ");
   console.log(fiteredMeasur);
 
-  const meas2 = await Trip.find(
+  /*const meas2 = await Trip.find(
     {
       "measurements.timestamp": { $gte: fromTimestamp },
     },
     { lean: true }
-  );
+  );*/
 
   /*console.log("EEEEE I MEASUREMENTS FILTERED(with find) : ");
   console.log(meas2);*/

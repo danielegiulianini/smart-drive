@@ -1,7 +1,3 @@
-//THIS IS IMPORTANT
-
-//const moment = require("moment");
-
 //tests utils
 const {
   validateNotEmpty,
@@ -17,6 +13,7 @@ const {
 const {
   loadMeasurementsToTrip,
   createFakeTripWithMeasurements,
+  assignTimestampToMeasurementsUpTo,
 } = require("../../utils/trip.utils");
 
 const { arrayFilledWith } = require("../../utils/arrays.utils.js");
@@ -28,44 +25,6 @@ const {
   subtractMinutes,
   subtractSeconds,
 } = require("../../utils/time.utils.js");
-
-const assignTimestampToMeasurementsFrom = (
-  dataset,
-  from,
-  intervalInMinutes
-) => {
-  for (var i = 0; i < dataset.length; i += intervalInMinutes) {
-    const measurementTimestamp = addMinutes(from, i);
-    console.log("assigning timestamp:" + measurementTimestamp);
-    dataset[i].timestamp = measurementTimestamp; //1 measurement for every minute
-  }
-  return dataset;
-};
-
-const assignTimestampToMeasurementsUpTo = (
-  dataset,
-  upTo,
-  intervalBetweenMeasurementsInSeconds
-) => {
-  //for (var i = dataset.length; i > 0; i -= intervalInMinutes) {
-  for (var i = 0; i < dataset.length; i++) {
-    //al primo tolgo molto, all'ultimo poco...
-    const measurementTimestamp = subtractSeconds(
-      upTo,
-      (dataset.length - i) * intervalBetweenMeasurementsInSeconds
-    );
-    console.log(
-      "now subtracting:" +
-        (dataset.length - i) * intervalBetweenMeasurementsInSeconds
-    );
-    console.log("assigning timestamp:" + measurementTimestamp);
-    console.log("to measurement:");
-    console.log(dataset[i]);
-
-    dataset[i].timestamp = measurementTimestamp; //1 measurement for every minute
-  }
-  return dataset;
-};
 
 //to-test data
 const Trip = require("../../models/trips");
@@ -84,7 +43,7 @@ const fakeTripData = {
 
 //rpm fixtures
 const rpmFeedbackDeservingMeasurements = () => {
-  rpmMeasurements = [];
+  rpmMeasurements = []; //to refactor with arrayFilledWith
   for (let i = 0; i < 10; i++) {
     rpmMeasurements.push({ rpm: 4000 });
   }
@@ -145,7 +104,6 @@ describe("a driving assistant", () => {
           1 //1 seconds
         )
       );
-      //rpmExceedingTrip = await TripsService.close(rpmExceedingTrip._id);
 
       console.log("il trip created:");
       console.log(rpmExceedingTrip);
@@ -216,7 +174,7 @@ describe("a driving assistant", () => {
 
   describe("when vehicle is idling too much", () => {
     //service methods
-    it.only("should give a feedback for switching off the engine", async () => {
+    it("should give a feedback for switching off the engine", async () => {
       for (idlingDataset of idlingMeasurementsDatasets) {
         const savedTrip = await createFakeTripWithMeasurements(
           assignTimestampToMeasurementsUpTo(

@@ -49,16 +49,6 @@ describe("a trip", () => {
       validateNotEmpty(savedTrip.startTimestamp);
       validateStringEquality(savedTrip.userId, fakeTripData.userId);
     });
-
-    /*it("should trigger an error if added twice", async () => {
-      expect.assertions(2);
-      expect(async () => {
-        savedTrip = await TripsService.addTrip(fakeTripData);
-        savedTrip = await TripsService.addTrip(fakeTripData);
-      })
-        .rejects //needed for testing async code
-        .toThrow(Error);
-    });*/
   });
 
   describe("when closed", () => {
@@ -67,7 +57,6 @@ describe("a trip", () => {
       let savedTrip = await TripsService.addTrip(fakeTripData);
       await TripsService.close(savedTrip._id);
       let fetchedTrip = await TripsService.get(savedTrip._id);
-
 
       validateNotEmpty(fetchedTrip.endTimestamp);
     });
@@ -80,13 +69,18 @@ describe("a trip", () => {
     });
 
     it("should trigger an error if already closed", async () => {
+      const savedTrip = await TripsService.addTrip(fakeTripData);
+      await TripsService.close(savedTrip._id);
       expect(async () => {
-        const savedTrip = await TripsService.addTrip(fakeTripData);
-        await TripsService.close(savedTrip._id);
         await TripsService.close(savedTrip._id);
       }).rejects.toThrow(Error);
     });
   });
+
+  //other tests for trips:
+  //- retrieving (list) trips
+  //- filtering trips by userId, by date
+  //- sorting trips by ecoScore, other properties...
 });
 
 /*
@@ -117,7 +111,7 @@ describe("a trip", () => {
   ],
 */
 
-//fixtures
+//measurements' fixtures
 const fakeRpm = "1920";
 const fakeKph = "89";
 const fakeOdometer = "12";
