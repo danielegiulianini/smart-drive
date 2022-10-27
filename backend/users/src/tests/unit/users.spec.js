@@ -146,14 +146,49 @@ describe("A Profile service", () => {
       const firstInRankingEcoscores = await ProfileService.add(fakeUserData);
       const secondInRankingEcoscores = await ProfileService.add(fakeUserData2);
 
-      const leaderboard = [secondInRankingEcoscores, firstInRankingEcoscores];
+      const unsortedUsers = [secondInRankingEcoscores, firstInRankingEcoscores];
 
       firstInRankingEcoscores.ecoScore = 100;
       secondInRankingEcoscores.ecoScore = 150;
       await firstInRankingEcoscores.save();
       await secondInRankingEcoscores.save();
 
-      expect(leaderboard).toStrictEqual(leaderboard.sort((user) => user.ecoScore));
+      expect(
+        (await ProfileService.list({
+          order_by_column: "ecoScore",
+          order_by_direction: "desc",
+        })).map((user) => user._id)
+      ).toStrictEqual(
+        unsortedUsers.sort((user) => user.ecoScore).map((user) => user._id)
+      );
+    });
+  });
+
+  describe("when retrieving users sorted by ecoscore and ordered by desc", () => {
+    it("should list them correctly", async () => {
+      const firstInRankingEcoscores = await ProfileService.add(fakeUserData2);
+      const secondInRankingEcoscores = await ProfileService.add(fakeUserData);
+
+      const unsortedUsers = [secondInRankingEcoscores, firstInRankingEcoscores];
+
+      firstInRankingEcoscores.ecoScore = 100;
+      secondInRankingEcoscores.ecoScore = 150;
+      await firstInRankingEcoscores.save();
+      await secondInRankingEcoscores.save();
+
+      expect(
+        (
+          await ProfileService.list({
+            order_by_column: "ecoScore",
+            order_by_direction: "asc",
+          })
+        ).map((user) => user._id)
+      ).toStrictEqual(
+        unsortedUsers
+          .sort((user) => user.ecoScore)
+          .reverse()
+          .map((user) => user._id)
+      );
     });
   });
 

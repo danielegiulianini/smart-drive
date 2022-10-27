@@ -1,15 +1,16 @@
 const Profile = require("../models/users");
+const { omit } = require("../utils/jsObjectUtils");
 
-const list = async () => {
+const list = async (query) => {
   //add filtering, sorting, paginating
-  const orderByColumn = req.query.order_by_column || "created_at";
-  const orderByDirection = req.query.order_by_direction || "desc";
-  //const page = req.query.page || 1;
-  const limit = req.query.limit || 20;
+  const orderByColumn = query.order_by_column || "created_at";
+  const orderByDirection = query.order_by_direction || "desc";
+  //const page = query.page || 1;
+  const limit = query.limit || 20;
 
   //remove the pagination and sorting letting filtering only (or directly pick the complementary of them)
-  const query = omit(
-    req.query,
+  const selection = omit(
+    query,
     "orderByColumn",
     "orderByDirection",
     "page",
@@ -17,7 +18,7 @@ const list = async () => {
   );
 
   return (
-    Profile.find(query)
+    Profile.find(selection, { lean: true })
       .sort({ [orderByColumn]: orderByDirection }) //ECMAScript 2015 (ES6)'s Computed property names
       //.skip(limit * page)
       .limit(limit)
