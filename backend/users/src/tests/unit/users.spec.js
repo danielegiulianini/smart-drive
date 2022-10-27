@@ -127,8 +127,8 @@ describe("A Profile service", () => {
     });
   });
 
-  describe("when it's removed", () => {
-    it("should not be listed anymore if asked", async () => {
+  describe("when a user's removed", () => {
+    it("should not list it anymore if asked", async () => {
       await ProfileService.add(fakeUserData);
       await ProfileService.remove(fakeUserData._id);
 
@@ -141,11 +141,27 @@ describe("A Profile service", () => {
     });
   });
 
+  describe("when retrieving users sorted by ecoscore and ordered by desc", () => {
+    it("should list them correctly", async () => {
+      const firstInRankingEcoscores = await ProfileService.add(fakeUserData);
+      const secondInRankingEcoscores = await ProfileService.add(fakeUserData2);
+
+      const leaderboard = [secondInRankingEcoscores, firstInRankingEcoscores];
+
+      firstInRankingEcoscores.ecoScore = 100;
+      secondInRankingEcoscores.ecoScore = 150;
+      await firstInRankingEcoscores.save();
+      await secondInRankingEcoscores.save();
+
+      expect(leaderboard).toStrictEqual(leaderboard.sort((user) => user.ecoScore));
+    });
+  });
+
   //other tests:
   //- non deve ritornare users che non ho inserito
   //- removing a not-existing user triggers error...
   //- check default values are applied (in particular, for: scores levels, achievements)
   //- check users sorting by ecoscores...
-  //- check pagination 
+  //- check pagination
   //...
 });
