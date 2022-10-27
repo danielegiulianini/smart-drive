@@ -50,7 +50,8 @@ const getModels = async (req, res) => {
 const getSeries = async (req, res) => {
   console.log("a request for series arrived");
   setResponseWithGetJsonDataFrom(
-    "https://www.fueleconomy.gov/ws/rest/vehicle/menu/model",
+    //"https://www.fueleconomy.gov/ws/rest/vehicle/menu/model",
+    "https://www.fueleconomy.gov/ws/rest/vehicle/menu/options",
     {
       params: {
         //must use QUERY params to speak to fueleconomy

@@ -10,7 +10,7 @@ const VehicleModelsController = require("../controllers/vehicleModels");
 //no delete nor post
 
 router
- // .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
+ // .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //not needed here 
   .route("/vehiclesModels/productionYears/")
   .get(VehicleModelsController.getYears);
 
@@ -35,5 +35,4 @@ router
   .get(VehicleModelsController.getVehiclesDetails); //todo: check query params not null (either one of the 2)
 
 
-
-module.exports = router;
+  module.exports = router;

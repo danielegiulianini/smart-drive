@@ -141,12 +141,7 @@ describe("A User Vehicle service", () => {
 
       //add a vehicle for another user
       await UserVehicleService.add(secondUserVehicle);
-      console.log("returned are:");
-      console.log(
-        await UserVehicleService.list({
-          userId: aUserId,
-        })
-      );
+      
       //the first (two) have to be listed as of the first user (the last one has not to be listed as of the first user)
       expect(
         (
@@ -164,6 +159,5 @@ describe("A User Vehicle service", () => {
   //- non deve ritornare user's vehicles che non ho inserito
   //- removing a not-existing user's vehicle triggers error...
   //- check default values are applied
-  //- check filtering vehicles by user
   //...
 });

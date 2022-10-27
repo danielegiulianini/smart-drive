@@ -20,6 +20,7 @@
   "devDependencies": {
     "jest": "^29.2.0",
     "mongodb-memory-server": "^8.9.3",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "supertest": "^6.3.1"
   }
 }
