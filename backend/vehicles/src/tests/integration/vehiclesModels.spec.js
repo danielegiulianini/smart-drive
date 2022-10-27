@@ -5,6 +5,9 @@ const routes = require('../../routes');
 const app = express();
 app.use('/api/v1', routes);
 
+
+//I ask a vehicle for which I know... the response... and match against it
+
 describe('Book service integration tests', () => {
 
     test("Get first 5 results for 'Harry Potter' search", async () => {
