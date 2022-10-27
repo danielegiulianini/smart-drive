@@ -7,7 +7,9 @@ const add = async (userVehicle) => {
     .then((result) => {
       //could be in middleware too this validation (together with checknull)
       if (result) {
-        throw new TypeError(`The user vehicle ${userVehicle._id} already exists`);
+        throw new TypeError(
+          `The user vehicle ${userVehicle._id} already exists`
+        );
       }
     })
     .then(() => UserVehicle.create(userVehicle));
@@ -43,7 +45,7 @@ const get = async (vin) => {
 };
 
 //get all the associations (possibly with filter on userId (query param))
-const list = async (userId) => {
+/*const list = async (userId) => {
   console.log(`Getting vehicles.`);
   //if not providing filter it returns all the vehicles
   return UserVehicle.find(
@@ -53,6 +55,12 @@ const list = async (userId) => {
         }
       : {}
   );
+};*/
+
+const list = async (query) => {
+  console.log(`Getting vehicles.`);
+  //if not providing filter it returns all the vehicles
+  return UserVehicle.find(query);
 };
 
 module.exports = {

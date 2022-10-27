@@ -138,20 +138,25 @@ describe("A User Vehicle service", () => {
       //add (two) vehicles for the same user
       await UserVehicleService.add(firstUserVehicle1);
       await UserVehicleService.add(firstUserVehicle2);
-      
+
       //add a vehicle for another user
       await UserVehicleService.add(secondUserVehicle);
-
+      console.log("returned are:");
+      console.log(
+        await UserVehicleService.list({
+          userId: aUserId,
+        })
+      );
+      //the first (two) have to be listed as of the first user (the last one has not to be listed as of the first user)
       expect(
         (
           await UserVehicleService.list({
             userId: aUserId,
           })
         ).map((userVehicle) => userVehicle._id)
-      ).toStrictEqual(vehiclesOfFirstUser.map((user) => user._id));
-
-      //the first (two) have to be listed as of the first user (the last one has not to be listed as of the first user)
-      expect(await UserVehicleService.get(fakeUserVehicleData._id)).toBeNull();
+      ).toStrictEqual(
+        vehiclesOfFirstUser.map((userVehicle) => userVehicle._id)
+      );
     });
   });
 

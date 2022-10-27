@@ -30,7 +30,7 @@ const getAll = async (req, res) => {
   console.log("(1)the userId passed is " + req.query.userId);
 
   userVehiclesService
-    .list(req.query.userId)
+    .list(req.query)
     .then((f) => res.status(200).json(f))
     .catch((err) => res.status(400).json(err));
 };
