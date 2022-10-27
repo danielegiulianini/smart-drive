@@ -14,7 +14,7 @@ const setupRoutes = () => {
     console.log("notifications backend connected to mqtt broker");
 
     publishSubscribe.subscribe([notificationsTopics], () => {
-      console.log(`notifications backend subscribed to topic '${topic}'`);
+      console.log(`notifications backend subscribed to topic '${notificationsTopics}'`);
     });
   });
 
