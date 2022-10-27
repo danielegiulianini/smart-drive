@@ -17,6 +17,11 @@ router
   .route("/:userId")
   .get(ProfileController.get);
 
+  router
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
+  .route("/")
+  .get(ProfileController.list);
+
 router
   .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
   .route("/:userId")

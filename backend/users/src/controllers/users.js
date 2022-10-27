@@ -13,8 +13,7 @@ const create = async (req, res) => {
     country: req.body.country,
   };
 
-  ProfileService
-    .add(params)
+  ProfileService.add(params)
     .then((profile) => res.status(201).json(profile)) //todo actions to be refactored since reused
     .catch((err) => res.status(400).json(err));
 };
@@ -22,8 +21,7 @@ const create = async (req, res) => {
 const get = (req, res) => {
   const userId = req.params.userId;
 
-  ProfileService
-    .get(userId)
+  ProfileService.get(userId)
     .then((profile) => res.status(200).json(profile))
     //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));
@@ -35,9 +33,17 @@ const edit = (req, res) => {
   //params to be filtered before DB interaction for safety reason
   const params = req.body;
 
-  ProfileService
-    .edit(userId, params)
+  ProfileService.edit(userId, params)
     .then((profile) => res.status(200).json(profile))
+    //should use a dto here (response containing sensitive info!)
+    .catch((err) => res.status(400).json(err));
+};
+
+const list = (req, res) => {
+  //params to be filtered before DB interaction for safety reason (in validation middleware)
+
+  ProfileService.list(req.query)
+    .then((profiles) => res.status(200).json(profiles))
     //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));
 };
@@ -46,4 +52,5 @@ module.exports = {
   create,
   get,
   edit,
+  list,
 };

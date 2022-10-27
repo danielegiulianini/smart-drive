@@ -90,6 +90,8 @@ const setupRoutes = () => {
     }
 
     console.log("Received Message:", topic, payload.toString());
+
+    
   });
 };
 
