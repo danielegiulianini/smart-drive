@@ -13,6 +13,13 @@ const create = async (req, res) => {
     country: req.body.country,
   };
 
+
+  console.log("la req ottenuta: ")
+  console.log(req.body)
+
+  console.log("i params ottenuti: ")
+  console.log(params)
+
   ProfileService.add(params)
     .then((profile) => res.status(201).json(profile)) //todo actions to be refactored since reused
     .catch((err) => res.status(400).json(err));

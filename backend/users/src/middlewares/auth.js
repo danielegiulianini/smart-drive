@@ -8,7 +8,7 @@ const supabase = createClient.createClient(
 //backend copy token from headers to body of client request
 const extractUserIdFromTokenAndPutItToBody = async (req, res, next) => {
   let error = "";
-
+  console.log("requested an entry point that needs authentication");
   if (req.headers.authorization) {
     //retrieve access_token from request
     let access_token = req.headers.authorization;

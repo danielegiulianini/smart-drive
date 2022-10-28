@@ -7,23 +7,21 @@ const ProfileController = require("../controllers/users");
 //TODO: instead of the controller's handler (directly) could bind to the path an action method that
 //does some prints (so removing them from tha handlers)
 
+//router.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //set up middleware for post too? yes, because with supabase you have set it already
+
 router
- // .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //set up middleware for post too? yes, because with supabase you have set it already
   .route("/")
   .post(ProfileController.create);
 
 router
-  //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
   .route("/:userId")
   .get(ProfileController.get);
 
   router
-  //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
   .route("/")
   .get(ProfileController.list);
 
 router
- // .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
   .route("/:userId")
   .put(ProfileController.edit);
 
