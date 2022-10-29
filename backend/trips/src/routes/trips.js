@@ -9,15 +9,16 @@ const TripsController = require("../controllers/trips");
 
 //routes' base url: trips/api/v1/
 
+/*router
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //set up middleware for post too? yes, because with supabase you have set it already*/
+
 router
-  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
   .route("/")
   //here calling validators
   .get(TripsController.getAll);
 
 //get single trip? yes, for detail
 router
-  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
   .route("/:id")
   //here calling validators
 
@@ -25,7 +26,7 @@ router
 
 //write API
 router
-  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //set up middleware for post too? yes, because with supabase you have set it already
+  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) 
   .route("/")
   //here calling validators
 
@@ -34,10 +35,8 @@ router
 //order of preference: PATCH (no need in REST to send all the resource but cors complicated), PUT (idempotency gratis but cors
 //complicated). So, post.
 router
-  .use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //set up middleware for post too? yes, because with supabase you have set it already
   .route("/:tripId")
   //here calling validators
-
   .post(TripsController.close);
 //close is a verb! not rest!
 
