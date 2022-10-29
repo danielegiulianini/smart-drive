@@ -48,6 +48,7 @@ const addMeasurement = async (vin, newMeasurementParams) => {
 
 //handle closing trip (invoked by HTTP)  by adding the endTimestamp
 const close = async (tripId) => {
+  console.log("closing trip " + tripId);
   // if it was already closed? override it? (no need for atomicity of findOneAndUpdate since is very
   // rare to access (reand and write) the same trip from different frontends)
   const tripToEnd = await Trip.findOne({
@@ -57,9 +58,10 @@ const close = async (tripId) => {
     throw new TypeError(`The trip ${tripId} doesn't exist.`);
   } else {
     if (tripToEnd.endTimestamp) {
+      console.log("trip has already been closed")
       throw new TypeError(`The trip ${tripToEnd._id} has already been closed.`);
     } else {
-      tripToEnd.endTimestamp = now(); //new Date(); //moment().utcOffset(0, true).toDate();
+      tripToEnd.endTimestamp = now();
       await tripToEnd.save();
     }
   }

@@ -38,21 +38,23 @@ const close = async (req, res) => {
     //3.check and assing achievements
     const tripTotalScore = await scoresService.computeAndAssignScores(tripId)
       .totalScore;
-    publisher.publish(userId, scoreUpdatedEventsTopicPrefix + trip.userId, {
+    publisher.publish(scoreUpdatedEventsTopicPrefix + trip.userId, {
       totalScoreDelta: tripTotalScore,
     }); //assign scores to users micro
     const achievementsEvents = await achievementsService.getAchievements(
       trip.userId
     );
     if (achievementsEvents.length > 0) {
-      publisher.publish(userId, achievementEventsTopicPrefix + trip.userId, {
+      publisher.publish(achievementEventsTopicPrefix + trip.userId, {
         badgesIds: achievementsEvents,
       }); //assign badges to users micro
     }
     await statsService.computeAndUpdateStats(tripId);
-
+console.log("sending trip")
     res.status(201).json(trip); //todo actions to be refactored since reused
   } catch (err) {
+    console.log("error happened")
+console.log(err)
     res.status(400).json(err);
   }
 };
