@@ -16,9 +16,11 @@ const list = async (query) => {
     "page",
     "limit"
   );
+  console.log("la selection:")
+  console.log(selection)
 
   return (
-    Profile.find(selection, { lean: true })
+    await Profile.find(selection)
       .sort({ [orderByColumn]: orderByDirection }) //ECMAScript 2015 (ES6)'s Computed property names
       //.skip(limit * page)
       .limit(limit)
