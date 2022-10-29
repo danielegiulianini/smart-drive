@@ -28,6 +28,11 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   //- if there's no trips open? discard
   //- it there is: update it
 
+  console.log(
+    "in addMeasurements: vin is" + vin + "and the measurement params:"
+  );
+  console.log(newMeasurementParams);
+
   const currentTrip = await Trip.findOne({
     $and: [
       { vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
@@ -36,7 +41,7 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   });
 
   if (currentTrip) {
-    newMeasurementParams.timestamp = now();//moment().utcOffset(0, true).toDate(); //new Date();//NOT USING TIME ZONE SINCE MONGODB DOES NOT USE IT (in default endTimestamp)
+    newMeasurementParams.timestamp = now(); //moment().utcOffset(0, true).toDate(); //new Date();//NOT USING TIME ZONE SINCE MONGODB DOES NOT USE IT (in default endTimestamp)
     currentTrip.measurements.push(newMeasurementParams);
 
     //must set timestamp of measurement
@@ -58,7 +63,7 @@ const close = async (tripId) => {
     throw new TypeError(`The trip ${tripId} doesn't exist.`);
   } else {
     if (tripToEnd.endTimestamp) {
-      console.log("trip has already been closed")
+      console.log("trip has already been closed");
       throw new TypeError(`The trip ${tripToEnd._id} has already been closed.`);
     } else {
       tripToEnd.endTimestamp = now();
