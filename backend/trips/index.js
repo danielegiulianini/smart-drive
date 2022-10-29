@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 //  return res.status(500).json(err)
 //})
 
-const port = 8083; //const port = Number(process.env.TRIPS_MICROSERVICE_INTERNAL_PORT);
+const port = 8084; //const port = Number(process.env.TRIPS_MICROSERVICE_INTERNAL_PORT);
 
 //retrieve connection string from config file (.env or inside config folder)
 const dbConfig = require("./src/config/db.config");

@@ -79,9 +79,9 @@ const list = async (query) => {
 };
 
 //single trip
-const get = async (userId) => {
-  console.log(`Getting trip by ID: ${userId}`);
-  return Trip.findById(userId);
+const get = async (tripId) => {
+  console.log(`Getting trip by ID: ${tripId}`);
+  return Trip.findById(tripId);
 };
 
 module.exports = {
