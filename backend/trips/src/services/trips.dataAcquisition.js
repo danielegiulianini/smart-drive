@@ -34,10 +34,11 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   console.log(newMeasurementParams);
 
   const currentTrip = await Trip.findOne({
-    $and: [
+    vehicleIdentificationNumber: vin,
+    /*$and: [
       { vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
       { endTimestamp: null }, //returning both: 1. documents with existing endTImestamp but set to null and 2. without it
-    ],
+    ],*/
   });
 
   if (currentTrip) {
@@ -45,9 +46,10 @@ const addMeasurement = async (vin, newMeasurementParams) => {
     currentTrip.measurements.push(newMeasurementParams);
 
     //must set timestamp of measurement
-    await currentTrip.save();
+    return await currentTrip.save();
   } else {
     console.log("no trips to post published measurements to are there.");
+    return currentTrip;
   }
 };
 
