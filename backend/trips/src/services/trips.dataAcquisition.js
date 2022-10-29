@@ -36,7 +36,7 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   });
 
   if (currentTrip) {
-    newMeasurementParams.timestamp = moment().utcOffset(0, true).toDate(); //new Date();//NOT USING TIME ZONE SINCE MONGODB DOES NOT USE IT (in default endTimestamp)
+    newMeasurementParams.timestamp = now();//moment().utcOffset(0, true).toDate(); //new Date();//NOT USING TIME ZONE SINCE MONGODB DOES NOT USE IT (in default endTimestamp)
     currentTrip.measurements.push(newMeasurementParams);
 
     //must set timestamp of measurement

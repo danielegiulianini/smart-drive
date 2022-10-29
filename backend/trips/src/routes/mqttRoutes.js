@@ -23,7 +23,11 @@ const setupRoutes = () => {
     );
 
     if (vehiclesEventsRegex.test(topic)) {
-      const vin = topic.substring(topic, vehiclesTopixPrefix.length);
+      //substring(indexStart, indexEnd)
+      const vin = topic.substring(vehiclesTopixPrefix.length);
+      console.log("the topic is: " + topic)
+
+      console.log("the vin in mqttRoutes: " + vin)
       TripController.handleNewMeasurement(vin, payload);
     }
   });
