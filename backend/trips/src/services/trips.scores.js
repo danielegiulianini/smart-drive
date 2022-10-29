@@ -153,7 +153,7 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
   ]);
 
   console.log("la feedbackConsMetric: ");
-  console.log(feedbackConsMetric);
+  console.log(feedbackConsMetric[0]);
 
   const notMoreThan = (value, threshold) => {
     return value > threshold ? threshold : value;

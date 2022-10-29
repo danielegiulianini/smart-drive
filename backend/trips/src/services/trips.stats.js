@@ -57,9 +57,11 @@ const computeStats = async (tripId, fromTimestamp) => {
 //take it from odometer ot from OpenStreetData by getting distance of every 2 positions values: the first!
 const computeDistanceAndTimeTraveledStats = async (tripId) => {
   return (
-    Trip.findOne({}, tripId)
+    Trip.findOne({ _id: tripId })
       //sorting here?
       .then((trip) => {
+        console.log("the trips is: ");
+        console.log(trip);
         if (trip.measurements.length > 0) {
           const odometerAvailable =
             trip.measurements[trip.measurements.length - 1].odometer &&
