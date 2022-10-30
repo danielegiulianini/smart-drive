@@ -9,24 +9,29 @@ const User = require("../models/users");
 //join... (retrieve un po' più complicato)
 
 //funzione che aggiunge un achievement alla lista dello user
-async function unlockAchievements(userIds, ...achievements) {
-  if (userIds.length == 0) {
-    return;
-  }
 
-  let users = await User.find({
-    _id: { $in: userIds },
-  });
-  for (let user of users) {
-    for (let achievement of achievements) {
-      if (!user.unlockedAchievements.includes(achievement)) {
-        user.unlockedAchievements.push(achievement);
+//it returns the achievements unlocked
+async function unlockAchievements(userIds, achievements) {
+  let unlockedAchievements = [];
+  if (userIds.length > 0) {
+    let users = await User.find({
+      _id: { $in: userIds },
+    });
+    for (let user of users) {
+      for (let achievement of achievements) {
+        if (!user.unlockedAchievements.includes(achievement)) {
+          unlockedAchievements.push(achievement);
+          //user.unlockedAchievements.push(achievement);
+        }
       }
+      user.unlockedAchievements = unlockedAchievements;
+      await user.save();
     }
-    await user.save();
+    //not putting publish here but at higher level to ease testing (no mocking needed)
   }
-  //not putting publish here but at higher level to ease testing (no mocking needed)
+  return unlockedAchievements;
 }
+
 module.exports = {
   unlockAchievements,
 };

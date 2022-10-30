@@ -130,6 +130,17 @@ describe("A Levels service", () => {
     expect(updatedUser.level).toBe(fetchedTrip.level);
   });
 
+  /*describe("and the score", () => {
+    it("should persist the new level", async () => {
+      await Profile.create(fakeUserData);
+      const { updatedUser, levelChanged } = await LevelsService.scoresChanged(
+        fakeUserData._id,
+        300 //the mimimum for raising user level
+      );
+      const fetchedTrip = await Profile.findById(fakeUserData._id);
+      expect(updatedUser.level).toBe(fetchedTrip.level);
+    });
+  });*/
   //other tests:
   //...
 });

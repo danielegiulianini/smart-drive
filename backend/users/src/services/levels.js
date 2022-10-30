@@ -16,13 +16,16 @@ const scoresChanged = async (userId, scoreDelta) => {
 
   //let possible exceptions bubble up
   const user = await Profile.findById(userId);
-  const oldLevel = user.level;
-  user.ecoScore += scoreDelta;
-  user.level = getLevel(user.ecoScore);
-  return {
-    updatedUser: await user.save(),
-    levelChanged: oldLevel != user.level,
-  };
+  if (user) {
+    const oldLevel = user.level;
+    console.log("scoreDelta: " + scoreDelta);
+    user.ecoScore += scoreDelta;
+    user.level = getLevel(user.ecoScore);
+    return {
+      updatedUser: await user.save(),
+      levelChanged: oldLevel != user.level,
+    };
+  } else throw TypeError("Cannot updateScore for not-existing user");
 };
 
 //contains the logic for scores-levels mapping

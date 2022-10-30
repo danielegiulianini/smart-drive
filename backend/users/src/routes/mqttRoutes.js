@@ -5,7 +5,6 @@ const publisher = require("../utils/publishSubscribe");
 
 //handles mqtt routing based on topics (topic-based routing)
 //to be read from (global (with other micros)) config (constants) file
-const notificationsTopicPrefix = "notifications/";
 
 const achievementEventsTopicPrefix = "achievementsEvents/";
 const achievementEventsRegex = new RegExp(
@@ -17,14 +16,16 @@ const scoreUpdatedEventsTopicPrefix = "scoreUpdatedEvents/";
 const scoreUpdatedEventsRegex = new RegExp(
   "^" + scoreUpdatedEventsTopicPrefix + "[^/]+$"
 );
-const scoreUpdatedEventsTopics = scoreUpdatedEventsRegex + "+";
+const scoreUpdatedEventsTopics = scoreUpdatedEventsTopicPrefix + "+";
+
+const notificationsTopicPrefix = "notifications/";
 
 const setupRoutes = () => {
   publisher.subscribe(
     [achievementEventsTopics, scoreUpdatedEventsTopics],
     () => {
       console.log(
-        `Subscribed to topic '${achievementEventsTopics} and '${scoreUpdatedEventsTopics}'`
+        `Subscribed to topic ${achievementEventsTopics} and ${scoreUpdatedEventsTopics}`
       );
     }
   );
@@ -35,18 +36,19 @@ const setupRoutes = () => {
     console.log("mqtt client connected");
   });
   publisher.onMessage(async (topic, payload) => {
+    console.log(
+      `received msg at users server of topic '${topic}' with content '${payload.toString()}'`
+    );
     const payloadAsObject = JSON.parse(payload);
 
     if (achievementEventsRegex.test(topic)) {
       try {
-        const userId = topic.substring(
-          topic,
-          achievementEventsTopicPrefix.length
-        );
+        const userId = topic.substring(achievementEventsTopicPrefix.length);
+
         const achievementsUnlocked =
           await AchievementsService.unlockAchievements(
             [userId],
-            payloadAsObject.badgesIds
+            payloadAsObject.badgesIds //before accessing like this a message-format check should be done
           );
 
         publisher.publish(
@@ -56,17 +58,16 @@ const setupRoutes = () => {
             body: "You unlocked badge: " + achievementName,
           }))
         );
-      } catch {
+      } catch (err) {
         console.log(
-          "error in processing message with payload: " + payload + "at users"
+          "error in processing message with payload: " + payload + " at users"
         ); //log the error (cannot respond to client)
+        console.log(err);
+
       }
     } else if (scoreUpdatedEventsRegex.test(topic)) {
       try {
-        const userId = topic.substring(
-          topic,
-          scoreUpdatedEventsTopicPrefix.length
-        );
+        const userId = topic.substring(scoreUpdatedEventsTopicPrefix.length);
 
         LevelsService.scoresChanged(
           userId,
@@ -79,19 +80,18 @@ const setupRoutes = () => {
             });
           }
         });
-      } catch {
+      } catch (err) {
         //possible errors in deserializing...
         console.log(
-          "error in processing message with payload: " + payload + "at trips"
+          "error in processing message with payload: " + payload + "at users"
         ); //log the error only (cannot respond to client)
+        console.log(err);
       }
     } else {
       console.log("users mqtt client ignoring message");
     }
 
     console.log("Received Message:", topic, payload.toString());
-
-    
   });
 };
 
