@@ -14,16 +14,22 @@ const setupRoutes = () => {
     console.log("notifications backend connected to mqtt broker");
 
     publishSubscribe.subscribe([notificationsTopics], () => {
-      console.log(`notifications backend subscribed to topic '${notificationsTopics}'`);
+      console.log(
+        `notifications backend subscribed to topic '${notificationsTopics}'`
+      );
     });
   });
 
   publishSubscribe.onMessage((topic, payload) => {
+    console.log(
+      `received msg at notifications server of topic: '${topic}' with content: '${payload.toString()}'`
+    );
     if (notificationEventsRegex.test(topic)) {
-      NotificationsController.onMessageArrived(JSON.parse(payload));
-      console.log("Received notification message:", topic, payload.toString());
+      NotificationsController.onMessageArrived(payload);
     } else {
-      console.log("no messages for notifications at notifications microservice")
+      console.log(
+        "no messages for notifications at notifications microservice"
+      );
     }
   });
 };
