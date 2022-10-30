@@ -9,7 +9,7 @@ async function onMessageArrived(msg) {
   // Check if the message packet has the required fields
   if (isMessageValid(message)) {
     console.log("message is valid!");
-    // Call the send function on EmailService
+    // Call the send function on EmailService (in my case: import the API for sending over socket.io)
     /*await emailService
     .send(message.target, message.subject, message.textBody, message.htmlBody)
     .then((p) => console.log(`[AMQP] Done, message ID : ${p.messageId}`))

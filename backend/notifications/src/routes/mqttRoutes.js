@@ -20,8 +20,10 @@ const setupRoutes = () => {
 
   publishSubscribe.onMessage((topic, payload) => {
     if (notificationEventsRegex.test(topic)) {
-      NotificationsController.onMessageArrived(payload);
+      NotificationsController.onMessageArrived(JSON.parse(payload));
       console.log("Received notification message:", topic, payload.toString());
+    } else {
+      console.log("no messages for notifications at notifications microservice")
     }
   });
 };

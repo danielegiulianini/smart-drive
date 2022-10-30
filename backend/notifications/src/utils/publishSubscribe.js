@@ -19,11 +19,11 @@ PublishSubscribe.prototype.onMessage = function (callback) {
 };
 
 PublishSubscribe.prototype.publish = function (topic, message) {
-  this.client.publish(topic, message, { qos: 0, retain: false }, (error) => {
+  this.client.publish(topic, JSON.stringify(message, { qos: 0, retain: false }, (error) => {
     if (error) {
       console.error(error);
     }
-  });
+  }));
 };
 
 module.exports = new PublishSubscribe();
