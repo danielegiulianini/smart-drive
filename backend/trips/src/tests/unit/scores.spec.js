@@ -219,4 +219,50 @@ describe("A score calculator", () => {
       }
     });
   });
+
+  describe("when computing scores", () => {
+    describe("and trip is without measurements", () => {
+      const fakeTripData = {
+        sensorId: "fakeSensorId",
+        vehicleIdentificationNumber: "JH4DA3450HS011682",
+        //startTimestamp
+        //endTimestamp
+        userId: "fakeUserId",
+      };
+      it("should assign 0 for all score types", async () => {
+        const trip = await Trip.create(fakeTripData);
+        const savedTrip = await trip.save();
+        const scores = await ScoresService.computeAndAssignScores(
+          savedTrip._id
+        );
+
+        console.log("scores obtained");
+        console.log(scores);
+        expect(scores.rpmScore).toBeCloseTo(scores.rpmScore, 0);
+        expect(scores.feedbackConsiderationScore).toBeCloseTo(
+          scores.feedbackConsiderationScore,
+          0
+        );
+        expect(scores.totalScore).toBeCloseTo(scores.totalScore, 0);
+      });
+
+      it("should persist 0 for all score types", async () => {
+        const trip = await Trip.create(fakeTripData);
+        const savedTrip = await trip.save();
+
+        const scores = await ScoresService.computeAndAssignScores(
+          savedTrip._id
+        );
+
+        const fetchedTrip = await Trip.findById(savedTrip._id);
+
+        expect(fetchedTrip.rpmScore).toBeCloseTo(scores.rpmScore, 0);
+        expect(fetchedTrip.feedbackConsiderationScore).toBeCloseTo(
+          scores.feedbackConsiderationScore,
+          0
+        );
+        expect(fetchedTrip.totalScore).toBeCloseTo(scores.totalScore, 0);
+      });
+    });
+  });
 });

@@ -1,4 +1,4 @@
-const { now } = require("../utils/time.utils");
+const { now } = require("../../utils/time.utils");
 
 //tests utils
 const {
@@ -213,7 +213,7 @@ describe("a stats calculator", () => {
   //duration
   describe("when asked for the duration of a trip", () => {
     //service methods
-    it("should consider its starting and ending timestamp", async () => {
+    it.only("should consider its starting and ending timestamp", async () => {
       const tripApproximateDuration = 1000; //milliseconds
       const savedTrip = await createTripWithMeasurements(constantRpmValues);
       await sleep(tripApproximateDuration);
@@ -221,7 +221,10 @@ describe("a stats calculator", () => {
       const stats = await TripsStatsService.computeAndUpdateStats(
         savedTrip._id
       );
-      expect(stats.duration).toBeCloseTo(tripApproximateDuration / 1000, 0);
+      expect(stats.duration).toBeCloseTo(
+        tripApproximateDuration / 1000 / 60,
+        0
+      );
     });
   });
 

@@ -20,7 +20,7 @@ const getAndAssignFeedback = async (tripId, measurementPayload) => {
   return newFeedbacks ? newFeedbacks[0] : null;
 };
 
-const millis_in_seconds = 1000;
+//const millis_in_seconds = 1000;
 
 //feedbacks are given analyzing either scores or exact measurements
 const getFeedbacks = async (tripId, measurementPayload) => {

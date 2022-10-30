@@ -27,7 +27,7 @@ const create = async (req, res) => {
 //For sure, only the pair, so, for REST-compliancy, I should use patch, but it
 //complicates cors handling, so I use a post
 const close = async (req, res) => {
-  console.log(`calling ${req.method} ${req.originalUrl}`)
+  console.log(`calling ${req.method} ${req.originalUrl}`);
 
   const tripId = req.params.tripId;
   try {
@@ -36,11 +36,13 @@ const close = async (req, res) => {
     //1.compute and assign scores
     //2.compute and assing statistics (check for PBs?)
     //3.check and assing achievements
-    const tripTotalScore = await scoresService.computeAndAssignScores(tripId)
+    const tripTotalScore = (await scoresService.computeAndAssignScores(tripId))
       .totalScore;
-    publisher.publish(scoreUpdatedEventsTopicPrefix + trip.userId, {
-      totalScoreDelta: tripTotalScore,
-    }); //assign scores to users micro
+    if (tripTotalScore > 0) {
+      publisher.publish(scoreUpdatedEventsTopicPrefix + trip.userId, {
+        totalScoreDelta: tripTotalScore,
+      }); //assign scores to users micro
+    }
     const achievementsEvents = await achievementsService.getAchievements(
       trip.userId
     );
@@ -48,19 +50,20 @@ const close = async (req, res) => {
       publisher.publish(achievementEventsTopicPrefix + trip.userId, {
         badgesIds: achievementsEvents,
       }); //assign badges to users micro
+    } else {
+      console.log("no achievements got by trip");
     }
     await statsService.computeAndUpdateStats(tripId);
-console.log("sending trip")
     res.status(201).json(trip); //todo actions to be refactored since reused
   } catch (err) {
-    console.log("error happened")
-console.log(err)
+    console.log("error happened");
+    console.log(err);
     res.status(400).json(err);
   }
 };
 
 const get = async (req, res) => {
-  console.log(`calling ${req.method} ${req.originalUrl}`)
+  console.log(`calling ${req.method} ${req.originalUrl}`);
 
   tripsService
     .get(req.params.tripId)
@@ -75,7 +78,7 @@ const get = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-  console.log(`calling ${req.method} ${req.originalUrl}`)
+  console.log(`calling ${req.method} ${req.originalUrl}`);
 
   tripsService
     .list(req.query)

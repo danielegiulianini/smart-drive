@@ -4,12 +4,12 @@ const Trip = require("../models/trips");
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
-  console.log("calling computeAndUpdateStats with params:");
-  console.log(tripId);
-  console.log(fromTimestamp);
+ // console.log("calling computeAndUpdateStats with params:");
+  //console.log(tripId);
+  //console.log(fromTimestamp);
   const stats = await computeStats(tripId, fromTimestamp);
-  console.log("putting in document values:");
-  console.log(stats);
+ // console.log("putting in document values:");
+  //console.log(stats);
   //materializing stats for performances reason (should increase transaction count too)
   const statsDocs = await Trip.findOneAndUpdate(
     {
@@ -27,8 +27,8 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
       new: true, //returning updated user
     }
   );
-  console.log("nel then di computeandUopdateStats, statsdoc is :");
-  console.log(statsDocs);
+ // console.log("nel then di computeandUopdateStats, statsdoc is :");
+ // console.log(statsDocs);
   return statsDocs;
 };
 
@@ -67,8 +67,12 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
             trip.measurements[trip.measurements.length - 1].odometer &&
             trip.measurements[0].odometer;
 
+          console.log("odometer is available?:" + odometerAvailable);
+          console.log("endtumestamp is" + trip.endTimestamp);
+          console.log("starttumestamp is" + trip.startTimestamp);
+
           return {
-            duration: (trip.endTimestamp - trip.startTimestamp) / 1000, // divide by 1000 as Date records timestamp in milliseconds and seconds are returned
+            duration: (trip.endTimestamp - trip.startTimestamp) / 1000 / 60, // divide by 1000 as Date records timestamp in milliseconds and seconds are returned
             distance: odometerAvailable
               ? trip.measurements[trip.measurements.length - 1].odometer -
                 trip.measurements[0].odometer //in km as OBD
@@ -84,17 +88,18 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
 };
 
 const computeEngineStats = async (tripId, fromTimestamp) => {
-  console.log("calling computeEngineStats with tripId: " + tripId);
-  console.log("calling computeEngineStats with fromTimestamp: ");
-  console.log(fromTimestamp);
+  // console.log("calling computeEngineStats with tripId: " + tripId);
+  //console.log("calling computeEngineStats with fromTimestamp: ");
+  // console.log(fromTimestamp);
 
-  const fiteredMeasur = await Trip.aggregate([
+  //only for debugging
+  /*const fiteredMeasur = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" },
     { $match: { "measurements.timestamp": { $gte: fromTimestamp } } },
   ]);
   console.log("DDDDD I MEASUREMENTS FILTERED (with aggregate): ");
-  console.log(fiteredMeasur);
+  console.log(fiteredMeasur);*/
 
   /*const meas2 = await Trip.find(
     {
@@ -129,20 +134,20 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   if (fromTimestamp) {
     //splice(start, deleteCount)
     console.log("splicing...");
-    console.log("il fromtimestamp2:");
-    console.log(fromTimestamp);
+    //console.log("il fromtimestamp2:");
+    //console.log(fromTimestamp);
     queryStages.splice(2, 0, {
       $match: { "measurements.timestamp": { $gte: fromTimestamp } },
     });
   }
 
-  console.log("the resulting query stage:");
-  console.log(queryStages);
+  //console.log("the resulting query stage:");
+  //console.log(queryStages);
 
   //all in one query mongoose
   let statsDocs = await Trip.aggregate(queryStages);
-  console.log("le stats ritornano:");
-  console.log(statsDocs);
+  // console.log("le stats ritornano:");
+  //console.log(statsDocs);
   return statsDocs.length > 0 ? statsDocs[0] : null;
 };
 

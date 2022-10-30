@@ -34,11 +34,10 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   console.log(newMeasurementParams);
 
   const currentTrip = await Trip.findOne({
-    vehicleIdentificationNumber: vin,
-    /*$and: [
+    $and: [
       { vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
       { endTimestamp: null }, //returning both: 1. documents with existing endTImestamp but set to null and 2. without it
-    ],*/
+    ],
   });
 
   if (currentTrip) {
