@@ -23,7 +23,10 @@ const setupRoutes = () => {
       [notificationsTopics, drivingNotificationsTopics],
       () => {
         console.log(
-          `notifications backend subscribed to topic '${notificationsTopics}'`
+          `notifications backend subscribed to topic '${[
+            notificationsTopics,
+            drivingNotificationsTopics,
+          ]}'`
         );
       }
     );
@@ -34,13 +37,15 @@ const setupRoutes = () => {
       `received msg at notifications server of topic: '${topic}' with content: '${payload.toString()}'`
     );
     if (notificationEventsRegex.test(topic)) {
-      NotificationsController.onNewNotification(payload);
-    } else if (notificationEventsRegex.test(topic)) {
-      NotificationsController.onNewDrivingNotification(payload);
+      const userId = topic.substring(notificationsTopixPrefix.length);
+
+      NotificationsController.onNewNotification(userId, payload);
+    } else if (drivingNotificationEventsRegex.test(topic)) {
+      const userId = topic.substring(drivingNotificationsTopixPrefix.length);
+
+      NotificationsController.onNewDrivingNotification(userId, payload);
     } else {
-      console.log(
-        "no mqtt messages at notifications microservice"
-      );
+      console.log("no mqtt messages at notifications microservice");
     }
   });
 };
