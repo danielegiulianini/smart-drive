@@ -20,9 +20,9 @@ function onNewNotification(userId, notification) {
   }
 }
 
-function onNewDrivingNotification(userId, notification) {
+function onNewDrivingNotification(userId, drivingNotification) {
   if (userId) {
-    context.socket.volatile.emit("notification", notification);
+    context.socket.volatile.emit("drivingNotification", drivingNotification); //using volatile here for not saving messages whule out of connection
   } else {
     console.log(
       `User with id ${userId} is not currently logged in to notifications microservice`
@@ -32,6 +32,7 @@ function onNewDrivingNotification(userId, notification) {
 
 //used by index.html
 const onConnection = function (socket) {
+  users[socket.tokenUserId] = socket;
   socket.on("logout", () => logout(socket.tokenUserId));
   socket.on("disconnect", function () {
     onUserDisconnected(socket.tokenUserId);

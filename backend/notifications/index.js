@@ -27,13 +27,6 @@ async function startServer() {
   setupRoutes();
   console.log("routes bound");
 
-  //only used if exposing REST endpoint tpo (ex. for showing all users notifications)
-  /*app.listen(port, () =>
-    console.log(
-      `Notification backend listening on port ${port} and subscribed for MQTT data (notification)`
-    )
-  );*/
-
   console.log("setting up socket.io endpoint...");
 
   const io = require("socket.io")(server, {
@@ -44,7 +37,7 @@ async function startServer() {
   });
 
   //auth middleware
-  io.use(authenticateAndSaveUserId);
+  //io.use(authenticateAndSaveUserId);
 
   io.on("connection", function (socket) {
     console.log("New connection available");
@@ -52,6 +45,13 @@ async function startServer() {
   });
 
   console.log("socket.io endopoint setup");
+
+    //only used if exposing REST endpoint tpo (ex. for showing all users notifications)
+  server.listen(port, () =>
+    console.log(
+      `Notification backend listening on port ${port} and subscribed for MQTT data (notification)`
+    )
+  );
 }
 
 startServer();
