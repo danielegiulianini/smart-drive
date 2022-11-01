@@ -1,6 +1,16 @@
+const express = require("express");
+
 const { setupRoutes } = require("./src/routes/mqttRoutes");
-const mqtt = require("mqtt");
+const {
+  notificationsController,
+} = require("./src/controllers/NotificationsController");
+
+const http = require("http");
+
 const port = 8088; //const port = Number(process.env.NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT);
+const app = express();
+
+const server = http.createServer(app);
 
 async function startServer() {
   //only used if exposing REST endpoint (ex. for showing all users notifications)
@@ -22,6 +32,23 @@ async function startServer() {
       `Notification backend listening on port ${port} and subscribed for MQTT data (notification)`
     )
   );*/
+
+  console.log("setting up socket.io endpoint...");
+
+  const io = require("socket.io")(server, {
+    cors: {
+      origin: true,
+      methods: ["GET", "POST"],
+    },
+  });
+
+  //auth middleware
+  io.on("connection", function (socket) {
+    console.log("New connection available");
+    notificationsController.onConnection(socket);
+  });
+
+  console.log("socket.io endopoint setup");
 }
 
 startServer();
