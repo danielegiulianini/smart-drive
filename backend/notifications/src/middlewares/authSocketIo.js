@@ -1,7 +1,6 @@
 const { validateToken } = require("../middlewares/auth");
 
-const authenticate = async (socket, next) => {
-  //
+const authenticateAndSaveUserId = async (socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token) {
     await validateToken(access_token)
       .then((access_token) => {
@@ -20,4 +19,4 @@ const authenticate = async (socket, next) => {
   next(new Error("Authentication error"));
 };
 
-module.exports = authenticate;
+module.exports = authenticateAndSaveUserId;
