@@ -3,6 +3,7 @@ import HelloWorld from "../components/HelloWorld.vue";
 import TheAppProfilePage from "../views/TheAppProfilePage.vue";
 import TripsOverviewPage from "../views/TripsOverviewPage.vue";
 import TripDetailPage from "../views/TripDetailPage.vue";
+import DashboardPage from "../views/DashboardPage.vue";
 
 const routes = [
   {
@@ -23,6 +24,7 @@ const routes = [
     component: TripsOverviewPage,
   },
   { path: "/trips/:id", component: TripDetailPage },
+  { path: "/dashboard", component: DashboardPage },
 ];
 
 const router = createRouter({
