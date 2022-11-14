@@ -4,11 +4,11 @@ const Trip = require("../models/trips");
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
- // console.log("calling computeAndUpdateStats with params:");
+  // console.log("calling computeAndUpdateStats with params:");
   //console.log(tripId);
   //console.log(fromTimestamp);
   const stats = await computeStats(tripId, fromTimestamp);
- // console.log("putting in document values:");
+  // console.log("putting in document values:");
   //console.log(stats);
   //materializing stats for performances reason (should increase transaction count too)
   const statsDocs = await Trip.findOneAndUpdate(
@@ -27,8 +27,8 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
       new: true, //returning updated user
     }
   );
- // console.log("nel then di computeandUopdateStats, statsdoc is :");
- // console.log(statsDocs);
+  // console.log("nel then di computeandUopdateStats, statsdoc is :");
+  // console.log(statsDocs);
   return statsDocs;
 };
 
@@ -111,7 +111,7 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   /*console.log("EEEEE I MEASUREMENTS FILTERED(with find) : ");
   console.log(meas2);*/
 
-  let queryStages = [
+  const queryStages = [
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" }, //$unwind the services array before grouping, else group will give you array of arrays
     //or a filter + javascript manipulation (more flexible) instead of this last group
@@ -151,6 +151,56 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   return statsDocs.length > 0 ? statsDocs[0] : null;
 };
 
+const computeMeasurementAttributeComposition = async (
+  tripId,
+  fromTimestamp,
+  attributeName,
+  arrayOfRanges,
+  defaultValue
+) => {
+  const queryStages = await db.collection.aggregate([
+    { $match: { _id: tripId } }, //filter only data of requested trip
+    { $unwind: "$measurements" },
+    {
+      $bucket: {
+        groupBy: "$measurements." + attributeName,
+        boundaries: arrayOfRanges,
+        default: defaultValue, //Number.NEGATIVE_INFINITY
+        output: {
+          count: { $sum: 1 },
+        },
+      },
+    },
+  ]);
+  if (fromTimestamp) {
+    console.log("splicing...");
+    queryStages.splice(2, 0, {
+      $match: { "measurements.timestamp": { $gte: fromTimestamp } },
+    });
+  }
+
+  return statsDocs.length > 0 ? statsDocs[0] : null;
+};
+
+const computeSpeedComposition = async (tripId, fromTimestamp) => {
+  return computeMeasurementAttributeComposition(
+    tripId,
+    fromTimestamp,
+    "speed",
+    [0, 30, 50, 60, 130, 300],
+    0
+  );
+};
+
+const computeRpmComposition = async (tripId, fromTimestamp) => {
+  return computeMeasurementAttributeComposition(
+    tripId,
+    fromTimestamp,
+    "rpm",
+    [0, 300, 600, 1200, 3000, 4000],
+    0
+  );
+};
 module.exports = {
   computeEngineStats,
   computeDistanceAndTimeTraveledStats,
