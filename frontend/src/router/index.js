@@ -4,6 +4,7 @@ import TheAppProfilePage from "../views/TheAppProfilePage.vue";
 import TripsOverviewPage from "../views/TripsOverviewPage.vue";
 import TripDetailPage from "../views/TripDetailPage.vue";
 import DashboardPage from "../views/DashboardPage.vue";
+import GaragePage from "../views/GaragePage.vue";
 
 const routes = [
   {
@@ -12,7 +13,7 @@ const routes = [
     component: HelloWorld,
   },
   {
-    path: "/profile",
+    path: "/profile/:id",
     name: "Profile",
     //props:true,
     component: TheAppProfilePage,
@@ -25,6 +26,7 @@ const routes = [
   },
   { path: "/trips/:id", component: TripDetailPage },
   { path: "/dashboard", component: DashboardPage },
+  { path: "/garage", component: GaragePage }, //or vehicles...
 ];
 
 const router = createRouter({
