@@ -10,6 +10,9 @@ import GaragePage from "../views/GaragePage.vue";
 import VehicleDetailPage from "../views/VehicleDetailPage.vue";
 import VehicleDetailPage2 from "../views/VehicleDetailPage2.vue";
 import ScorePage from "../views/ScorePage.vue";
+import DriveModePage from "../views/DriveModePage.vue";
+import DriveModePage2 from "../views/DriveModePage2.vue";
+import SignupStepperFormPage from "../views/SignupStepperFormPage.vue";
 
 const routes = [
   {
@@ -35,7 +38,10 @@ const routes = [
   { path: "/garage", component: GaragePage }, //or vehicles...
   { path: "/vehicle/:id", component: VehicleDetailPage }, //or vehicles...
   { path: "/vehicle2/:id", component: VehicleDetailPage2 }, //or vehicles...
-  { path: "/scores/:id", component: ScorePage }, //or vehicles...
+  { path: "/drive/:id", component: DriveModePage },
+  { path: "/drive2/:id", component: DriveModePage2 },
+  { path: "/score/:id", component: ScorePage },
+  { path: "/signup/", component: SignupStepperFormPage },
 ];
 
 const router = createRouter({
