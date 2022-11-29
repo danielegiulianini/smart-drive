@@ -1,5 +1,8 @@
 <template>
-  <div class="p-3 d-grid gap-2 d-flex justify-content-between">
+  <div
+    class="p-3 d-grid gap-2 d-flex justify-content-between step-wrapper"
+    :class="stepWrapperClass"
+  >
     <button
       class="btn btn-primary w-50"
       type="button"
@@ -13,7 +16,7 @@
       class="btn btn-primary w-50"
       type="button"
       @click="nextStep"
-      :disabled="laststep"
+      v-if="!laststep"
     >
       <!--style="width:100px"-->
       Next
