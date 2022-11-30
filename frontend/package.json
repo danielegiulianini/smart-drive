@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.1.1",
+    "axios": "^1.2.0",
+    "progressbar.js": "^1.1.0",
     "sass": "^1.56.1",
     "vue": "^3.2.41",
     "vue-router": "^4.1.6",
