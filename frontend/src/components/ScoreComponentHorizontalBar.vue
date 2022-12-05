@@ -10,6 +10,7 @@
             data-bs-placement="top"
             data-html="true"
             :title="scoreToolTip"
+            ref="info"
           >
           </i>
         </h6>
@@ -32,6 +33,9 @@
 
 <script>
 import AppHorizontalProgressBarVue from "../components/AppHorizontalProgressBar.vue";
+//import { Tooltip } from "/assets/style/vendor/bootstrap/js/bootstrap.esm.min.js";
+
+import { Tooltip } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 export default {
   props: {
@@ -58,6 +62,9 @@ export default {
   },
   components: {
     AppHorizontalProgressBarVue,
+  },
+  mounted() {
+    new Tooltip(this.$refs.info);
   },
 };
 </script>
