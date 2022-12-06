@@ -143,4 +143,19 @@ describe("A Levels service", () => {
   });*/
   //other tests:
   //...
+
+  describe("when asked to track a users scores", () => {
+    it("should only persist the last X scores of each user", async () => {
+      const X = 14;
+      const user = await Profile.create(fakeUserData);
+      for (var i = 1; i <= X + 10; i++) {
+        await LevelsService.trackUsersScores();
+      }
+      const fetchedUser = await Profile.findById(fakeUserData._id);
+      expect(fetchedUser.scoresTrend.length).toBe(X);
+    });
+  });
+
+  //still to:
+  //- check scoresTrend dates
 });

@@ -50,34 +50,44 @@ const fakeUserData2 = {
 describe("A Profile service", () => {
   describe("when a user is added for the first time", () => {
     it("should return it correctly", async () => {
-      const savedTrip = await ProfileService.add(fakeUserData);
+      const savedUser = await ProfileService.add(fakeUserData);
 
-      expect(savedTrip._id).toBe(fakeUserData._id);
-      expect(savedTrip.name).toBe(fakeUserData.name);
-      expect(savedTrip.surname).toBe(fakeUserData.surname);
-      expect(savedTrip.gender).toBe(fakeUserData.gender);
-      expect(savedTrip.language).toBe(fakeUserData.language);
-      expect(savedTrip.email).toBe(fakeUserData.email);
-      expect(savedTrip.city).toBe(fakeUserData.city);
-      expect(savedTrip.country).toBe(fakeUserData.country);
+      expect(savedUser._id).toBe(fakeUserData._id);
+      expect(savedUser.name).toBe(fakeUserData.name);
+      expect(savedUser.surname).toBe(fakeUserData.surname);
+      expect(savedUser.gender).toBe(fakeUserData.gender);
+      expect(savedUser.language).toBe(fakeUserData.language);
+      expect(savedUser.email).toBe(fakeUserData.email);
+      expect(savedUser.city).toBe(fakeUserData.city);
+      expect(savedUser.country).toBe(fakeUserData.country);
+
       //level, score and achievements
+      expect(savedUser.scoresTrend).toEqual([]);
+      expect(savedUser.ecoScore).toBe(0);
+      expect(savedUser.level).toBe(0);
+      expect(savedUser.unlockedAchievements).toEqual([]);
     });
 
     it("should persist it correctly", async () => {
       //aggiungo user e me lo ritrovo come lo ho aggiunto
       await ProfileService.add(fakeUserData);
 
-      const fetchedTrip = await Profile.findById(fakeUserData._id);
+      const fetchedUser = await Profile.findById(fakeUserData._id);
 
-      expect(fetchedTrip._id).toBe(fakeUserData._id);
-      expect(fetchedTrip.name).toBe(fakeUserData.name);
-      expect(fetchedTrip.surname).toBe(fakeUserData.surname);
-      expect(fetchedTrip.gender).toBe(fakeUserData.gender);
-      expect(fetchedTrip.language).toBe(fakeUserData.language);
-      expect(fetchedTrip.email).toBe(fakeUserData.email);
-      expect(fetchedTrip.city).toBe(fakeUserData.city);
-      expect(fetchedTrip.country).toBe(fakeUserData.country);
+      expect(fetchedUser._id).toBe(fakeUserData._id);
+      expect(fetchedUser.name).toBe(fakeUserData.name);
+      expect(fetchedUser.surname).toBe(fakeUserData.surname);
+      expect(fetchedUser.gender).toBe(fakeUserData.gender);
+      expect(fetchedUser.language).toBe(fakeUserData.language);
+      expect(fetchedUser.email).toBe(fakeUserData.email);
+      expect(fetchedUser.city).toBe(fakeUserData.city);
+      expect(fetchedUser.country).toBe(fakeUserData.country);
+
       //level, score and achievements
+      expect(fetchedUser.scoresTrend).toEqual([]);
+      expect(fetchedUser.ecoScore).toBe(0);
+      expect(fetchedUser.level).toBe(0);
+      expect(fetchedUser.unlockedAchievements).toEqual([]);
     });
   });
 
@@ -100,19 +110,19 @@ describe("A Profile service", () => {
         name: updatedName,
       });
 
-      const fetchedTrip = await Profile.findById(fakeUserData._id);
+      const fetchedUser = await Profile.findById(fakeUserData._id);
 
       //changes what to be changed
-      expect(fetchedTrip.name).toBe(updatedName);
+      expect(fetchedUser.name).toBe(updatedName);
 
       //no-changes what to be not changed
-      expect(fetchedTrip._id).toBe(fakeUserData._id);
-      expect(fetchedTrip.surname).toBe(fakeUserData.surname);
-      expect(fetchedTrip.gender).toBe(fakeUserData.gender);
-      expect(fetchedTrip.language).toBe(fakeUserData.language);
-      expect(fetchedTrip.email).toBe(fakeUserData.email);
-      expect(fetchedTrip.city).toBe(fakeUserData.city);
-      expect(fetchedTrip.country).toBe(fakeUserData.country);
+      expect(fetchedUser._id).toBe(fakeUserData._id);
+      expect(fetchedUser.surname).toBe(fakeUserData.surname);
+      expect(fetchedUser.gender).toBe(fakeUserData.gender);
+      expect(fetchedUser.language).toBe(fakeUserData.language);
+      expect(fetchedUser.email).toBe(fakeUserData.email);
+      expect(fetchedUser.city).toBe(fakeUserData.city);
+      expect(fetchedUser.country).toBe(fakeUserData.country);
     });
 
     it("should throw an error if new user' email is already taken", async () => {
@@ -154,10 +164,12 @@ describe("A Profile service", () => {
       await secondInRankingEcoscores.save();
 
       expect(
-        (await ProfileService.list({
-          order_by_column: "ecoScore",
-          order_by_direction: "desc",
-        })).map((user) => user._id)
+        (
+          await ProfileService.list({
+            order_by_column: "ecoScore",
+            order_by_direction: "desc",
+          })
+        ).map((user) => user._id)
       ).toStrictEqual(
         unsortedUsers.sort((user) => user.ecoScore).map((user) => user._id)
       );
@@ -195,7 +207,7 @@ describe("A Profile service", () => {
   //other tests:
   //- non deve ritornare users che non ho inserito
   //- removing a not-existing user triggers error...
-  //- check default values are applied (in particular, for: scores levels, achievements)
+  //- check remaining default values are applied
   //- check users listing (getAll)
   //- check pagination
   //...
