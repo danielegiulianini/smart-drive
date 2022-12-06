@@ -25,6 +25,10 @@ const userVehicleSchema = mongoose.Schema({
   userId: {
     type: Number,
   },
+  retired: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("UserVehicles", userVehicleSchema);
