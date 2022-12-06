@@ -190,7 +190,7 @@ services:
     ports:
       - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
-      - reverse-proxy  #leveraging dependencies' transitivity here
+      - nginx-proxy  #leveraging dependencies' transitivity here
     networks:
       - frontend
 
