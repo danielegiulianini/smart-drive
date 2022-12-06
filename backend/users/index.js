@@ -5,6 +5,8 @@
 var express = require("express");
 var app = express();
 const { setupRoutes } = require("./src/routes/mqttRoutes");
+const { runEveryDaySinceNow } = require("./src/utils/time.utils.js");
+const { trackUsersScores } = require("./src/services/levels.js");
 
 //cors library abstracts header-writing
 const cors = require("cors");
@@ -28,7 +30,7 @@ async function startServer() {
   console.log("Connecting to db...");
   await dbUtil.connect(dbConfig);
   console.log("Connected!");
-  
+
   console.log("Setting up routes ...");
   const routes = require("./src/routes");
   app.use("/api/v1", routes);
@@ -38,6 +40,9 @@ async function startServer() {
   app.listen(port, () =>
     console.log(`users backend listening on port ${port}!`)
   );
+
+  
+  runEveryDaySinceNow(trackUsersScores);
 }
 
 startServer();
