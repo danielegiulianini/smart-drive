@@ -1,3 +1,4 @@
+const { now } = require("mongoose");
 const Profile = require("../models/users");
 
 //callback chiamata con l'aumento di punti
@@ -38,6 +39,18 @@ const getLevel = (score) => {
   return Math.round(score / scorePerLevel);
 };
 
+const trackUsersScores = async () => {
+  const lastDaysCountOfTrackedScore = 14;
+  //for each user push to scores its current score
+  for await (const user of Profile.find()) {
+    user.scoresTrend.push({ score: user.ecoScore }); //createdAt defaults to current timestamp
+    //take only at most 14-days-old score
+    user.scoresTrend.slice(-lastDaysCountOfTrackedScore); //user.scoresTrend.filter((score) => score.createdAt > subtractDays(now(), 14)
+    await user.save();
+  }
+};
+
 module.exports = {
   scoresChanged,
+  trackUsersScores,
 };
