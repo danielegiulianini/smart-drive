@@ -14,12 +14,12 @@
       <div class="pagetitle">
         <h1>My Garage</h1>
 
-        <nav>
+        <!--  <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
             <li class="breadcrumb-item active">My Trips</li>
           </ol>
-        </nav>
+        </nav>-->
       </div>
       <!-- End Page Title -->
     </div>
@@ -38,7 +38,7 @@
         </div>
         <div>
           <button
-            class="btn btn-light d-none d-lg-block"
+            class="btn btn-light d-none d-sm-block"
             type="button"
             style="border-color: gray"
           >
@@ -61,7 +61,7 @@
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#flush-collapseOne"
-                aria-expanded="false"
+                aria-expanded="true"
                 aria-controls="flush-collapseOne"
               >
                 Active
@@ -70,14 +70,27 @@
 
             <div
               id="flush-collapseOne"
-              class="accordion-collapse collapse"
+              class="accordion-collapse collapse show"
               aria-labelledby="flush-headingOne"
               data-bs-parent="#accordionFlushExample"
             >
               <div class="accordion-body">
                 <div
-                  class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-5 g-4"
+                  class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4"
                 >
+                  <!-- :key is a low-level hint for Vue -->
+                  <!-- _id is the _id of userVehicle (not of vehicleModel)-->
+                  <VehicleCard
+                    v-for="(vehicle, index) in userVehiclesWithModelDetails"
+                    :key="vehicle._id"
+                    :_id="vehicle._id"
+                    :make="vehicle.make"
+                    :model="vehicle.model"
+                    :makeLogoImgUrl="makeLogoImgUrlByMake[vehicle.make]"
+                    :comb08="vehicle.comb08"
+                    :fuelType="vehicle.fuelType"
+                    :trany="vehicle.trany"
+                  ></VehicleCard>
                   <VehicleCard></VehicleCard>
                   <VehicleCard></VehicleCard>
                   <VehicleCard></VehicleCard>
@@ -95,7 +108,7 @@
                 aria-expanded="false"
                 aria-controls="flush-collapseTwo"
               >
-                Rtirati
+                Ritirati
               </button>
             </h2>
             <div
@@ -118,6 +131,7 @@
       </div>
     </div>
   </main>
+  <MobileAddVehicleButton></MobileAddVehicleButton>
   <TheAppMobileNavbar></TheAppMobileNavbar>
   <TheAppFooter></TheAppFooter>
 </template>
@@ -128,7 +142,9 @@ import TheAppSidebar from "../components/TheAppSidebar.vue";
 import TheAppFooter from "../components/TheAppFooter.vue";
 import TheAppMobileNavbar from "../components/TheAppMobileNavbar.vue";
 import VehicleCard from "../components/VehicleCard.vue";
-import MobileAddVehicleButton from "../MobileAddVehicleButton.vue";
+import MobileAddVehicleButton from "../components/MobileAddVehicleButton.vue";
+import makesLogosData from "../assets/data.json"; //vehicle-make's logos
+import axios from "axios";
 
 export default {
   components: {
@@ -137,22 +153,65 @@ export default {
     TheAppFooter,
     TheAppMobileNavbar,
     VehicleCard,
+    MobileAddVehicleButton,
+  },
+  data() {
+    return {
+      userVehicles: [],
+      //not reactive:
+      makeLogoImgUrlByMake: makesLogosData //a data structure optimized for access
+        .reduce(function (result, item, index, array) {
+          result[item.name] = item.image.source;
+          return result;
+        }, {}),
+    };
+  },
+  computed: {
+    /* activeUserVehicles: userVehicles.filter((vehicle) => !vehicle.retired),
+    ritiredUserVehicles: userVehicles.filter((vehicle) => vehicle.retired),
+    vehiclesCount: userVehicles.length,*/
+    activeUserVehicles() {
+      return userVehicles.filter((vehicle) => !vehicle.retired);
+    },
+    ritiredUserVehicles() {
+      return userVehicles.filter((vehicle) => vehicle.retired);
+    },
+    activeUserVehiclesCount() {
+      return userVehicles().length;
+    },
+    ritiredUserVehiclesCount() {
+      return ritiredUserVehicles().length;
+    },
+  },
+  methods: {},
+  mounted() {
+    console.log("makes logo data is: ", this.makeLogoImgUrlByMake);
+    //fetch all the vehicles of the user from vehicles microservice and pass as props to vehicle cards!
+    //manually joining userVehicles and vehicleModels here
+    /*const loggedInUserId = 12; //this.$store.state.user.id;
+    axios
+      .get(`vehicles/userVehicles?userId=${loggedInUserId}`)
+      .then((result) => {
+        const userVehicles = result.data;
+        const promises = userVehicles.map((userVehicle) => {
+          return axios
+            .get(`vehicles/vehicleModels/vehicleDetails/${userVehicle.vehicleModelId}`)//retrieving vehicles details
+            .then((res) => {
+              res.data;
+            });
+        });
+        Promise.all(promises)
+          .then((usersVehicleWithModelDetails) => {
+            console.log(usersVehicleWithModelDetails);
+            this.userVehicles = usersVehicleWithModelDetails;
+          })
+          .catch((err) => {
+            throw err; //rethrowing a error
+          });
+      })
+      .catch((err) => console.error(err)); //communicate something to user?*/
   },
 };
 </script>
 
-<style>
-.btn-circle.btn-md {
-  width: 50px;
-  height: 50px;
-  padding: 7px 10px;
-  border-radius: 25px;
-  font-size: 10px;
-  text-align: center;
-}
-.page-header {
-  padding: 20px;
-  background-color: white; /* ghostwhite;*/
-  border-radius: 10px;
-}
-</style>
+<style scoped></style>
