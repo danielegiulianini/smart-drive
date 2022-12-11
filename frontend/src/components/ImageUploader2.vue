@@ -27,16 +27,16 @@
   </div>
   <div
     class="uploader mb-1 mt-1"
-    @dragenter="OnDragEnter"
-    @dragleave="OnDragLeave"
+    @dragenter.prevent="OnDragEnter"
+    @dragleave.prevent="OnDragLeave"
     @dragover.prevent
     @drop="onDrop"
     :class="{ dragging: isDragging }"
   >
     <div class="upload-control" v-show="image">
       <!--<label for="file">Select a file</label>-->
-      <button @click="upload">Upload</button>
-      <button @click="deleteImg">Delete</button>
+      <button @click.prevent="upload">Upload</button>
+      <button @click.prevent="deleteImg">Delete</button>
     </div>
 
     <div v-show="!image">
@@ -84,14 +84,11 @@ export default {
   },
   methods: {
     OnDragEnter(e) {
-      e.preventDefault();
-
       this.dragCount++;
       this.isDragging = true;
       return false;
     },
     OnDragLeave(e) {
-      e.preventDefault();
       this.dragCount--;
       if (this.dragCount <= 0) this.isDragging = false;
     },
@@ -140,7 +137,7 @@ export default {
         this.files = [];*/
         imageSuccessfullyUploaded = true;
         // Emit FormData & image URL to the parent component
-        this.$emit("image-uploaded", { formData, imageUrl });
+        this.$emit("imageUploaded", { formData, imageUrl });
       });
     },
     deleteImg() {
@@ -149,13 +146,13 @@ export default {
       document.querySelector("#file").value = ""; //this needed for avoiding that in chrome two consecutive same files don't trigger onchange
       //remove img
       //remove from form-data
-      this.images.pop();
+      this.image = "";
       console.log("now images are ", this.image);
-      this.files.pop();
+      this.file = "";
       console.log("now files are ", this.file);
     },
   },
-  emits: ["image-uploaded"],
+  emits: ["imageUploaded"],
 };
 </script>
 
