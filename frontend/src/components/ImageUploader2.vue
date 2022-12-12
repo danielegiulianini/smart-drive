@@ -35,8 +35,14 @@
   >
     <div class="upload-control" v-show="image">
       <!--<label for="file">Select a file</label>-->
-      <button @click.prevent="upload">Upload</button>
-      <button @click.prevent="deleteImg">Delete</button>
+      <!--<button @click.prevent="upload" v-if="!(initialImage == image)">
+        Upload
+      </button>-->
+      <!--<button @click.prevent="deleteImg">Delete</button>-->
+      <button @click.prevent="deleteImg"><i class="bi bi-trash3-fill" style="font-size:100%"></i></button>
+      <button @click.prevent="upload" v-if="!(initialImage == image)">
+        <i class="bi bi-upload" style="font-size:100%"></i>
+      </button>
     </div>
 
     <div v-show="!image">
@@ -50,9 +56,9 @@
     </div>
 
     <div class="images-preview justify-content-center" v-show="image">
-      <div class="img-wrapper" v-if="image">
+      <div class="img-wrapper justify-content-center" v-if="image">
         <img :src="image" />
-        <div class="details">
+        <div class="details" v-if="file">
           <span class="name" v-if="file" v-text="file.name"></span>
           <span class="size" v-if="file" v-text="getFileSize(file.size)"></span>
         </div>
@@ -62,13 +68,13 @@
 </template>
 
 <script>
-//TODO: make it impossible to add more than one image
 import { getFileSize } from "../utils/File.js";
+import axios from "axios";
 
 export default {
   props: {
     initialImage: {
-      type: String, // Number from 0.0 to 1.0
+      type: String,
     },
   },
   data: function () {
@@ -107,6 +113,7 @@ export default {
     },
     //this is a preview
     addImage(file) {
+      this.imageSuccessfullyUploaded = false;
       console.log("addImage");
 
       if (!file.type.match("image.*")) {
@@ -124,9 +131,11 @@ export default {
     upload() {
       const formData = new FormData();
 
-      formData.append("images[]", file, file.name);
-
-      const imageUrl = URL.createObjectURL(this.files[0]);
+      formData.append("images[]", this.file, this.file.name);
+      console.log("this file is", this.file);
+      const imageUrl = URL.createObjectURL(this.file);
+      console.log("successful upload");
+      this.imageSuccessfullyUploaded = true;
 
       //axios (this can be here or in parent component)
       axios.post("/images-upload", formData).then((response) => {
@@ -135,13 +144,20 @@ export default {
         /* no remove
         this.images = [];
         this.files = [];*/
-        imageSuccessfullyUploaded = true;
+        this.imageSuccessfullyUploaded = true;
         // Emit FormData & image URL to the parent component
         this.$emit("imageUploaded", { formData, imageUrl });
       });
     },
     deleteImg() {
       console.log("deleteImage");
+      //if image was already uploaded must delete it from servers
+      console.log("imageSuccessfullyUploaded?", this.imageSuccessfullyUploaded);
+      if (this.imageSuccessfullyUploaded) {
+        console.log("deleting image from server!");
+        this.$emit("imageRemoved");
+      }
+      console.log("after if!");
       //should be using refs
       document.querySelector("#file").value = ""; //this needed for avoiding that in chrome two consecutive same files don't trigger onchange
       //remove img
@@ -152,7 +168,7 @@ export default {
       console.log("now files are ", this.file);
     },
   },
-  emits: ["imageUploaded"],
+  emits: ["imageUploaded", "imageRemoved"],
 };
 </script>
 
