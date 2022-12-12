@@ -39,9 +39,15 @@
         Upload
       </button>-->
       <!--<button @click.prevent="deleteImg">Delete</button>-->
-      <button @click.prevent="deleteImg"><i class="bi bi-trash3-fill" style="font-size:100%"></i></button>
-      <button @click.prevent="upload" v-if="!(initialImage == image)">
-        <i class="bi bi-upload" style="font-size:100%"></i>
+      <button @click.prevent="deleteImg">
+        <i class="bi bi-trash3-fill" style="font-size: 100%"></i>
+      </button>
+      <button
+        class="ms-1"
+        @click.prevent="upload"
+        v-if="!(initialImage == image)"
+      >
+        <i class="bi bi-upload" style="font-size: 100%"></i>
       </button>
     </div>
 
@@ -111,19 +117,22 @@ export default {
       const files = e.dataTransfer.files;
       if (files.length > 0) this.addImage(files[0]);
     },
-    //this is a preview
+    validateImage(file) {
+      let valid = true;
+      if (!file.type.match("image.*")) {
+        this.invalidImageMessage = `${file.name} is not an image`;
+        valid = false;
+      }
+      return valid;
+    },
     addImage(file) {
       this.imageSuccessfullyUploaded = false;
-      console.log("addImage");
-
-      if (!file.type.match("image.*")) {
-        console.log(`${file.name} is not an image`);
-        return;
+      if (this.validateImage(file)) {
+        this.file = file;
+        const reader = new FileReader();
+        reader.onload = (e) => (this.image = e.target.result);
+        reader.readAsDataURL(file);
       }
-      this.file = file; //const img = new Image();
-      const reader = new FileReader();
-      reader.onload = (e) => (this.image = e.target.result);
-      reader.readAsDataURL(file);
     },
     getFileSize(size) {
       getFileSize(size);
