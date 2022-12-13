@@ -36,11 +36,13 @@ const close = async (req, res) => {
     //1.compute and assign scores
     //2.compute and assing statistics (check for PBs?)
     //3.check and assing achievements
-    const tripTotalScore = (await scoresService.computeAndAssignScores(tripId))
-      .totalScore;
-    if (tripTotalScore > 0) {
+    const tripScore = await scoresService.computeAndAssignScores(tripId);
+    if (tripScore.totalScore > 0) {
       publisher.publish(scoreUpdatedEventsTopicPrefix + trip.userId, {
-        totalScoreDelta: tripTotalScore,
+        totalScore: tripScore.totalScore,
+        speedScore: tripScore.speedScore,
+        rpmScore: tripScore.rpmScore,
+        feedbackConsiderationScore: tripScore.feedbackConsiderationScore,
       }); //assign scores to users micro
     }
     const achievementsEvents = await achievementsService.getAchievements(
