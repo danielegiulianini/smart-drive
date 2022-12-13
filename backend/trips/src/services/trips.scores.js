@@ -13,10 +13,12 @@ const computeAndAssignScores = async (tripId) => {
   });
   trip.rpmScore = scores.rpmScore;
   trip.feedbackConsiderationScore = scores.feedbackConsiderationScore;
-  //trip.speedScore = scores.speedScore;
+  trip.speedScore = scores.speedScore;
 
   trip.totalScore =
-    0.7 * scores.rpmScore + 0.3 * scores.feedbackConsiderationScore; //* scores.speedScore;
+    0.6 * scores.rpmScore +
+    0.3 * scores.feedbackConsiderationScore +
+    0.1 * scores.speedScore;
 
   //saving one time only here
   return await trip.save();
@@ -26,8 +28,8 @@ const computeAndAssignScores = async (tripId) => {
 const computeScores = async (tripId) => {
   return Object.assign(
     await computeRpmScore(tripId), //, slidingWindowSizeForRpmInSeconds),
-    await computeFeedbackConsiderationScoreOffline(tripId)
-    //await computeSpeedScore(tripId, slidingWindowSizeForSpeedLimitInSeconds)
+    await computeFeedbackConsiderationScoreOffline(tripId),
+    await computeSpeedScore(tripId)
   );
 };
 
@@ -35,6 +37,9 @@ const computeSpeedScore = async (tripId) => {
   //fecthing limits
   //stdev wrt limits
   //variance depends on windowSize
+  return {
+    speedScore: 0,
+  };
 };
 
 //joining here scores computation that can be computed with a single query performance reason)
