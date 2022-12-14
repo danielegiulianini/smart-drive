@@ -20,19 +20,28 @@ const scoresChanged = async (
       new: true, //returning the new version
     }
   );*/
-
   //let possible exceptions bubble up
   const user = await Profile.findById(userId);
   if (user) {
     const oldLevel = user.level;
-    console.log("scoreDelta: " + totalScore);
+    console.log("trip's total score: " + totalScore);
+    console.log("trip's speed score: " + speedScore);
+    console.log("trip's rpm score: " + rpmScore);
+    console.log("trip's feedback cons score: " + feedbackConsiderationScore);
+
     user.xp += totalScore;
-    user.speedScore;
-    user.ecoScore = (ecoScore + totalScore) / 2;
-    user.rpmScore = (ecoScore + rpmScore) / 2;
-    user.speedScore = (ecoScore + speedScore) / 2;
+
+    //user's score after one trip should be the trip score, otherwise: previous score too is taken into consideration
+    user.ecoScore =
+      user.ecoScore == 0 ? totalScore : (user.ecoScore + totalScore) / 2;
+    user.rpmScore =
+      user.ecoScore == 0 ? rpmScore : (user.rpmScore + rpmScore) / 2;
+    user.speedScore =
+      user.ecoScore == 0 ? speedScore : (user.speedScore + speedScore) / 2;
     user.feedbackConsiderationScore =
-      (ecoScore + feedbackConsiderationScore) / 2;
+      user.ecoScore == 0
+        ? feedbackConsiderationScore
+        : (user.feedbackConsiderationScore + feedbackConsiderationScore) / 2;
 
     user.level = getLevel(user.ecoScore);
     return {
