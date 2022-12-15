@@ -1,23 +1,24 @@
 <template>
+  <!-- this is the vehicle overview card (wrt. vehicle detail card)-->
   <div class="col">
-    <div class="card">
-      <img
-        src="/src/assets/style/img/mercedes_1920.jpg"
-        class="card-img-top"
-        alt="..."
-      />
+    <div class="card nested-card" @click="$router.push(`/vehicle2/${_id}`)">
+      <!--src="/src/assets/style/img/mercedes_1920.jpg"-->
+      <img :src="pictureUri" class="card-img-top" alt="..." />
       <div class="card-body">
         <div class="d-flex justify-content-between align-middle">
           <div>
-            <h1 class="card-title mb-0 pb-2" style="font-size: 180%">Fiat</h1>
+            <h1 class="card-title mb-0 pb-2" style="font-size: 180%">
+              {{ make }}
+            </h1>
             <h6 class="card-subtitle mb-2 text-muted">
-              <span style="font-size: 140%">Panda</span>
-              <span class="badge bg-secondary ms-2">Most used</span>
+              <span style="font-size: 140%">{{ model }}</span>
+              <!--<span class="badge bg-secondary ms-2">Most used</span>-->
             </h6>
           </div>
           <div class="mt-3">
+            <!--src="https://www.carlogos.org/logo/Volkswagen-logo-2019-640x500.jpg"-->
             <img
-              src="https://www.carlogos.org/logo/Volkswagen-logo-2019-640x500.jpg"
+              :src="makeLogoImgUrl"
               style="max-width: 65px; max-height: 65px"
               alt="..."
             />
@@ -26,11 +27,11 @@
 
         <div class="d-flex justify-content-between align-middle">
           <div>
-            <span class="card-text text-bf" style="font-size: 110%"
-              >Diesel</span
-            >
+            <span class="card-text text-bf" style="font-size: 110%">{{
+              fuelType
+            }}</span>
             <p
-              class="card-text text-muted text-end"
+              class="card-text text-muted text-start"
               style="line-height: 90%; font-size: 90%"
             >
               fuel type
@@ -38,9 +39,9 @@
           </div>
 
           <div>
-            <span class="card-text text-bf" style="font-size: 110%"
-              >Automatic</span
-            >
+            <span class="card-text text-bf" style="font-size: 110%">{{
+              trany
+            }}</span>
             <p
               class="card-text text-muted text-end"
               style="line-height: 80%; font-size: 90%"
@@ -51,7 +52,9 @@
         </div>
         <div class="d-flex justify-content-between align-middle mt-1">
           <div>
-            <span class="card-text text-bf" style="font-size: 110%">2022</span>
+            <span class="card-text text-bf" style="font-size: 110%">{{
+              year
+            }}</span>
             <p
               class="card-text text-muted"
               style="line-height: 80%; font-size: 90%"
@@ -65,7 +68,7 @@
               <span
                 class="card-text text-bf text-end ms-auto"
                 style="font-size: 120%"
-                >32</span
+                >{{ comb08 }}</span
               >
             </div>
             <p
@@ -86,5 +89,65 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    _id: {
+      type: String,
+      required: true,
+    },
+    year: {
+      type: String,
+      required: true,
+    },
+    make: {
+      type: String,
+      required: true,
+    },
+    model: {
+      type: String,
+      required: true,
+    },
+    pictureUri: {
+      type: String,
+      required: true,
+    },
+    makeLogoImgUrl: {
+      type: String,
+      required: true,
+    },
+    comb08: {
+      type: String,
+      required: true,
+    },
+    fuelType: {
+      type: String,
+      required: true,
+    },
+    trany: {
+      type: String,
+      required: true,
+    },
+  },
+  mounted() {
+    console.log("my pictureUri is", this.pictureUri);
+  },
+};
 </script>
+
+<style scoped>
+.card-img-top {
+  height: 25vh;
+  object-fit: cover;
+}
+.card {
+  transition: transform 0.2s ease;
+  /*box-shadow: 0 4px 6px 0 rgba(22, 22, 26, 0.18);
+    border-radius: 0;
+    border: 0;
+    margin-bottom: 1.5em;*/
+  cursor: pointer;
+}
+.card:hover {
+  transform: scale(1.05);
+}
+</style>
