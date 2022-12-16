@@ -12,8 +12,6 @@ import GaragePage from "../views/GaragePage.vue";
 import VehicleDetailPage from "../views/VehicleDetailPage.vue";
 import VehicleDetailPage2 from "../views/VehicleDetailPage2.vue";
 import ScorePage from "../views/ScorePage.vue";
-import ScorePage2 from "../views/ScorePage2.vue";
-import ScorePage3 from "../views/ScorePage3.vue";
 
 import DriveModePage from "../views/DriveModePage.vue";
 import DriveModePage2 from "../views/DriveModePage2.vue";
@@ -25,6 +23,9 @@ import fileUpload from "../views/FileUploadPage.vue";
 import AddVehicleFormPage from "../views/AddVehicleFormPage.vue";
 import HomePage from "../views/HomePage.vue";
 import SupabaseTestPage from "../views/SupabaseTestPage.vue";
+import StartTripPage from "../views/StartTripPage.vue";
+import UserSignupFormPage from "../views/UserSignupFormPage.vue";
+import UserLoginFormPage from "../views/UserLoginPage.vue";
 
 const routes = [
   {
@@ -43,52 +44,52 @@ const routes = [
     name: "Trips",
     //props:true,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     },
     component: TripsOverviewPage,
   },
-  { path: "/trips/:id", component: TripDetailPage },                                                                     
+  { path: "/trips/:id", component: TripDetailPage },
   { path: "/trips2/:id", component: TripDetailPage2 },
   { path: "/dashboard", component: DashboardPage },
   { path: "/garage", component: GaragePage }, //or vehicles...
 
-  { path: "/vehicle/:id", component: VehicleDetailPage }, //or vehicles...
-  { path: "/vehicle2/:id", component: VehicleDetailPage2 }, //or vehicles...
+  { path: "/vehicle/:id", name: "VehicleDetail", component: VehicleDetailPage }, //or vehicles...
+  { path: "/vehicle2/:_id", component: VehicleDetailPage2, props: true }, //or vehicles... HERE PROPS ARE NEEDED
 
   { path: "/drive/:id", component: DriveModePage },
   { path: "/drive2/:id", component: DriveModePage2 },
 
   { path: "/score/:id", component: ScorePage },
-  { path: "/score2/:id", component: ScorePage2 },
-  { path: "/score3/:id", component: ScorePage3 },
 
-  { path: "/signup", name:"signup", component: SignupStepperPage },
+  { path: "/signup", name: "signup", component: SignupStepperPage },
   { path: "/signup2", component: SignupStepperPage2 },
   { path: "/signup3", component: SignupStepperPage3 },
+  { path: "/signup4", component: UserSignupFormPage },
 
   { path: "/tripsSummary", component: TripSummaryPage },
   { path: "/fileUpload", component: fileUpload },
 
   { path: "/addVehicle", component: AddVehicleFormPage },
   { path: "/supabase", component: SupabaseTestPage },
+  { path: "/startTrip", component: StartTripPage },
+  { path: "/login", component: UserLoginFormPage },
 ];
-
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
 
-//from: https://stackoverflow.com/questions/52653337/vuejs-redirect-from-login-register-to-home-if-already-loggedin-redirect-from 
+//from: https://stackoverflow.com/questions/52653337/vuejs-redirect-from-login-register-to-home-if-already-loggedin-redirect-from
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
     // if not, redirect to login page.
     if (!store.getters.isLoggedIn) {
-      console.log("user not logged in")
+      console.log("user not logged in");
       next({ name: "signup" }); //TODO CHANGE TO LOGIN!
     } else {
-      console.log("user logged in")
+      console.log("user logged in");
 
       next(); // go to wherever I'm going
     }
