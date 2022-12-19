@@ -1,36 +1,21 @@
 <template>
   <div
-    class="tab-pane fade show p-4 pb-0"
+    class="tab-pane p-4 pb-0"
     :class="{ active: isActive }"
     id="bordered-justified-home"
     role="tabpanel"
     aria-labelledby="home-tab"
   >
-    <!--Sunt est soluta temporibus accusantium neque nam maiores cumque
-          temporibus. Tempora libero non est unde veniam est qui dolor. Ut
-          sunt iure rerum quae quisquam autem eveniet perspiciatis odit.
-          Fuga sequi sed ea saepe at unde.-->
-
     <div class="row">
       <div class="col-md-4 col-lg-4 B pb-4">
         <div class="card nested-card text-center h-100">
           <div class="card-body profile-card pt-4 text-center">
             <div class="filter">
-              <a
-                class="icon"
-                href="#"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
-                ><i class="bi bi-pencil"></i
-              ></a>
+              <UserEditModal></UserEditModal>
             </div>
-            <!--<div class="d-flex flex-row-reverse bd-highlight">-->
-            <!--<a class="btn btn-secondary rounded-pill btn-sm" id="edit-badge" style="color: #999999">Edit</a>-->
-            <!--<a class="badge rounded-pill bg-light" id="edit-badge">Edit</a>-->
-            <!--</div>-->
 
             <img
-              src="/src/assets/style/img/profile-img.jpg"
+              :src="actualPictureUri"
               alt="Profile"
               class="rounded-circle mb-3 mt-3"
             />
@@ -39,13 +24,16 @@
             >
               <div>
                 <h2 class="card-title" style="font-size: 150%">
-                  Kevin Anderson
+                  {{ firstName }} {{ surname }}
                 </h2>
-                <h6>danigiulio7@gmail.com</h6>
-                <span class="text-muted small pt-2 ps-1">
-                  <i class="bi bi-geo-alt"></i> Cesenatico, Italia</span
+                <h6>{{ email }}</h6>
+                <span class="text-muted small pt-2 ps-1" v-if="country">
+                  <i class="bi bi-geo-alt"></i>{{ city }}, {{ country }}</span
                 >
               </div>
+            </div>
+            <div class="card-footer p-2">
+              member since {{ timeSince(new Date(createdAt)) }}
             </div>
           </div>
         </div>
@@ -70,12 +58,10 @@
                   <!--<div class="card-title">XP</div>-->
                   <div>
                     <div class="filter">
-                      <a
-                        class="icon"
-                        href="#"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModal"
-                        ><i class="bi bi-question-circle"></i
+                      <a class="icon" href="#">
+                        <AppTooltip
+                          content="Experience Points (XP) are gained by performing trips."
+                        ></AppTooltip
                       ></a>
                     </div>
                     <!--<div class="d-flex flex-row-reverse bd-highlight">-->
@@ -83,14 +69,18 @@
                     <!--<a class="badge rounded-pill bg-light" id="edit-badge">Edit</a>-->
                     <!--</div>-->
 
-                    <h4 style="font-size: 200%">500</h4>
+                    <h4 style="font-size: 200%">{{ xp }}</h4>
                     <!---->
-                    <span class="text-muted small pt-2 ps-1 mb-0"
-                      ><span class="fw-bold"
-                        ><i class="bi bi-arrow-up"></i> +10%</span
+                    <div class="text-center">
+                      <span class="text-muted small ps-1"
+                        >{{ xpGatheredDuringThisLevel }}/300 to level
+                        {{ level + 1 }}</span
                       >
-                      since last month</span
-                    >
+                      <AppLabeledHorizontalProgressBar
+                        :progress="xpGatheredDuringThisLevel"
+                        max="300"
+                      ></AppLabeledHorizontalProgressBar>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -103,64 +93,42 @@
               <div class="card-body profile-card pb-1">
                 <div class="mb-5 mb-sm-0">
                   <div class="filter">
-                    <a
-                      class="icon"
-                      href="#"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
-                      ><i class="bi bi-question-circle"></i
+                    <a class="icon" href="#"
+                      ><AppTooltip
+                        content="A given level is reached by gathering XPs. The higher the level the better your reputation and available features are."
+                      ></AppTooltip
                     ></a>
                   </div>
                   <h1 class="card-title mb-0">Level</h1>
-
                   <div class="d-flex justify-content-around">
                     <div>
                       <img
-                        src="/src/assets/style/img/badges/threeWheeler.png"
+                        :src="category.pictureUri"
                         alt="Profile"
                         style="width: 69px; height: 69px"
                       />
                     </div>
                     <div class="mb-0 pb-0 text-center">
                       <div class="d-flex my-auto align-middle">
-                        <div style="font-size: 200%">15</div>
+                        <div style="font-size: 200%">{{ level }}</div>
                         <small
                           class="text-muted align-middle mt-3 ps-1"
                           style="font-size: 80%"
-                          >| threeweheeler</small
+                          >| {{ category.name }}</small
                         >
                       </div>
                       <div class="text-center">
                         <span class="text-muted small ps-1"
                           >80/150 to level 10</span
                         >
-                        <div
-                          class="progress mx-5"
-                          style="height: 3px; width: 50px"
-                        >
-                          <div
-                            class="progress-bar progress-bar-striped progress-bar-animated bg-info"
-                            role="progressbar"
-                            aria-valuenow="85"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            style="width: 85%"
-                          ></div>
-                        </div>
+                        <AppLabeledHorizontalProgressBar
+                          progress=""
+                          max=""
+                        ></AppLabeledHorizontalProgressBar>
                       </div>
                     </div>
                   </div>
-                  <!--<div class="d-flex flex-row-reverse bd-highlight">-->
-                  <!--<a class="btn btn-secondary rounded-pill btn-sm" id="edit-badge" style="color: #999999">Edit</a>-->
-                  <!--<a class="badge rounded-pill bg-light" id="edit-badge">Edit</a>-->
-                  <!--</div>-->
-
-                  <!--
-                  <h4 class="d-inline-block">5</h4>
-                  <small class="text-muted"> | starter</small>
-                  <h6>Level</h6>-->
                 </div>
-                <!--</div>-->
               </div>
             </div>
           </div>
@@ -177,15 +145,25 @@
                 <h6>Filter</h6>
               </li>
 
-              <li><a class="dropdown-item" href="#">Today</a></li>
-              <li><a class="dropdown-item" href="#">This Month</a></li>
-              <li><a class="dropdown-item" href="#">This Year</a></li>
+              <li><a class="dropdown-item" href="#">Trips</a></li>
+              <li><a class="dropdown-item" href="#">Badges</a></li>
             </ul>
           </div>
 
           <div class="card-body">
-            <h5 class="card-title">Recent Activity <span>| Today</span></h5>
-
+            <h5 class="card-title">Recent Activity <span>| Trips</span></h5>
+            <div
+              class="d-flex flex-column justify-content-center align-items-center text-center"
+              style="height: 300px"
+            >
+              <h1 style="font-size: 110%">No activities</h1>
+              <p class="text-muted" style="font-size: 90%">
+                You seem to be an app beginner.
+              </p>
+            </div>
+            <!--<div class="activity h-75" style="background-color: red">
+              ciao (prova per fare display di "no reent activities...")
+            --><!--
             <div class="activity">
               <div class="activity-item d-flex">
                 <div class="activite-label">32 min</div>
@@ -197,9 +175,9 @@
                   <a href="#" class="fw-bold text-dark">explicabo officiis</a>
                   beatae
                 </div>
-              </div>
-              <!-- End activity item-->
-
+              </div>-->
+            <!-- End activity item-->
+            <!--
               <div class="activity-item d-flex">
                 <div class="activite-label">56 min</div>
                 <i
@@ -208,9 +186,9 @@
                 <div class="activity-content">
                   Voluptatem blanditiis blanditiis eveniet
                 </div>
-              </div>
-              <!-- End activity item-->
-
+              </div>-->
+            <!-- End activity item-->
+            <!--
               <div class="activity-item d-flex">
                 <div class="activite-label">2 hrs</div>
                 <i
@@ -219,9 +197,9 @@
                 <div class="activity-content">
                   Voluptates corrupti molestias voluptatem
                 </div>
-              </div>
-              <!-- End activity item-->
-
+              </div>-->
+            <!-- End activity item-->
+            <!--
               <div class="activity-item d-flex">
                 <div class="activite-label">1 day</div>
                 <i
@@ -231,9 +209,8 @@
                   Tempore autem saepe
                   <a href="#" class="fw-bold text-dark">occaecati voluptatem</a>
                 </div>
-              </div>
-              <!-- End activity item-->
-            </div>
+              </div>-->
+            <!-- End activity item-->
           </div>
         </div>
       </div>
@@ -244,15 +221,164 @@
 </template>
 
 <script>
+import AppTooltip from "./AppTooltip.vue";
+import AppLabeledHorizontalProgressBar from "./AppLabeledHorizontalProgressBar.vue";
+import UserEditModal from "./UserEditModal.vue";
+
+const defaultAvatarUri = "/src/assets/img/driverAvatar.png";
+const categories = [
+  {
+    name: "tricycle",
+    pictureUri: "/src/assets/img/levels/tricycle.png",
+  },
+  {
+    name: "threewheeler",
+    pictureUri: "/src/assets/img/levels/threeWheeler.png",
+  },
+  {
+    name: "car",
+    pictureUri: "/src/assets/img/levels/car.png",
+  },
+  {
+    name: "sport-car",
+    pictureUri: "/src/assets/img/levels/sport-car.png",
+  },
+  {
+    name: "formula",
+    pictureUri: "/src/assets/img/levels/formula.png",
+  },
+];
+
+/*_id:
+email:
+    name:
+    surname:
+    gender: NO, NON LI PROIETTO
+    language: NO, NON LI PROIETTO
+    city:
+    country:
+    profilePictureUri:
+    createdAt:
+    updatedAt:
+    lastLoginAt:
+    unlockedAchievements:
+
+    ecoScore: NO, IN OTHER PAGE
+    speedScore: NO, IN OTHER PAGE
+    rpmScore:  NO, IN OTHER PAGE
+    feedbackConsiderationScore:  NO, IN OTHER PAGE
+
+    xp:
+    level:
+    scoresTrend: [
+      {
+        score: Number,
+        referredTo: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],*/
 export default {
-  /* components: {
-  },*/
+  components: { AppLabeledHorizontalProgressBar, AppTooltip, UserEditModal },
   props: {
     isActive: {
-      type: Boolean, // Number from 0.0 to 1.0
+      type: Boolean,
       default: false,
     },
+    firstName: { required: true },
+    surname: { required: true },
+    email: { required: true },
+    city: { required: true },
+    country: { required: true },
+    profilePictureUri: { required: true },
+    createdAt: { required: true }, //this is already a date (not a string)
+    xp: { required: true },
+    level: { required: true },
   },
-  mounted() {},
+  /*data() {
+    /*return {
+      email: "",
+      name: "",
+      surname: "",
+      city: "",
+      country: "",
+      profilePictureUri: "",
+      createdAt: "",
+      xp: "",
+      level: "",
+    };*/
+  /*},*/
+  computed: {
+    actualPictureUri() {
+      return this.profilePictureUri ? this.profilePictureUri : defaultAvatarUri;
+    },
+    xpGatheredDuringThisLevel() {
+      return this.xp - this.level * 300;
+    },
+    category() {
+      console.log("calling catgory!");
+      let categoryIndex = this.scale(
+        this.level,
+        0,
+        100, //max level
+        0,
+        categories.length
+      );
+      console.log("il category index,", categoryIndex);
+
+      const lastCategoryIndex = categories.length - 1;
+      //if mroe than x levels => return last category
+      if (categoryIndex > lastCategoryIndex) {
+        categoryIndex = lastCategoryIndex;
+      }
+      console.log("il category index,", categoryIndex);
+      console.log("la gategory is", categories[categoryIndex]);
+      return categories[categoryIndex];
+    },
+  },
+
+  methods: {
+    scale(number, inMin, inMax, outMin, outMax) {
+      return ((number - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+    },
+    timeSince(date) {
+      console.log("la date to whuch say timeSince", date);
+      var seconds = Math.floor((new Date() - date) / 1000);
+
+      var interval = seconds / 31536000;
+
+      if (interval > 1) {
+        return Math.floor(interval) + " years";
+      }
+      interval = seconds / 2592000;
+      if (interval > 1) {
+        return Math.floor(interval) + " months";
+      }
+      interval = seconds / 86400;
+      if (interval > 1) {
+        return Math.floor(interval) + " days";
+      }
+      interval = seconds / 3600;
+      if (interval > 1) {
+        return Math.floor(interval) + " hours";
+      }
+      interval = seconds / 60;
+      if (interval > 1) {
+        return Math.floor(interval) + " minutes";
+      }
+      return Math.floor(seconds) + " seconds";
+    },
+  },
+  mounted() {
+    //ajax call...
+  },
 };
 </script>
+
+<style scoped>
+img {
+  object-fit: contain;
+  max-height: 105px;
+}
+</style>
