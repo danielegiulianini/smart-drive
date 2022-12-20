@@ -138,25 +138,33 @@ export default {
       getFileSize(size);
     },
     upload() {
+      //upload only if not the default image!
       const formData = new FormData();
-
-      formData.append("images[]", this.file, this.file.name);
       console.log("this file is", this.file);
-      const imageUrl = URL.createObjectURL(this.file);
-      console.log("successful upload");
-      this.imageSuccessfullyUploaded = true;
+      console.log("the image is", this.image);
 
-      //axios (this can be here or in parent component)
-      axios.post("/images-upload", formData).then((response) => {
-        //display an alert
-        console.log("All images uplaoded successfully");
-        /* no remove
+      if (this.file) {
+        formData.append("images[]", this.file, this.file.name);
+        const imageUrl = URL.createObjectURL(this.file);
+        console.log("successful upload");
+        this.imageSuccessfullyUploaded = true;
+
+        //axios (this can be here or in parent component)
+        axios.post("/images-upload", formData).then((response) => {
+          //display an alert
+          console.log("All images uplaoded successfully");
+          /* no remove
         this.images = [];
         this.files = [];*/
-        this.imageSuccessfullyUploaded = true;
-        // Emit FormData & image URL to the parent component
-        this.$emit("imageUploaded", { formData, imageUrl });
-      });
+          this.imageSuccessfullyUploaded = true;
+          // Emit FormData & image URL to the parent component
+          this.$emit("imageUploaded", { formData, imageUrl });
+        });
+      } else {
+        console.log(
+          "not uploading image as it is the default as no one is selected"
+        );
+      }
     },
     deleteImg() {
       console.log("deleteImage");
