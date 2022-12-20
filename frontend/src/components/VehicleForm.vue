@@ -37,7 +37,11 @@
           <div class="d-flex justify-content-between align-items-center">
             <label for="yourName" class="form-label">Your vehicle Image</label>
           </div>
-          <ImageUploader2 @imageUploaded="onImageInput"></ImageUploader2>
+          <ImageUploader2
+            :initial-image="getUserImage"
+            @imageUploaded="onImageInput"
+            @imageRemoved="onImageRemoved"
+          ></ImageUploader2>
 
           <div class="col-12">
             <label for="yourName" class="form-label"
@@ -77,7 +81,7 @@
                 class="form-select"
                 id="floatingSelect3"
                 aria-label="Floating label select example"
-                :disabled="makeDisabled"
+                :disabled="!vehicle.make"
                 @input="onMakeInput"
                 v-model="vehicle.make"
                 required
@@ -111,7 +115,7 @@
                 class="form-select"
                 id="floatingSelect4"
                 aria-label="Floating label select example"
-                :disabled="modelDisabled"
+                :disabled="!vehicle.model"
                 @input="onModelInput"
                 v-model="vehicle.model"
                 required
@@ -142,7 +146,7 @@
                 class="form-select"
                 id="floatingSelect4"
                 aria-label="Floating label select example"
-                :disabled="seriesDisabled"
+                :disabled="!vehicle.series"
                 @input="onSeriesInput"
                 v-model="vehicle.series"
                 required
@@ -175,7 +179,7 @@
                 name="username"
                 class="form-control"
                 id="yourUsername"
-                :disabled="vinDisabled"
+                :disabled="!vehicle._id"
                 v-model="vehicle._id"
                 required
                 pattern="{17}"
@@ -186,6 +190,7 @@
             </div>
           </div>
           <div class="pt-3 d-grid gap-2 d-flex justify-content-between">
+            <!-- this closes wrapping modal!-->
             <button
               class="btn btn-secondary w-50"
               type="button"
@@ -217,6 +222,7 @@
 import axios from "axios";
 
 import ImageUploader2 from "./ImageUploader2.vue";
+const defaultAvatarUri = "/src/assets/img/carAvatar.png";
 
 //function needed because vehicles backend returns a non-standard format (array if size>1 and object if size == 1)
 function convertToArrayIfNotAlready(possibleArray) {
@@ -231,9 +237,14 @@ export default {
     submitButtonName: {
       type: String,
     },
-    initialVehicle: {
-      type: Object,
-    },
+    _id: { required: false },
+    year: { required: false },
+    make: { required: false },
+    model: { required: false },
+    series: { required: false },
+    pictureUri: { required: false },
+    retired: { required: false },
+
     isSubmitting: {
       //used for disabling input while submitting to prevent incoeherent behaviour
       type: Boolean,
@@ -255,13 +266,13 @@ export default {
         vid: "",
       },
       vehicle: {
-        year: this.initialVehicle?.year,
-        make: this.initialVehicle?.make,
-        model: this.initialVehicle?.model,
-        series: this.initialVehicle?.series,
-        _id: this.initialVehicle?._id, //the so-called "vin"
-        pictureUri: this.initialVehicle?.pictureUri, //default picture uri
-        retired: this.initialVehicle?.pictureUri, //not needed as default in mongoose
+        _id: this._id, //the so-called "vin"
+        year: this.year, //this.initialVehicle.year,
+        make: this.make,
+        model: this.model,
+        series: this.series,
+        pictureUri: this.pictureUri, //default picture uri
+        retired: this.retired, //not needed as default in mongoose
         //---------------------------------------------
       },
       overallError: "",
@@ -272,6 +283,13 @@ export default {
         series: false,
       },
     };
+  },
+  computed: {
+    getUserImage() {
+      return this.vehicle.pictureUri
+        ? this.vehicle.pictureUri
+        : defaultAvatarUri;
+    },
   },
   methods: {
     getYears: async function () {
@@ -344,9 +362,12 @@ export default {
     onImageInput: function ({ formData, imageUrl }) {
       this.vehicle.pictureUri = imageUrl;
     },
+    onImageRemoved: function () {
+      this.vehicle.pictureUri = "";
+    },
     onYearInput: function (e) {
       this.getMakesOfYear(e.target.value); //use e.target.value because this.vehicle.year is not assigned yet as my input handler is called before the input handler of v-model
-      this.makeDisabled = false; //enable next option
+      //this.makeDisabled = false; //enable next option
       this.$refs.addVehicleForm.classList.remove("was-validated");
     },
     onMakeInput: function (e) {
@@ -357,7 +378,7 @@ export default {
         this.vehicle.make
       );
       this.getModelsOfYearAndMake(this.vehicle.year, e.target.value);
-      this.modelDisabled = false;
+      //this.modelDisabled = false;
       this.$refs.addVehicleForm.classList.remove("was-validated");
     },
     onModelInput: function (e) {
@@ -374,11 +395,11 @@ export default {
         this.vehicle.make,
         e.target.value
       );
-      this.seriesDisabled = false;
+      //this.seriesDisabled = false;
       this.$refs.addVehicleForm.classList.remove("was-validated");
     },
     onSeriesInput: function (e) {
-      this.vinDisabled = false;
+      //this.vinDisabled = false;
       this.$refs.addVehicleForm.classList.remove("was-validated");
     },
     clientSideValidateForm: function () {
@@ -396,6 +417,37 @@ export default {
           user: this.user,
         });
       } else console.log("form is not valid!");
+    },
+  },
+  //this watchers
+  watch: {
+    _id: function (value) {
+      //here the prop
+      this.vehicle._id = value;
+    },
+    year: function (value) {
+      //here the prop
+      this.vehicle.year = value;
+    },
+    make: function (value) {
+      //here the prop
+      this.vehicle.make = value;
+    },
+    model: function (value) {
+      //here the prop
+      this.vehicle.model = value;
+    },
+    series: function (value) {
+      //here the prop
+      this.vehicle.series = value;
+    },
+    pictureUri: function (value) {
+      //here the prop
+      this.vehicle.pictureUri = value;
+    },
+    retired: function (value) {
+      //here the prop
+      this.vehicle.retired = value;
     },
   },
   mounted() {
