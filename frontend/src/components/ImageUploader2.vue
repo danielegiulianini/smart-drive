@@ -83,7 +83,7 @@ export default {
       type: String,
     },
   },
-  data: function () {
+  data () {
     return {
       isDragging: false,
       invalidImageMessage: "",
@@ -186,6 +186,13 @@ export default {
     },
   },
   emits: ["imageUploaded", "imageRemoved"],
+  watch: {
+    initialImage: function (value) {
+      console.log("tttttttttttttttttttchaning image")
+      //here the prop
+      this.image = value;
+    },
+  },
 };
 </script>
 
