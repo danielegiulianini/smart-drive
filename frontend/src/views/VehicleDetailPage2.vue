@@ -40,7 +40,7 @@
         <div class="col-12 col-lg-5">
           <div class="col">
             <div class="card mb-2">
-              <img :src="overview.pictureUri" class="card-img-top" alt="..." />
+              <img :src="actualPictureUri" class="card-img-top" alt="..." />
               <div class="card-body">
                 <div class="d-flex justify-content-between align-middle">
                   <div>
@@ -55,9 +55,10 @@
                       <!--<span class="badge bg-secondary ms-2">Most used</span>-->
                     </h6>
                   </div>
-                  <div class="mt-3">
+                  <div class="mt-3 d-flex">
                     <img
                       :src="overview.makeLogoImgUrl"
+                      class="my-auto"
                       style="max-width: 65px; max-height: 65px"
                       alt="..."
                     />
@@ -77,7 +78,7 @@
                     </p>
                   </div>
 
-                  <div>
+                  <div class="text-end">
                     <span class="card-text text-end" style="font-size: 110%">{{
                       statistics.tripsCount
                     }}</span>
@@ -93,15 +94,28 @@
               <div
                 class="card-footer text-center d-flex justify-content-between my-auto"
               >
-                <small class="text-muted my-auto" v-if="tripsCount > 0"
+                <small class="text-muted my-auto" v-if="statistics.tripsCount > 0"
                   >Last trip 3 mins ago</small
                 >
                 <small class="text-muted my-auto" v-else
                   >No trips recorded yet</small
                 >
                 <div>
-                  <i class="bi bi-trash3-fill" style="font-size: 150%"></i>
-                  <i class="bi bi-pencil ps-3" style="font-size: 150%"></i>
+                  <DeleteVehicleModal></DeleteVehicleModal>
+                  <EditVehicleModal
+                    v-bind:initialVehicle="overview"
+                    year="2012"
+                  ></EditVehicleModal>
+
+                  <!--<i
+                    class="mybtn bi bi-trash3-fill"
+                    style="font-size: 150%; color: #aab7cf"
+                  ></i>-->
+
+                  <!--<i
+                    class="mybtn bi bi-pencil ps-3"
+                    style="font-size: 150%; color: #aab7cf"
+                  ></i>-->
                 </div>
               </div>
             </div>
@@ -205,8 +219,10 @@ import VehicleStatisticsTabPane from "../components/VehicleStatisticsTabPane.vue
 import VehicleOverviewTabPane from "../components/VehicleOverviewTabPane.vue";
 import VehicleLocationTabPane from "../components/VehicleLocationTabPane.vue";
 //it resembles vehicleCard, but more in detail...
-
+import DeleteVehicleModal from "../components/DeleteVehicleModal.vue";
+import EditVehicleModal from "../components/EditVehicleModal.vue";
 import makesLogosData from "../assets/data.json"; //vehicle-make's logos
+const defaultAvatarPath = "/src/assets/img/carAvatar.png";
 
 export default {
   components: {
@@ -218,6 +234,8 @@ export default {
     VehicleStatisticsTabPane,
     VehicleOverviewTabPane,
     VehicleLocationTabPane,
+    DeleteVehicleModal,
+    EditVehicleModal,
   },
   props: ["_id"], //uservehicleid (vin)
   data() {
@@ -229,8 +247,10 @@ export default {
         }, {}),
       isLoading: true,
       activeItem: "overview",
-      //magari suddivido in sotto-object così agevolo il passaggio ai tab pane...
+      //splitting in sub-objects so to ease passing...
+      //could have used array here!
       overview: {
+        vin: this._id,
         vehicleModelId: "",
         year: "",
         createdAt: "",
@@ -246,6 +266,7 @@ export default {
         trany: "",
         drive: "",
         VClass: "",
+        cylinders: "",
 
         //>fuel-related
         barrels08: "", //for fuel type 1,
@@ -255,6 +276,7 @@ export default {
         fuelType: "",
         fuelCost08: "",
         youSaveSpend: "",
+
         //>emissions:
         co2TailpipeGpm: "", //for fuel type 1
         co2: "", //for fuel type 1
@@ -301,6 +323,11 @@ export default {
         timestamp: "",
       },
     };
+  },
+  computed: {
+    actualPictureUri() {
+      return this.overview.pictureUri ? this.overview.pictureUri : defaultAvatarPath;
+    },
   },
   methods: {
     isActive(menuItem) {
@@ -351,6 +378,11 @@ export default {
     },
   },
   mounted() {
+    console.log(
+      "**************** in vehicledetail: initialvehicle is: ",
+      this.overview
+    );
+
     console.log("la last location is: ", this.lastLocation);
     //manually joining userVehicles and vehicleModels here assigning to data properties
     console.log("l'id is: ", this._id);
@@ -360,9 +392,12 @@ export default {
       .then((userVehicleRes) => {
         console.log("data coming from userVehicles", userVehicleRes);
         this.overview.pictureUri = userVehicleRes.data.pictureUri;
-        this.overview.createdAt = new Date(
-          userVehicleRes.data.createdAt
-        ).toUTCString().split(' ').slice(0, 3).join(' ');
+        this.overview.pictureUri = "";
+        this.overview.createdAt = new Date(userVehicleRes.data.createdAt)
+          .toUTCString()
+          .split(" ")
+          .slice(0, 3)
+          .join(" ");
 
         this.overview.retired = userVehicleRes.data.retired;
         return userVehicleRes;
@@ -398,6 +433,7 @@ export default {
         this.overview.trany = vehicleModel.trany;
         this.overview.drive = vehicleModel.drive;
         this.overview.VClass = vehicleModel.VClass;
+        this.overview.cylinders = vehicleModel.cylinders;
 
         //>fuel-related
         this.overview.barrels08 = vehicleModel.barrels08; //for fuel type 1
@@ -413,9 +449,7 @@ export default {
       })
       .then(() => {
         //3. fetching user-vehicle trips data
-        return axios.get(
-          `vehicles/trips?vehicleIdentificationNumber=${this._id}`
-        );
+        return axios.get(`trips?vehicleIdentificationNumber=${this._id}`);
       })
       .then((tripsRes) => {
         console.log("i trips for this vehicle", tripsRes.data);
@@ -425,7 +459,7 @@ export default {
           (trip) => trip.endTimestamp
         );
 
-        //1.a. computing statistics (could re-sort by computing before some ajax calls to improve reduce latency )
+        //1.a. computing statistics (could re-sort operations by computing before some ajax calls to improve reduce latency )
 
         this.statistics.tripsCount = vehicleTripsSortedByTimestamp.length;
 
@@ -435,7 +469,9 @@ export default {
               vehicleTripsSortedByTimestamp.length - 1
             ];
 
-          this.timeSinceLastTrip = this.timeSince(lastTrip.endTimestamp);
+          this.timeSinceLastTrip = this.timeSince(
+            new Date(lastTrip.endTimestamp)
+          );
           //1.b. computing remaining statistics (could improve efficiency by computing all the metrics in a single loop)
           //assuming all data is present (no holes)
           this.statistics.totalScore = this.computeMinMaxAvgSum(
@@ -477,9 +513,17 @@ export default {
           }
         }
       })
-      .catch((err) => console.error(err)) //communicate something to user (with a mre user-friendly mapping?)
-      .finally(() => (this.isLoading = false));
-    this.isLoading = false; //tp premove...
+      .catch((err) => {
+        console.log("eccezione ricevuta:");
+        console.error(err);
+      }) //communicate something to user (with a mre user-friendly mapping?)
+      .finally(() => {
+        console.log("nel finally");
+        this.isLoading = false;
+      });
+    this.isLoading = false;
   },
 };
 </script>
+
+<style scoped></style>
