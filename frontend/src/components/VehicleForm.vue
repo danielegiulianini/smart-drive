@@ -56,9 +56,10 @@
                 @input="onYearInput"
                 required
               >
-                <option selected disabled :value="this.vehicle.year">
+                <option selected :value="this.vehicle.year">
                   {{ this.vehicle.year ? this.vehicle.year : "Choose..." }}
                 </option>
+
                 <option
                   v-for="(item, index) in domain.years"
                   :key="item.value"
@@ -67,7 +68,7 @@
                   {{ item.text }}
                 </option>
               </select>
-              <div class="invalid-feedback">Please, enter your name!</div>
+              <div class="invalid-feedback">Please, enter your year!</div>
               <div
                 v-if="isLoading.years"
                 class="spinner-border spinner-border-sm input-spinner"
@@ -75,19 +76,19 @@
             </div>
           </div>
           <div class="col-12">
-            <label for="yourEmail" class="form-label">Your vehicle make</label>
+            <label for="yourMake" class="form-label">Your vehicle make</label>
             <div class="is-loading">
               <select
                 class="form-select"
                 id="floatingSelect3"
                 aria-label="Floating label select example"
-                :disabled="!vehicle.make"
+                :class="{ disabled: !vehicle.year }"
                 @input="onMakeInput"
                 v-model="vehicle.make"
                 required
               >
-                <option selected disabled :value="this.vehicle.make">
-                  {{ this.vehicle.make ? this.vehicle.make : "Choose..." }}
+                <option selected :value="vehicle.make">
+                  {{ vehicle.make ? vehicle.make : "Choose..." }}
                 </option>
                 <option
                   v-for="(item, index) in domain.makes"
@@ -98,7 +99,7 @@
                 </option>
               </select>
               <div class="invalid-feedback">
-                Please enter a valid Email address!
+                Please choose a valid make.
               </div>
               <div
                 v-if="isLoading.makes"
@@ -115,13 +116,13 @@
                 class="form-select"
                 id="floatingSelect4"
                 aria-label="Floating label select example"
-                :disabled="!vehicle.model"
                 @input="onModelInput"
                 v-model="vehicle.model"
+                :class="{ disabled: !vehicle.make }"
                 required
               >
-                <option selected disabled :value="this.vehicle.model">
-                  {{ this.vehicle.model ? this.vehicle.model : "Choose..." }}
+                <option selected :value="vehicle.model">
+                  {{ vehicle.model ? vehicle.model : "Choose..." }}
                 </option>
                 <option
                   v-for="(item, index) in domain.models"
@@ -146,14 +147,18 @@
                 class="form-select"
                 id="floatingSelect4"
                 aria-label="Floating label select example"
-                :disabled="!vehicle.series"
+                :class="{ disabled: !vehicle.model }"
                 @input="onSeriesInput"
                 v-model="vehicle.series"
                 required
               >
-                <option selected disabled :value="this.vehicle.series">
+                <option
+                  selected
+                  :value="vehicle.series"
+                >
                   {{ this.vehicle.series ? this.vehicle.series : "Choose..." }}
                 </option>
+                <!-- no disabled as it would disable (required) validation!-->
                 <option
                   v-for="(item, index) in domain.series"
                   :value="item.value"
@@ -161,7 +166,7 @@
                   {{ item.text }}
                 </option>
               </select>
-              <div class="invalid-feedback">Please choose a username.</div>
+              <div class="invalid-feedback">Please choose some other vehicle details.</div>
 
               <div
                 v-if="isLoading.series"
@@ -179,7 +184,7 @@
                 name="username"
                 class="form-control"
                 id="yourUsername"
-                :disabled="!vehicle._id"
+                :class="{ disabled: !vehicle._id }"
                 v-model="vehicle._id"
                 required
                 pattern="{17}"
@@ -244,7 +249,6 @@ export default {
     series: { required: false },
     pictureUri: { required: false },
     retired: { required: false },
-
     isSubmitting: {
       //used for disabling input while submitting to prevent incoeherent behaviour
       type: Boolean,
@@ -266,13 +270,13 @@ export default {
         vid: "",
       },
       vehicle: {
-        _id: this._id, //the so-called "vin"
-        year: this.year, //this.initialVehicle.year,
-        make: this.make,
-        model: this.model,
-        series: this.series,
-        pictureUri: this.pictureUri, //default picture uri
-        retired: this.retired, //not needed as default in mongoose
+        _id:"", //this._id, //the so-called "vin"
+        year:"", //this.year, //this.initialVehicle.year,
+        make:"",// this.make,
+        model:"",//this.model,
+        series:"",// this.series,
+        pictureUri:"",// this.pictureUri, //default picture uri
+        retired:false// this.retired, //not needed as default in mongoose
         //---------------------------------------------
       },
       overallError: "",
@@ -286,6 +290,7 @@ export default {
   },
   computed: {
     getUserImage() {
+      console.log("77777777777777777running getUserImage computed");
       return this.vehicle.pictureUri
         ? this.vehicle.pictureUri
         : defaultAvatarUri;
@@ -310,7 +315,9 @@ export default {
         .finally(() => (this.isLoading.years = false));
     },
     getMakesOfYear: async function (year) {
-      console.log("getting makes in vehicle registration form");
+      console.log("getting makes in vehicle registration form");      
+      this.isLoading.makes = true;
+
       axios
         .get(`vehicles/vehiclesModels/makes`, {
           params: {
@@ -327,6 +334,8 @@ export default {
       //handle error by replying it to user in alert or year field
     },
     getModelsOfYearAndMake: async function (year, make) {
+      this.isLoading.models = true;
+
       console.log("getting models in vehicle registration form");
       axios
         .get(`vehicles/vehiclesModels/models`, {
@@ -346,6 +355,8 @@ export default {
       //handle error by replying it to user in alert or year field
     },
     getSeriesOfYearMakeAndModel: async function (year, make, model) {
+      this.isLoading.series = true;
+
       console.log("getting series in vehicle registration form");
       axios
         .get(`vehicles/vehiclesModels/series`, {
@@ -440,9 +451,12 @@ export default {
     series: function (value) {
       //here the prop
       this.vehicle.series = value;
+      //series is the only info is not retrievable by vehiclemodels (when a initial vehicle is provided)
+      this.getSeriesOfYearMakeAndModel(this.year, this.make, this.model);
     },
     pictureUri: function (value) {
       //here the prop
+      console.log("8888888888888888888888 pictureUriUpdated");
       this.vehicle.pictureUri = value;
     },
     retired: function (value) {
@@ -466,5 +480,18 @@ export default {
   right: calc(0.375em + 2rem);
   z-index: 4;
   top: calc((0.375em + 0.1875rem) + 2px);
+}
+
+.form-select.disabled {
+  background-color: #e9ecef;
+}
+
+select.disabled {
+  opacity: 1;
+  /*pointer-events: none;*/
+}
+
+select > option.disabled {
+  color: -internal-light-dark(graytext, rgb(170, 170, 170));
 }
 </style>
