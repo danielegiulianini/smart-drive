@@ -1,10 +1,9 @@
 const express = require("express");
 
 const { setupRoutes } = require("./src/routes/mqttRoutes");
-const {
-  notificationsController,
-} = require("./src/controllers/NotificationsController");
+const notificationsController = require("./src/controllers/NotificationsController");
 const { authenticateAndSaveUserId } = require("./src/middlewares/authSocketIo");
+const dbUtil = require("./src/utils/mongooseUtils");
 
 const http = require("http");
 
@@ -14,16 +13,18 @@ const app = express();
 const server = http.createServer(app);
 
 async function startServer() {
-  //only used if exposing REST endpoint too (ex. for showing all users notifications)
-  //console.log("Connecting to db...");
-  //await dbUtil.connect(dbConfig);
-  //console.log("Connected!");
+  //used for exposing REST endpoint (ex. for showing all users notifications)
+  console.log("Connecting to db...");
+  await dbUtil.connect(dbConfig);
+  console.log("Connected!");
 
   console.log("Setting up routes...");
 
-  //only used if exposing REST endpoint too (ex. for showing all users notifications)
-  //const routes = require("./routes");
-  //app.use("/api/v1", routes);
+  //REST endpoint routes (ex. for showing all users notifications)
+  const routes = require("./routes");
+  app.use("/api/v1", routes);
+
+  //mqtt routed
   setupRoutes();
   console.log("routes bound");
 
@@ -37,16 +38,15 @@ async function startServer() {
   });
 
   //auth middleware
-  //io.use(authenticateAndSaveUserId);
-
-  io.on("connection", function (socket) {
+  io.on("connection", (socket) => { //.use(authenticateAndSaveUserId)//to re-enable after testing
     console.log("New connection available");
     notificationsController.onConnection(socket);
   });
 
   console.log("socket.io endopoint setup");
 
-    //only used if exposing REST endpoint tpo (ex. for showing all users notifications)
+  //only used if exposing REST endpoint tpo (ex. for showing all users notifications)
+
   server.listen(port, () =>
     console.log(
       `Notification backend listening on port ${port} and subscribed for MQTT data (notification)`
