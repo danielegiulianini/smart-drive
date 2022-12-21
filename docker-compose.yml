@@ -106,6 +106,7 @@ services:
       - ${NOTIFICATIONS_MICROSERVICE_EXTERNAL_PORT}:${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - mosquitto
+      - mongodb-notifications
     networks:
       - backend
 
@@ -166,7 +167,7 @@ services:
   mongodb-images:
     image: mongo
     restart: always
-    #volumes:
+    #volumes: #for persist updates
     #  - "images-volume:/data/db"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${IMAGES_DB_ROOT_USERNAME}
@@ -174,25 +175,35 @@ services:
     networks:
       - backend
 
+  mongodb-notifications:
+    image: mongo
+    restart: always
+    #volumes: #for persist updates
+    #  - "notifications-volume:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${NOTIFICATIONS_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${NOTIFICATIONS_DB_ROOT_PASSWORD}
+    networks:
+      - backend
 
   #-------------------------------------------------------------------------------------------
   #--frontend
   #-------------------------------------------------------------------------------------------
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        - "PORT=${FRONTEND_INTERNAL_PORT}"
-    volumes:
-      - ./frontend:/usr/src/frontend #not actually needed since no nodemon is required as for HMR (this entry must be updated if moving docker-compose)
-    ports:
-      - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
-    depends_on:
-      - nginx-proxy  #leveraging dependencies' transitivity here
-    networks:
-      - frontend
+  #frontend:
+   # build:
+    #  context: ./frontend
+     # dockerfile: Dockerfile
+      #args:
+       # - "PORT=${FRONTEND_INTERNAL_PORT}"
+    #volumes:
+     # - ./frontend:/usr/src/frontend #not actually needed since no nodemon is required as for HMR (this entry must be updated if moving docker-compose)
+    #ports:
+     # - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    #depends_on:
+     # - nginx-proxy  #leveraging dependencies' transitivity here
+    #networks:
+     # - frontend
 
 #volumes shared among services(containers):
 
