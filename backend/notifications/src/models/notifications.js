@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const profileSchema = mongoose.Schema({
+const notificationSchema = mongoose.Schema({
   //using default _id
   title: {
     type: String,
@@ -18,6 +18,13 @@ const profileSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  isRead: {
+    type: Boolean,
+    default: false,
+  },
+  recipient: {
+    type: String,
+  },
 });
 
-module.exports = mongoose.model("users", profileSchema);
+module.exports = mongoose.model("users", notificationSchema);

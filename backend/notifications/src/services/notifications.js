@@ -12,15 +12,13 @@ const add = async (notification) => {
 const edit = async (notificationId, params) => {
   console.log(`Updating user ${notificationId} with data: ${JSON.stringify(params)}`);
 
-  //must use a dto here for avoiding user auto-push points!
-
   return Notification.findOneAndUpdate(
     {
       _id: notificationId,
     },
     params,
     {
-      new: true, //returning updated user
+      new: true, //returning updated notification
     }
   );
 };

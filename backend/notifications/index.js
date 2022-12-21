@@ -4,7 +4,7 @@ const { setupRoutes } = require("./src/routes/mqttRoutes");
 const notificationsController = require("./src/controllers/NotificationsController");
 const { authenticateAndSaveUserId } = require("./src/middlewares/authSocketIo");
 const dbUtil = require("./src/utils/mongooseUtils");
-
+const dbConfig = require("./src/config/db.config");
 const http = require("http");
 
 const port = 8088; //const port = Number(process.env.NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT);
@@ -21,7 +21,7 @@ async function startServer() {
   console.log("Setting up routes...");
 
   //REST endpoint routes (ex. for showing all users notifications)
-  const routes = require("./routes");
+  const routes = require("./src/routes");
   app.use("/api/v1", routes);
 
   //mqtt routed
@@ -38,7 +38,8 @@ async function startServer() {
   });
 
   //auth middleware
-  io.on("connection", (socket) => { //.use(authenticateAndSaveUserId)//to re-enable after testing
+  io.on("connection", (socket) => {
+    //.use(authenticateAndSaveUserId)//to re-enable after testing
     console.log("New connection available");
     notificationsController.onConnection(socket);
   });
