@@ -1,6 +1,6 @@
 <template>
   <div
-    class="tab-pane p-4 pb-0"
+    class="tab-pane p-1 pb-0"
     :class="{ active: isActive }"
     id="bordered-justified-contact"
     role="tabpanel"
@@ -91,8 +91,10 @@
                         </p>
                       </div>-->
                       <div>
-                        <span class="card-text text-bf" style="font-size: 300%"
-                          >98</span
+                        <span
+                          class="card-text text-bf"
+                          style="font-size: 300%"
+                          >{{ score[scoreSorting] }}</span
                         >
                         <p
                           class="card-text text-muted"
@@ -137,7 +139,15 @@
                   v-for="(user, index) in users"
                   :key="user._id"
                   :firstName="user.firstName"
-                  :score="user.score"
+                  :score="
+                    scoreSorting == 'totalScore'
+                      ? user.ecoScore
+                      : scoreSorting == 'rpmScore'
+                      ? user.rpmScore
+                      : scoreSorting == 'speedScore'
+                      ? user.speedScore
+                      : user.feedbackConsiderationScore
+                  "
                   :rank="rankOf(users, user._id)"
                   :surname="user.surname"
                   :profilePictureUri="user.profilePictureUri"
@@ -174,7 +184,7 @@ export default {
     //me
     actualPictureUri: { required: true },
     level: { required: true },
-    totalScore: { required: true },
+    score: { required: true },
     scoresTrend: { required: true, default: [] },
     //all users
     users: { required: true, default: [] },
