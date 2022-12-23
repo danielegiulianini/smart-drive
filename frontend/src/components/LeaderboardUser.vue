@@ -1,35 +1,38 @@
 <template>
   <!-- applico confizionalmente uno stile se fra i primi 3!-->
-  <tr :class="rowClass">
+  <tr :class="rowClassObject">
     <td class="text-muted text-center">
-      rank<i
+      {{ rank
+      }}<i
         class="bi bi-trophy"
         style="color: silver"
         v-if="rank < 4"
-        :class="podiumTrophyClass"
+        :class="trophyClass"
       ></i>
     </td>
     <th scope="row align-text-center">
       <div class="d-flex">
         <a href="#" class="d-flex"
           ><img
-            src="/src/assets/style/img/product-1.jpg"
+            :src="profilePictureUri"
             class="rounded-circle my-auto"
             style="max-width: 50px"
             alt=""
         /></a>
         <div class="ps-3 my-auto" style="font-size: 95%">
-          Daniele Giulianini
-          <div class="text-muted" style="font-size: 95%">level 5</div>
+          {{name surname}}
+          <div class="text-muted" style="font-size: 95%">level {{ level }}</div>
         </div>
       </div>
     </th>
-    <td class="d-none d-sm-table-cell text-center">15</td>
-    <td class="d-none d-sm-table-cell text-center">52</td>
-    <td class="d-none d-sm-table-cell text-center">22</td>
+    <!-- <td class="d-none d-sm-table-cell text-center km">15</td>-->
+    <td class="d-none d-sm-table-cell text-center xp">{{ xp }}</td>
+    <td class="d-none d-sm-table-cell text-center badgesCount">
+      {{ badgesCount }}
+    </td>
     <td class="fw-bold my-auto text-center">
       <AppSemiCircularProgressBar
-        progressPercentage="0.8"
+        :progressPercentage=score
       ></AppSemiCircularProgressBar>
     </td>
   </tr>
@@ -43,36 +46,27 @@ export default {
     AppSemiCircularProgressBar,
   },
   props: {
+    score: { required: true }, //either total, speed, rpm, feedback-consideration ...
     rank: { required: true },
     firstName: { required: true },
     surname: { required: true },
     profilePictureUri: { required: true },
     xp: { required: true },
     level: { required: true },
-    scoresTrend: { required: true }, //for: active ... ago
     badges: { required: true },
   },
   computed: {
-    lastUserTrip() {
-      const lastScoreUpdate = this.scoresTrend[this.scoresTrend.length - 1];
-      const lastScoreUpdateDate = lastScoreUpdate.referredTo;
-      return this.timeSince(lastScoreUpdateDate);
+    badgesCount() {
+      return this.badges.length;
     },
-    lastUserActivity() {
-      if (this.scoresTrend.length > 0) {
-        return lastScoreTrip();
-      } else {
-        return "no trips yet.";
-      }
-    },
-    rowClass() {
+    rowClassObject() {
       return {
         "gold-row": rank == 1,
         "silver-row": rank == 2,
         "bronze-row": rank == 3,
       };
     },
-    podiumTrophyClass() {
+    trophyClassObject() {
       return {
         "gold-trophy": rank == 1,
         "silver-trophy": rank == 2,
@@ -109,25 +103,10 @@ export default {
       return Math.floor(seconds) + " seconds";
     },
   },
-  data() {},
 };
 </script>
 
 <style scoped>
-.btn-circle.btn-md {
-  width: 50px;
-  height: 50px;
-  padding: 7px 10px;
-  border-radius: 25px;
-  font-size: 10px;
-  text-align: center;
-}
-.page-header {
-  padding: 20px;
-  background-color: white; /* ghostwhite;*/
-  border-radius: 10px;
-}
-
 .gold-trophy {
   color: gold;
 }
@@ -145,11 +124,11 @@ export default {
 }
 
 .silver-row {
-  border-color: gold;
+  border-color: silver;
   border-width: 1px 1px;
 }
 .silver-row {
-  border-color: gold;
+  border-color: bronze;
   border-width: 1px 1px;
 }
 </style>
