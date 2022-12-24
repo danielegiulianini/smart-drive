@@ -19,13 +19,13 @@ export default {
       isSubmitting: false,
     };
   },
-  methods: {      //axios' ajax call to 1. supabase and 2. users' microservice; (in sequence)
-
-    onValidFormSubmit(event, user) {
+  methods: {
+    //axios' ajax call to 1. supabase and 2. users' microservice; (in sequence)
+    onValidFormSubmit(user) {
       console.log("submitting to backend");
+
       this.isSubmitting = true;
-      this.$store
-        .register({
+      this.$store.dispatch("register", {
           email: user.email,
           password: user.password,
         })
@@ -36,7 +36,7 @@ export default {
             axios.post(`users`, {
               tokenUserId: user.id, //id is a supabase property
 
-              name: user.name,
+              name: user.firstName,
               surname: user.surname,
               email: user.email,
 
