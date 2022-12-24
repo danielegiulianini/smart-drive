@@ -48,7 +48,16 @@ const profileSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    unlockedAchievements: [{ type: String }], //the achievements' ids /urls?
+    //unlockedAchievements2: [{ type: String }], //the achievements' ids /urls?
+    unlockedAchievements: [
+      {
+        id: String,
+        earnedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     ecoScore: {
       type: Number,
       default: 0, //before a trip is made it must be visualizable anyway
@@ -74,6 +83,7 @@ const profileSchema = mongoose.Schema(
       default: 0, //before a trip is made it must be visualizable anyway
     },
     scoresTrend: [
+      //actually this is TOTALScoreTrend
       {
         score: Number,
         referredTo: {
