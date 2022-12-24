@@ -1,18 +1,20 @@
 <template>
-  <div class="card nested-card text-center align-items-center m-2">
+  <div class="card nested-card text-center align-items-center m-2 h-100">
     <img
-      class="card-img-top badge-image rounded-circle mt-4"
-      src="/src/assets/style/img/profile-img.jpg"
+      class="card-img-top badge-image mt-4"
+      :src="pictureUri"
       style="width: 100px"
       alt="..."
-    />
+    /><!--      src="/src/assets/style/img/badges/bronzeSmoothness.png"--> <!--goldTrips-->
     <div class="card-body">
-      <h5 class="card-title mb-0 pb-2">Daniele Giulianini</h5>
+      <h5 class="card-title mb-0 pb-2">{{ name }}</h5>
       <!--<h6 class="card-subtitle mb-2 text-muted">Cesenatico</h6>-->
-      <small class="card-text text-muted">Drive 100 km. </small>
+      <small class="card-text text-muted">{{ description }}</small>
     </div>
-    <div class="card-footer lh-sm">
-      <small class="text-muted lh-sm">Otained one year ago</small>
+    <div class="card-footer lh-sm" v-if="earnedAt">
+      <small class="text-muted lh-sm"
+        >Obtained {{ timeSince(earnedAt) }}.</small
+      >
     </div>
   </div>
 </template>
@@ -45,4 +47,50 @@
 }
 </style>
 
-<script></script>
+<script>
+export default {
+  props: {
+    name: {
+      requred: true,
+    },
+    description: {
+      required: true,
+    },
+    pictureUri: {
+      required: true,
+    },
+    earnedAt: {
+      required: false,
+    },
+  },
+  methods: {
+    timeSince(date) {
+      console.log("la date to whuch say timeSince", date);
+      var seconds = Math.floor((new Date() - date) / 1000);
+
+      var interval = seconds / 31536000;
+
+      if (interval > 1) {
+        return Math.floor(interval) + " years";
+      }
+      interval = seconds / 2592000;
+      if (interval > 1) {
+        return Math.floor(interval) + " months";
+      }
+      interval = seconds / 86400;
+      if (interval > 1) {
+        return Math.floor(interval) + " days";
+      }
+      interval = seconds / 3600;
+      if (interval > 1) {
+        return Math.floor(interval) + " hours";
+      }
+      interval = seconds / 60;
+      if (interval > 1) {
+        return Math.floor(interval) + " minutes";
+      }
+      return Math.floor(seconds) + " seconds";
+    },
+  },
+};
+</script>
