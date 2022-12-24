@@ -2,7 +2,6 @@
   <section
     class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4"
   >
-
     <!--<div class="container">
       <div class="row justify-content-center">
         <div
@@ -19,7 +18,8 @@
         </div>
 
         <!-- start user info-->
-        <div class="p-lg-5 p-4" style="padding-bottom: 20%">
+        <div class="py-lg-5 p-4" style="padding-bottom: 20%">
+          <!-- old spacing: class="p-lg-5 p-4"-->
           <!-- Error alert -->
           <div
             class="alert alert-danger alert-dismissible fade show"
@@ -128,10 +128,12 @@
                 name="password"
                 class="form-control"
                 id="yourPassword"
-                required pattern=".{6,}"
+                required
+                pattern=".{5,}"
                 v-model="user.password"
+                autocomplete="on"
               />
-              <div class="invalid-feedback">Please enter your password!</div>
+              <div class="invalid-feedback">Please enter a valid password!</div>
             </div>
 
             <div
@@ -225,6 +227,7 @@ export default {
     country: { required: false },
     city: { required: false },
     profilePictureUri: { required: false },
+    overallError: "",
   },
   computed: {
     getUserImage() {
@@ -235,7 +238,6 @@ export default {
   },
   data() {
     return {
-      overallError: "",
       //================form-related data ========================
       //surnameA: this.surname,
       user: {
