@@ -15,12 +15,18 @@ const drivingNotificationEventsRegex = new RegExp(
 ); //^drivingNotifications\/[^/]+$
 const drivingNotificationsTopics = drivingNotificationsTopixPrefix + "+";
 
+const measurementsTopixPrefix = "measurements/";
+const measurementsEventsRegex = new RegExp(
+  "^" + measurementsTopixPrefix + "[^/]+$"
+); //^drivingNotifications\/[^/]+$
+const measurementsTopics = measurementsTopixPrefix + "+";
+
 const setupRoutes = () => {
   publishSubscribe.onConnect(() => {
     console.log("notifications backend connected to mqtt broker");
 
     publishSubscribe.subscribe(
-      [notificationsTopics, drivingNotificationsTopics],
+      [notificationsTopics, drivingNotificationsTopics, measurementsTopics],
       () => {
         console.log(
           `notifications backend subscribed to topic '${[
@@ -44,6 +50,10 @@ const setupRoutes = () => {
       const userId = topic.substring(drivingNotificationsTopixPrefix.length);
 
       NotificationsController.onNewDrivingNotification(userId, payload);
+    } else if (measurementsEventsRegex.test(topic)) {
+      const userId = topic.substring(measurementsTopixPrefix.length);
+
+      NotificationsController.onNewMeasurement(userId, payload);
     } else {
       console.log("no mqtt messages at notifications microservice");
     }
