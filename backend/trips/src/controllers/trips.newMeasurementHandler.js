@@ -4,6 +4,7 @@ const publisher = require("../utils/publishSubscribe");
 
 //to be read from (global) config (constants) file
 const drivingNotificationsTopicPrefix = "drivingNotifications/";
+const measurementsTopicPrefix = "measurements/";
 
 const handleNewMeasurement = async (vin, measurementPayload) => {
   //no need for destructuring for validation (mongoose's strict option cut exceeding fields off)
@@ -24,7 +25,7 @@ const handleNewMeasurement = async (vin, measurementPayload) => {
     console.log("the trip is:");
     console.log(trip);
     if (trip) {
-      //give advice to user via phone!... (I assume it's connected while nodemcu is sending here!)
+      //1. give advice to user via phone!... (I assume it's connected while nodemcu is sending here!)
       const feedback = await drivingAssistantService.getAndAssignFeedback(
         trip._id,
         measurementPayload
@@ -34,6 +35,11 @@ const handleNewMeasurement = async (vin, measurementPayload) => {
           feedback: feedback,
         });
       }
+
+      //2. communicating real-time data
+      publisher.publish(measurementsTopicPrefix + trip.userId, {
+        measurement: measurementPayload,
+      });
     }
   } catch (error) {
     console.log(error); //returning error to arduino? you can't (mqtt is not request/response)
