@@ -6,18 +6,18 @@
     style="height: 100vh; overflow-y: hidden; overflow-x: hidden"
   >
     <div class="mt-5 pt-5 pb-0 mb-0">
-      <Speedometer></Speedometer>
+      <Speedometer :kph="kph"></Speedometer>
     </div>
 
     <div class="row p-3 pt-0 mt-0 pb-1" data-v-13fae52c="">
       <div class="col" data-v-13fae52c="">
-        <RpmMeter></RpmMeter>
+        <RpmMeter :rpm="rpm"></RpmMeter>
       </div>
       <div class="col d-flex justify-content-center" data-v-13fae52c="">
         <div class="d-flex" data-v-13fae52c="">
           <div class="my-auto" style="font-family: 'Open Sans'">
-            <FuelTankLevelMeter></FuelTankLevelMeter>
-            <Odometer></Odometer>
+            <FuelTankLevelMeter :fuelTankLevel="fuelTankLevel"></FuelTankLevelMeter>
+            <Odometer :odometer="odometer"></Odometer>
           </div>
         </div>
       </div>
@@ -108,10 +108,10 @@ export default {
   data() {
     return {
       //mirroring backend's mongoose trips'measurement schema
-      rpm: "",
-      kph: "",
-      odometer: "",
-      fuelTankLevel: "",
+      rpm: "0", //or to be replaced by "" and some logic for hiding charts if not measurement are still
+      kph: "0",
+      odometer: "0",
+      fuelTankLevel: "0",
     };
   },
   mounted() {
