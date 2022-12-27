@@ -45,17 +45,28 @@
                 <div class="d-flex justify-content-between align-middle">
                   <div>
                     <h1 class="card-title mb-0 pb-2" style="font-size: 180%">
-                      12 Nov 2022
+                      {{ date }}
                     </h1>
                     <h6 class="card-subtitle mb-2 text-muted">
-                      <span style="font-size: 140%">Opel corsa 5a serie</span>
+                      <span style="font-size: 140%"
+                        >{{ vehicleMake }} {{ vehicleModel }}</span
+                      >
                     </h6>
                   </div>
                   <div class="mt-3 text-center">
                     <AppSemiCircularProgressBar
-                      progressPercentage="0.8"
+                      :progressPercentage="globalScore"
                     ></AppSemiCircularProgressBar>
-                    <div class="text-muted" style="margin-top:-20px; font-size:90%">Total score</div>
+                    <div
+                      class="text-muted"
+                      style="
+                        margin-top: -20px;
+                        font-size: 90%;
+                        line-height: 85%;
+                      "
+                    >
+                      Total score
+                    </div>
                   </div>
                 </div>
                 <div class="row">
@@ -69,15 +80,16 @@
                       >
                         <div>
                           <span
+                            v-if="startLocation.latitude"
                             class="card-text text-bf"
                             style="font-size: 110%"
-                            >Cesena, FC, Italia</span
+                            >{{ startLocation.name }}</span
                           >
                           <p
                             class="card-text text-muted"
                             style="line-height: 80%; font-size: 90%"
                           >
-                            12.56
+                            {{ startTimestamp }}
                           </p>
                         </div>
                       </div>
@@ -90,15 +102,16 @@
                       >
                         <div>
                           <span
+                            v-if="startLocation.latitude"
                             class="card-text text-bf"
                             style="font-size: 110%"
-                            >Cesena, FC, Italia</span
+                            >{{ endLocation.name }}</span
                           >
                           <p
                             class="card-text text-muted"
                             style="line-height: 80%; font-size: 90%"
                           >
-                            12.56
+                            {{ endTimestamp }}
                           </p>
                         </div>
                       </div>
@@ -164,7 +177,6 @@
               </div>
             </div>-->
               </div>
-              <!-- here goes tabs-->
             </div>
           </div>
           <!-- <div class="card-footer text-center">
@@ -224,9 +236,20 @@
               <!-- first tab-pane-->
               <TripScoreTabPane
                 :isActive="isActive('scores')"
+                :totalScore="globalScore"
+                :aggressivenessScore="aggressivenessScore"
+                :safetyScore="safetyScore"
+                :feedbackConsiderationScore="feedbackConsiderationScore"
               ></TripScoreTabPane>
               <TripStatisticsTabPane
                 :isActive="isActive('statistics')"
+                :distanceTraveled="distanceTraveled"
+                :duration="duration"
+                :fuelConsumption="fuelConsumption"
+                :avgRpm="avgRpm"
+                :avgKph="avgKph"
+                :maxRpm="maxRpm"
+                :maxKph="maxKph"
               ></TripStatisticsTabPane>
               <TripEventsTabPane
                 :isActive="isActive('events')"
@@ -243,6 +266,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import TheAppHeader from "../components/TheAppHeader.vue";
 import TheAppSidebar from "../components/TheAppSidebar.vue";
 import TheAppFooter from "../components/TheAppFooter.vue";
@@ -252,6 +276,7 @@ import TripStatisticsTabPane from "../components/TripStatisticsTabPane.vue";
 import TripEventsTabPane from "../components/TripEventsTabPane.vue";
 import Spinner from "../components/Spinner.vue";
 import AppSemiCircularProgressBar from "../components/AppSemiCircularProgressBar.vue";
+
 export default {
   components: {
     TripScoreTabPane,
@@ -264,17 +289,166 @@ export default {
     Spinner,
     AppSemiCircularProgressBar,
   },
+  props: ["_id"], //uservehicleid (vin)
   data() {
-    return { isLoading: true, activeItem: "scores" };
+    return {
+      //tabs-related
+      isLoading: true,
+      activeItem: "scores",
+      //overview
+      startTimestamp: "",
+      endTimestamp: "",
+      date: "",
+      startLocation: {
+        name: "",
+        latitude: "",
+        longitude: "",
+      },
+      endLocation: {
+        name: "",
+        latitude: "",
+        longitude: "",
+      },
+      vehicleMake: "",
+      vehicleModel: "",
+      positions: [],
+      //scores
+      globalScore: 0,
+      aggressivenessScore: 0,
+      safetyScore: 0,
+      feedbackConsiderationScore: 0,
+      idlingScore: 0,
+      //statistics
+      distanceTraveled: "",
+      duration: "",
+      fuelConsumption: "",
+      avgRpm: "",
+      avgKph: "",
+      maxRpm: "",
+      maxKph: "",
+    };
   },
   methods: {
     isActive(menuItem) {
       return this.activeItem === menuItem;
     },
     setActive(menuItem) {
-      console.log("setting active!!!!");
       this.activeItem = menuItem;
     },
+  },
+  mounted() {
+    console.log("getting trip info...");
+    //manually joining backend info and assigning to data properties
+    axios
+      .get(`trips/${this._id}`)
+      .then((tripRes) => {
+        console.log("data coming from trips", tripRes.data);
+        const tripData = tripRes.data;
+
+        //could directly assign  tripRes.data to sub-object
+        let startDate = new Date(tripData.startTimestamp);
+        this.startTimestamp = startDate.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        var month = startDate.toLocaleString("default", { month: "short" });
+        var day = startDate.getUTCDate();
+        var year = startDate.getUTCFullYear();
+        this.date = day + " " + month + " " + year;
+        /*new Date(tripData.startTimestamp)
+          .toLocaleString()
+          .split(",")[0];*/
+        this.endTimestamp = new Date(tripData.endTimestamp).toLocaleTimeString(
+          [],
+          { hour: "2-digit", minute: "2-digit" }
+        );
+
+        //statistics
+        this.distanceTraveled = tripData.distanceTraveled;
+        this.duration = tripData.duration;
+        //this.fuelConsumption = tripData.fuelConsumption;
+        this.avgRpm = tripData.avgRpm;
+        this.avgKph = tripData.avgKph;
+        this.maxRpm = tripData.maxRpm;
+        this.maxKph = tripData.maxKph;
+
+        //mapping measurements to google maps format: here, in express or directly in arduino?
+        this.positions = tripData.measurements.map(
+          (measurement) => measurement.position
+        );
+
+        //CAUTION: Array.at does not return error if passed index is null
+        this.startLocation.latitude = this.positions.at(0); //this.positions[0]?.lat;
+        //this.positions.length == 0 ? this.positions[0].lat : "";
+        this.startLocation.longitude = this.positions.at(0); //this.positions[0]?.lng;//this.positions?.[0]?.lat;
+        //this.positions.length == 0 ? this.positions[0].lng : "";
+        this.endLocation.latitude = this.positions.at(
+          this.positions.length - 1
+        ); //this.positions.length > 0 ? this.positions[this.positions.length-1].lat  : ""
+        //this.positions.length == 0 ? this.positions[0].lat : "";
+        this.endLocation.longitude = this.positions.at(
+          this.positions.length - 1
+        ); //this.positions?.[this.positions.length-1>0? this.positions.length-1 : ]?.lat;
+        //this.positions.length == 0 ? this.positions[0].lng : "";
+
+        //scores
+        this.globalScore = tripData.totalScore;
+        this.aggressivenessScore = tripData.rpmScore;
+        this.safetyScore = tripData.speedScore ? tripData.speedScore : 0;
+        this.feedbackConsiderationScore = tripData.feedbackConsiderationScore;
+
+        return tripData.vehicleIdentificationNumber;
+      })
+      //2. fetching vehicleModelId from userVehicles
+      .then((vehicleIdentificationNumber) => {
+        return axios.get(
+          `vehicles/userVehicles/${vehicleIdentificationNumber}`
+        );
+      })
+      .then((userVehicleRes) => {
+        console.log("data coming from userVehicles", userVehicleRes);
+        const userVehicleData = userVehicleRes.data;
+
+        return userVehicleData.vehicleModelId;
+      })
+      //3. fetching vehicle make and name from vehicle Models (and cost, possibly)
+      .then((vehicleModelId) => {
+        return axios.get(
+          `vehicles/vehiclesModels/vehicleDetails/${vehicleModelId}`
+        );
+      })
+      .then((vehicleRes) => {
+        console.log("data coming from vehiclesModels", vehicleRes.data);
+        const vehicleData = vehicleRes.data;
+
+        this.vehicleMake = vehicleData.make;
+        this.vehicleModel = vehicleData.model;
+
+        return vehicleRes;
+      })
+      //4. fetching latitude with google maps API
+      .then(() => {
+        return axios.get(`trips?vehicleIdentificationNumber=${this._id}`);
+      })
+      .then((googleMapsRes) => {
+        console.log("data coming from google maps", googleMapsRes.data);
+        const tripData = googleMapsRes.data;
+
+        this.startLocation.name = "";
+        this.endLocation.name = "";
+
+        return googleMapsRes;
+      })
+      .catch((err) => {
+        console.log("eccezione ricevuta:");
+        console.error(err);
+        //maybe communicate something to user (with a mre user-friendly mapping?)
+      })
+      .finally(() => {
+        console.log("nel finally");
+        this.isLoading = false;
+      });
+    this.isLoading = false;
   },
 };
 </script>
