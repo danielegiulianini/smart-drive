@@ -5,28 +5,35 @@
     id="outer-container"
     style="height: 100vh; overflow-y: hidden; overflow-x: hidden"
   >
-    <div class="mt-5 pt-5 pb-0 mb-0">
-      <Speedometer :kph="kph"></Speedometer>
-    </div>
-
-    <div class="row p-3 pt-0 mt-0 pb-1" data-v-13fae52c="">
-      <div class="col" data-v-13fae52c="">
-        <RpmMeter :rpm="rpm"></RpmMeter>
+    <div class="vehicle-dashboard tooltip" :class="{ tooltipShow: started }">
+      <div class="mt-5 pt-5 pb-0 mb-0">
+        <Speedometer :kph="kph"></Speedometer>
       </div>
-      <div class="col d-flex justify-content-center" data-v-13fae52c="">
-        <div class="d-flex" data-v-13fae52c="">
-          <div class="my-auto" style="font-family: 'Open Sans'">
-            <FuelTankLevelMeter :fuelTankLevel="fuelTankLevel"></FuelTankLevelMeter>
-            <Odometer :odometer="odometer"></Odometer>
+
+      <div class="row p-3 pt-0 mt-0 pb-1" data-v-13fae52c="">
+        <div class="col" data-v-13fae52c="">
+          <RpmMeter :rpm="rpm"></RpmMeter>
+        </div>
+        <div class="col d-flex justify-content-center" data-v-13fae52c="">
+          <div class="d-flex" data-v-13fae52c="">
+            <div class="my-auto" style="font-family: 'Open Sans'">
+              <FuelTankLevelMeter
+                :fuelTankLevel="fuelTankLevel"
+              ></FuelTankLevelMeter>
+              <Odometer :odometer="odometer"></Odometer>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="inner-element"></div>
-
     <!-- end of row-->
     <div class="button-row p-3 text-center">
-      <AppDriveButton></AppDriveButton>
+      {{ started }}
+      <AppDriveButton
+        @click="ciao"
+        :driveButtonName="driveButtonName"
+      ></AppDriveButton>
       <!--<button
         id="driveButton"
         type="button"
@@ -84,6 +91,18 @@
     margin-bottom: 30%;
   }
 }
+
+/* for schowing dashboard only if trip started */
+.tooltip {
+  opacity: 0;
+  transform: translateY(-30px) scale(0.96);
+  transition: transform 0.35s, opacity 0.25s;
+}
+
+.tooltipShow {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
 </style>
 
 <script>
@@ -94,6 +113,7 @@ import RpmMeter from "../components/RpmMeter.vue";
 import FuelTankLevelMeter from "../components/FuelTankLevelMeter.vue";
 import Odometer from "../components/Odometer.vue";
 import AppDriveButton from "../components/AppDriveButton.vue";
+import axios from "axios";
 
 export default {
   components: {
@@ -108,19 +128,54 @@ export default {
   data() {
     return {
       //mirroring backend's mongoose trips'measurement schema
+      started: false,
       rpm: "0", //or to be replaced by "" and some logic for hiding charts if not measurement are still
       kph: "0",
       odometer: "0",
       fuelTankLevel: "0",
+      _id: "", //future Trip's ID
     };
+  },
+  computed: {
+    driveButtonName() {
+      return started ? "End" : "Start";
+    },
+  },
+  methods: {
+    ciao() {
+      console.log("ciao");
+    },
+    onDriveButtonClicked() {
+      if (!started) {
+        axios
+          .post("trips")
+          .then((newTripRes) => {
+            this._id = newTripRes.data._id;
+            started = true; //putting here for not allowing to close (from the view) a trip not actually posted to backend
+          })
+          .catch((err) => console.error(err)); //maybe a more user-friendly message here
+      } else {
+        //close axios call and redirect
+        axios
+          .post(`trips/${this._id}`)
+          .catch((err) => console.error(err)) //maybe a more user-friendly message here
+          .then(() =>
+            this.$router.push({ name: "TripDetail", params: this._id })
+          );
+      }
+    },
   },
   mounted() {
     //here it comes data from io
+    console.log("this.store.state is ", this.store.state);
     this.$store.state.socket.on("measurement", function (data) {
       this.rpm = data.rpm;
       this.kph = data.kph;
       this.odometer = data.odometer;
       this.fuelTankLevel = data.fuelTankLevel;
+    });
+    this.$store.state.socket.on("drivingFeedback", function (data) {
+      console.log("feedback arrived");
     });
   },
 };
