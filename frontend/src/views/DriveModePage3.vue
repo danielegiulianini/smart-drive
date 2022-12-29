@@ -32,6 +32,7 @@
       {{ started }}
       <AppDriveButton
         @click="ciao"
+        :spin="isStarting"
         :driveButtonName="driveButtonName"
       ></AppDriveButton>
       <!--<button
@@ -129,6 +130,7 @@ export default {
     return {
       //mirroring backend's mongoose trips'measurement schema
       started: false,
+      isStarting: false,
       rpm: "0", //or to be replaced by "" and some logic for hiding charts if not measurement are still
       kph: "0",
       odometer: "0",
@@ -138,7 +140,7 @@ export default {
   },
   computed: {
     driveButtonName() {
-      return started ? "End" : "Start";
+      return this.started ? "End" : "Start";
     },
   },
   methods: {
@@ -152,6 +154,7 @@ export default {
           .then((newTripRes) => {
             this._id = newTripRes.data._id;
             started = true; //putting here for not allowing to close (from the view) a trip not actually posted to backend
+            //put a spinner here???
           })
           .catch((err) => console.error(err)); //maybe a more user-friendly message here
       } else {
