@@ -5,14 +5,14 @@ export default {
       badges: [
         //feedback consideration
         {
-          id: "",
+          id: "feedbackConsiderationScore_single_trip_95",
           name: "Gold improver",
           description:
             "Get a feedback consideration score of at least 95 for a trip.",
           pictureUri: "/src/assets/img/badges/goldFeedback.png",
         },
         {
-          id: "",
+          id: "feedbackConsiderationScore_single_trip_92",
 
           name: "Silver improver",
           description:
@@ -20,7 +20,7 @@ export default {
           pictureUri: "/src/assets/img/badges/silverFeedback.png",
         },
         {
-          id: "",
+          id: "feedbackConsiderationScore_single_trip_85",
 
           name: "Bronze improver",
           description:
