@@ -4,31 +4,24 @@ const Trip = require("../models/trips");
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
-  // console.log("calling computeAndUpdateStats with params:");
-  //console.log(tripId);
-  //console.log(fromTimestamp);
   const stats = await computeStats(tripId, fromTimestamp);
-  // console.log("putting in document values:");
-  //console.log(stats);
   //materializing stats for performances reason (should increase transaction count too)
   const statsDocs = await Trip.findOneAndUpdate(
     {
       _id: tripId,
     },
-    {
+    stats /*{ TO BE CHECKED
       maxRpm: stats.maxRpm,
       avgRpm: stats.avgRpm,
       maxKph: stats.maxKph,
       avgKph: stats.avgKph,
       distanceTraveled: stats.distanceTraveled,
       duration: stats.duration,
-    },
+    },*/,
     {
       new: true, //returning updated user
     }
   );
-  // console.log("nel then di computeandUopdateStats, statsdoc is :");
-  // console.log(statsDocs);
   return statsDocs;
 };
 
@@ -88,29 +81,6 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
 };
 
 const computeEngineStats = async (tripId, fromTimestamp) => {
-  // console.log("calling computeEngineStats with tripId: " + tripId);
-  //console.log("calling computeEngineStats with fromTimestamp: ");
-  // console.log(fromTimestamp);
-
-  //only for debugging
-  /*const fiteredMeasur = await Trip.aggregate([
-    { $match: { _id: tripId } }, //filter only data of requested trip
-    { $unwind: "$measurements" },
-    { $match: { "measurements.timestamp": { $gte: fromTimestamp } } },
-  ]);
-  console.log("DDDDD I MEASUREMENTS FILTERED (with aggregate): ");
-  console.log(fiteredMeasur);*/
-
-  /*const meas2 = await Trip.find(
-    {
-      "measurements.timestamp": { $gte: fromTimestamp },
-    },
-    { lean: true }
-  );*/
-
-  /*console.log("EEEEE I MEASUREMENTS FILTERED(with find) : ");
-  console.log(meas2);*/
-
   const queryStages = [
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" }, //$unwind the services array before grouping, else group will give you array of arrays
@@ -132,10 +102,7 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
 
   //adding match stage (as third) in query to filter values by timestamp if provided
   if (fromTimestamp) {
-    //splice(start, deleteCount)
     console.log("splicing...");
-    //console.log("il fromtimestamp2:");
-    //console.log(fromTimestamp);
     queryStages.splice(2, 0, {
       $match: { "measurements.timestamp": { $gte: fromTimestamp } },
     });
@@ -145,7 +112,27 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   //console.log(queryStages);
 
   //all in one query mongoose
-  let statsDocs = await Trip.aggregate(queryStages);
+
+  statsDocs = await Promise.all([
+    Trip.aggregate(queryStages),
+    computeSpeedComposition(tripId, fromTimestamp),
+    computeRpmComposition(tripId, fromTimestamp),
+  ]).then(([basicEngineStats, speedCompositionStats, rpmCompositionStats]) => {
+    console.log("the engine stats");
+    console.log(basicEngineStats);
+    console.log("the duration stats");
+    console.log(speedCompositionStats);
+    console.log("the duration stats");
+    console.log(rpmCompositionStats);
+    return Object.assign(
+      basicEngineStats,
+      speedCompositionStats,
+      rpmCompositionStats
+    );
+  });
+
+  let statsDocs = Trip.aggregate(queryStages);
+
   // console.log("le stats ritornano:");
   //console.log(statsDocs);
   return statsDocs.length > 0 ? statsDocs[0] : null;
@@ -158,7 +145,7 @@ const computeMeasurementAttributeComposition = async (
   arrayOfRanges,
   defaultValue
 ) => {
-  const queryStages = await db.collection.aggregate([
+  const queryStages = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" },
     {
@@ -173,7 +160,6 @@ const computeMeasurementAttributeComposition = async (
     },
   ]);
   if (fromTimestamp) {
-    console.log("splicing...");
     queryStages.splice(2, 0, {
       $match: { "measurements.timestamp": { $gte: fromTimestamp } },
     });
@@ -201,6 +187,24 @@ const computeRpmComposition = async (tripId, fromTimestamp) => {
     0
   );
 };
+
+const computeSpeedLimitDeviationComposition = async (tripId, fromTimestamp) => {
+  //fetch trip data
+  //.maptospeedlimit for the position
+  //subtract
+  //group by
+  
+  return computeMeasurementAttributeComposition(
+    tripId,
+    fromTimestamp,
+    "rpm",
+    [0, 300, 600, 1200, 3000, 4000],
+    0
+  );
+};
+
+//pairSpeedWithSpeedLimit()
+
 module.exports = {
   computeEngineStats,
   computeDistanceAndTimeTraveledStats,
