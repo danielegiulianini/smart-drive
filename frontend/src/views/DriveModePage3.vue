@@ -1,9 +1,33 @@
 <template>
   <TheAppHeader></TheAppHeader>
+  <Spinner :show="isLoading"></Spinner>
 
+  <div
+    class="card pt-2"
+    style="box-shadow: none"
+    v-if="!hasUserRegisteredAVehicle"
+  >
+    <div class="card-body text-center">
+      <div
+        class="d-flex flex-column justify-content-center align-items-center"
+        style="height: 90vh"
+      >
+        <h1 style="font-size: 150%">No events recorded for this trip</h1>
+        <p class="text-muted">Drive with the app to see your events.</p>
+        <div
+          class="btn btn-light"
+          @click="this.$router.push('/garage')"
+          style="background-color: #012970; color: white"
+        >
+          Register a vehicle
+        </div>
+      </div>
+    </div>
+  </div>
   <main
     id="outer-container"
     style="height: 100vh; overflow-y: hidden; overflow-x: hidden"
+    v-else
   >
     <div class="vehicle-dashboard tooltip" :class="{ tooltipShow: started }">
       <div class="mt-5 pt-5 pb-0 mb-0">
@@ -31,27 +55,10 @@
     <div class="button-row p-3 text-center">
       {{ started }}
       <AppDriveButton
-        @click="ciao"
+        @click="onDriveButtonClicked"
         :spin="isStarting"
         :driveButtonName="driveButtonName"
       ></AppDriveButton>
-      <!--<button
-        id="driveButton"
-        type="button"
-        class="acceso"
-        style="
-          font-size: 120%;
-          border-radius: 100%;
-          width: 100px;
-          height: 100px;
-          border-width: 2px;
-          z-index: 99 !important;
-          border: solid;
-        "
-      >
-        <div class="fw-bold" style="margin-bottom: -8px">Start</div>
-        <small style="font-size: 70%">drive</small>
-      </button>-->
     </div>
   </main>
 
@@ -115,6 +122,7 @@ import FuelTankLevelMeter from "../components/FuelTankLevelMeter.vue";
 import Odometer from "../components/Odometer.vue";
 import AppDriveButton from "../components/AppDriveButton.vue";
 import axios from "axios";
+import Spinner from "../components/Spinner.vue";
 
 export default {
   components: {
@@ -124,11 +132,13 @@ export default {
     Speedometer,
     RpmMeter,
     Odometer,
+    Spinner,
     FuelTankLevelMeter,
   },
   data() {
     return {
       //mirroring backend's mongoose trips'measurement schema
+      isLoading: true,
       started: false,
       isStarting: false,
       rpm: "0", //or to be replaced by "" and some logic for hiding charts if not measurement are still
@@ -136,6 +146,7 @@ export default {
       odometer: "0",
       fuelTankLevel: "0",
       _id: "", //future Trip's ID
+      hasUserRegisteredAVehicle: false,
     };
   },
   computed: {
@@ -144,17 +155,18 @@ export default {
     },
   },
   methods: {
-    ciao() {
-      console.log("ciao");
-    },
     onDriveButtonClicked() {
-      if (!started) {
+      if (!this.started) {
+        console.log("starting trip");
+        const loggedInUser = 12; //this.$store.getters.getUser.id};//, { questa è corretta
         axios
-          .post("trips")
+          .post("trips", {
+            userId: loggedInUser,
+          })
           .then((newTripRes) => {
             this._id = newTripRes.data._id;
-            started = true; //putting here for not allowing to close (from the view) a trip not actually posted to backend
-            //put a spinner here???
+            this.started = true; //putting this here for not allowing to close (from the view) a trip not actually posted to backend
+            this.isStarting = false;
           })
           .catch((err) => console.error(err)); //maybe a more user-friendly message here
       } else {
@@ -167,19 +179,33 @@ export default {
           );
       }
     },
-  },
-  mounted() {
-    //here it comes data from io
-    console.log("this.store.state is ", this.store.state);
-    this.$store.state.socket.on("measurement", function (data) {
+    onNewMeasurement(measurement) {
       this.rpm = data.rpm;
       this.kph = data.kph;
       this.odometer = data.odometer;
       this.fuelTankLevel = data.fuelTankLevel;
-    });
-    this.$store.state.socket.on("drivingFeedback", function (data) {
+    },
+    onNewDrivingFeedback(DrivingFeedback) {
       console.log("feedback arrived");
-    });
+    },
+  },
+  mounted() {
+    //here it comes data from io
+    //console.log("this.store.state is ", this.store.state);
+    //this.$store.state.socket.on("measurement", this.onNewMeasurement);
+    //this.$store.state.socket.on("drivingFeedback", this.onNewDrivingFeedback);
+
+    const loggedInUser = 12; //this.$store.getters.getUser.id};//, { questa è corretta
+    //check if at least a vehicle is present!
+
+    axios
+      .get(`vehicles/userVehicles?userId=${loggedInUser}`)
+      .then((vehiclesRes) => {
+        if (vehiclesRes.data.length > 0) {
+          this.hasUserRegisteredAVehicle = true;
+        }
+      })
+      .finally(() => (this.isLoading = false));
   },
 };
 </script>
