@@ -19,6 +19,8 @@
 -->
       <TripOverviewCard
         v-for="(trip, index) in trips"
+        :key="trip._id"
+        :_id="trip._id"
         :globalScore="trip.globalScore"
         :startTimestamp="trip.startTimestamp"
         :endTimestamp="trip.endTimestamp"
@@ -28,6 +30,7 @@
         :startLocation="trip.startLocation"
         :endLocation="trip.endLocation"
         :positions="trip.positions"
+        :distanceTraveled="trip.distanceTraveled"
       ></TripOverviewCard>
     </section>
   </main>
@@ -185,7 +188,7 @@ export default {
       });
 
     const a = await aPromise;
-    //this.trips = a;
+    this.trips = a;
     console.log("i trips raffianti: ", a);
   },
   watch: {
