@@ -15,13 +15,16 @@
     </div>
     <!-- End Page Title -->
     <section class="section">
+      <!--        :key="trip._id"
+-->
       <TripOverviewCard
         v-for="(trip, index) in trips"
-        :key="trip._id"
         :globalScore="trip.globalScore"
         :startTimestamp="trip.startTimestamp"
         :endTimestamp="trip.endTimestamp"
         :date="trip.date"
+        :vehicleModel="trip.vehicleModel"
+        :vehicleMake="trip.vehicleMake"
         :startLocation="trip.startLocation"
         :endLocation="trip.endLocation"
         :positions="trip.positions"
@@ -63,7 +66,9 @@ export default {
         if (latitude && longitude) {
           resolve(""); //to be callend inside callback
         } else {
-          console.log("no latitude or longitude => so, performing geocoding");
+          console.log(
+            "no latitude or longitude => so, not performing geocoding"
+          );
           resolve("");
         }
       });
@@ -73,18 +78,19 @@ export default {
     //must fetch only closed trip (for statistics to be computed)
     console.log("getting trip info...");
 
-    const loggedInUserId = 6; //this.$store.state.user.id; or with vuex getter
+    const loggedInUserId = 12; //this.$store.state.user.id; or with vuex getter
 
     //manually joining (trips/vehicles) backend info as trips model doesn't contain all trip's info to show
     //The { item : null } query matches documents that either contain
     //the item field whose value is null or that do not contain the item field.
-
-    this.trips = await axios
+    const aPromise = axios
       .get(`trips?userId=${loggedInUserId}`)
-      .then((trips) =>
-        Promise.all(
+      .then((trips) => {
+        console.log("data returned by trips micro is", trips.data);
+        return Promise.all(
           trips.data.map((trip) => {
             //============================= overview =============================
+
             let startDate = new Date(trip.startTimestamp);
             trip.startTimestamp = startDate.toLocaleTimeString([], {
               hour: "2-digit",
@@ -126,10 +132,14 @@ export default {
                 .get(
                   `vehicles/userVehicles/${trip.vehicleIdentificationNumber}`
                 )
-                .then((userVehicleRes) =>
-                  axios
+                .then((userVehicleRes) => {
+                  console.log(
+                    "data returned by userVehicles micro is",
+                    userVehicleRes.data
+                  );
+                  return axios
                     .get(
-                      `vehicles/vehiclesModels/vehicleDetails/${userVehicleRes.vehicleModelId}`
+                      `vehicles/vehiclesModels/vehicleDetails/${userVehicleRes.data.vehicleModelId}`
                     )
                     .then((vehicleRes) => {
                       console.log(
@@ -138,35 +148,32 @@ export default {
                       );
                       const vehicleData = vehicleRes.data;
 
-                      this.vehicleMake = vehicleData.make;
-                      this.vehicleModel = vehicleData.model;
-                    })
-                )
+                      trip.vehicleMake = vehicleData.make;
+                      trip.vehicleModel = vehicleData.model;
+
+                      return trip;
+                    });
+                })
                 //============================= reverse geoconding =============================
-                .then(() =>
-                  this.getLocationName(
+                .then(() => {
+                  trip.startLocation.name = this.getLocationName(
                     trip.startLocation.latitude,
                     trip.startLocation.longitude
-                  )
-                )
-                .then(
-                  (locationName) =>
-                    (trip.startLocation.locationName = locationName)
-                )
-                .then(() =>
-                  this.getLocationName(
+                  );
+                  return trip;
+                })
+
+                .then(() => {
+                  trip.endLocation.name = this.getLocationName(
                     trip.endLocation.latitude,
                     trip.endLocation.longitude
-                  )
-                )
-                .then(
-                  (locationName) =>
-                    (trip.endLocation.locationName = locationName)
-                )
+                  );
+                  return trip;
+                })
             );
           })
-        )
-      )
+        );
+      })
       .catch((err) => {
         console.log("exceotion received");
         console.error(err);
@@ -176,6 +183,15 @@ export default {
         console.log("nel finally");
         this.isLoading = false;
       });
+
+    const a = await aPromise;
+    //this.trips = a;
+    console.log("i trips raffianti: ", a);
+  },
+  watch: {
+    trips(newVal, oldVal) {
+      console.log("trips updated inside watcher!");
+    },
   },
 };
 </script>
