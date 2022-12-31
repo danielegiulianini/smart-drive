@@ -34,94 +34,60 @@
               <div class="accordion-body">
                 <!-- could have used a v-for if using array instead of object for vehicle's properties-->
                 <ul class="list-group list-group-flush">
-                  <li
-                    class="list-group-item d-flex justify-content-between align-middle"
-                  >
-                    <VehicleDetailItem
+                    <TripDetailItem
                       label="max total score"
-                      :value="statistics.totalScore.max"
-                    ></VehicleDetailItem>
+                      :itemValue="statistics.totalScore.max"
+                    ></TripDetailItem>
 
-                    <VehicleDetailItem
+                    <TripDetailItem
                       :right="true"
                       label="avg total score"
-                      :value="statistics.totalScore.avg"
-                    ></VehicleDetailItem>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-middle"
-                  >
-                    <VehicleDetailItem
+                      :itemValue="statistics.totalScore.avg"
+                    ></TripDetailItem>
+                    <TripDetailItem
                       label="min total score"
-                      :value="statistics.totalScore.min"
-                    ></VehicleDetailItem>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-middle"
-                  >
-                    <VehicleDetailItem
+                      :itemValue="statistics.totalScore.min"
+                    ></TripDetailItem>
+                    <TripDetailItem
                       label="max safety score"
-                      :value="statistics.speedScore.max"
-                    ></VehicleDetailItem>
+                      :itemValue="statistics.speedScore.max"
+                    ></TripDetailItem>
 
-                    <VehicleDetailItem
+                    <TripDetailItem
                       :right="true"
                       label="avg safety score"
-                      :value="statistics.speedScore.avg"
-                    ></VehicleDetailItem>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-middle"
-                  >
-                    <VehicleDetailItem
+                      :itemValue="statistics.speedScore.avg"
+                    ></TripDetailItem>
+                    <TripDetailItem
                       label="min safety score"
-                      :value="statistics.speedScore.min"
-                    ></VehicleDetailItem>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-middle"
-                  >
-                    <VehicleDetailItem
+                      :itemValue="statistics.speedScore.min"
+                    ></TripDetailItem>
+                    <TripDetailItem
                       label="max aggressiveness score"
-                      :value="statistics.rpmScore.max"
-                    ></VehicleDetailItem>
+                      :itemValue="statistics.rpmScore.max"
+                    ></TripDetailItem>
 
-                    <VehicleDetailItem
-                      :right="true"
+                    <TripDetailItem
                       label="avg aggressiveness score"
-                      :value="statistics.rpmScore.avg"
-                    ></VehicleDetailItem>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-middle"
-                  >
-                    <VehicleDetailItem
+                      :itemValue="statistics.rpmScore.avg"
+                    ></TripDetailItem>
+                    <TripDetailItem
                       label="min aggressiveness score"
-                      :value="statistics.rpmScore.min"
-                    ></VehicleDetailItem>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-middle"
-                  >
-                    <VehicleDetailItem
+                      :itemValue="statistics.rpmScore.min"
+                    ></TripDetailItem>
+                    <TripDetailItem
                       label="max feedback score"
-                      :value="statistics.feedbackConsiderationScore.max"
-                    ></VehicleDetailItem>
+                      :itemValue="statistics.feedbackConsiderationScore.max"
+                    ></TripDetailItem>
 
-                    <VehicleDetailItem
-                      :right="true"
+                    <TripDetailItem
                       label="avg feedback score"
-                      :value="statistics.feedbackConsiderationScore.avg"
-                    ></VehicleDetailItem>
-                  </li>
-                  <li
-                    class="list-group-item d-flex justify-content-between align-middle"
-                  >
-                    <VehicleDetailItem
+                      :itemValue="statistics.feedbackConsiderationScore.avg"
+                    ></TripDetailItem>
+                    <TripDetailItem
                       label="min feedback score"
-                      :value="statistics.feedbackConsiderationScore.min"
-                    ></VehicleDetailItem>
-                  </li>
+                      :itemValue="statistics.feedbackConsiderationScore.min"
+                    ></TripDetailItem>
                 </ul>
               </div>
             </div>
@@ -149,30 +115,30 @@
                 <li
                   class="list-group-item d-flex justify-content-between align-middle"
                 >
-                  <VehicleDetailItem
+                  <TripDetailItem
                     label="max total score"
                     :value="statistics.tripDistance.max"
-                  ></VehicleDetailItem>
+                  ></TripDetailItem>
 
-                  <VehicleDetailItem
+                  <TripDetailItem
                     :right="true"
                     label="avg total score"
                     :value="statistics.tripDistance.avg"
-                  ></VehicleDetailItem>
+                  ></TripDetailItem>
                 </li>
                 <li
                   class="list-group-item d-flex justify-content-between align-middle"
                 >
-                  <VehicleDetailItem
+                  <TripDetailItem
                     label="max total score"
                     :value="statistics.tripDistance.max"
-                  ></VehicleDetailItem>
+                  ></TripDetailItem>
 
-                  <VehicleDetailItem
+                  <TripDetailItem
                     :right="true"
                     label="avg total score"
                     :value="statistics.tripDistance.avg"
-                  ></VehicleDetailItem>
+                  ></TripDetailItem>
                 </li>
               </ul>
             </div>
@@ -202,24 +168,24 @@
                 <li
                   class="list-group-item d-flex justify-content-between align-middle"
                 >
-                  <VehicleDetailItem
+                  <TripDetailItem
                     label="max total score"
                     :value="statistics.estimatedTripCost.max"
-                  ></VehicleDetailItem>
+                  ></TripDetailItem>
 
-                  <VehicleDetailItem
+                  <TripDetailItem
                     :right="true"
                     label="avg total score"
                     :value="statistics.estimatedTripCost.avg"
-                  ></VehicleDetailItem>
+                  ></TripDetailItem>
                 </li>
                 <li
                   class="list-group-item d-flex justify-content-between align-middle"
                 >
-                  <VehicleDetailItem
+                  <TripDetailItem
                     label="max total score"
                     :value="statistics.estimatedTripCost.max"
-                  ></VehicleDetailItem>
+                  ></TripDetailItem>
                 </li>
               </ul>
               <!--end first col-->
@@ -233,11 +199,11 @@
 </template>
 
 <script>
-import VehicleDetailItem from "./VehicleDetailItem.vue";
+import TripDetailItem from "./TripDetailItem.vue";
 
 export default {
   inheritAttrs: false,
-  components: { VehicleDetailItem },
+  components: { TripDetailItem },
   props: {
     isActive: {
       type: Boolean, // Number from 0.0 to 1.0
