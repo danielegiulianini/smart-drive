@@ -113,25 +113,25 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
 
   //all in one query mongoose
 
-  statsDocs = await Promise.all([
+  let statsDocs = await Promise.all([
     Trip.aggregate(queryStages),
-    computeSpeedComposition(tripId, fromTimestamp),
-    computeRpmComposition(tripId, fromTimestamp),
-  ]).then(([basicEngineStats, speedCompositionStats, rpmCompositionStats]) => {
+    //computeSpeedComposition(tripId, fromTimestamp), (but abandoned because of time lack)
+    //computeRpmComposition(tripId, fromTimestamp),
+    //]).then(([basicEngineStats, speedCompositionStats, rpmCompositionStats]) => {
+  ]).then(([basicEngineStats]) => {
     console.log("the engine stats");
     console.log(basicEngineStats);
-    console.log("the duration stats");
-    console.log(speedCompositionStats);
-    console.log("the duration stats");
-    console.log(rpmCompositionStats);
+    //console.log("the speed composition stats");
+    //console.log(speedCompositionStats);
+    //console.log("the rpm composition stats");
+    // console.log(rpmCompositionStats);
     return Object.assign(
-      basicEngineStats,
-      speedCompositionStats,
-      rpmCompositionStats
+      basicEngineStats
+      //speedCompositionStats, needed for trips charts (but abandoned because of time lack)
+      //rpmCompositionStats
     );
   });
 
-  let statsDocs = Trip.aggregate(queryStages);
 
   // console.log("le stats ritornano:");
   //console.log(statsDocs);
@@ -193,7 +193,7 @@ const computeSpeedLimitDeviationComposition = async (tripId, fromTimestamp) => {
   //.maptospeedlimit for the position
   //subtract
   //group by
-  
+
   return computeMeasurementAttributeComposition(
     tripId,
     fromTimestamp,
