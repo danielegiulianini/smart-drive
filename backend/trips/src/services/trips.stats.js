@@ -4,6 +4,7 @@ const Trip = require("../models/trips");
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
+  console.log("?????????????????????????????'il trip ID ", tripId);
   const stats = await computeStats(tripId, fromTimestamp);
   //materializing stats for performances reason (should increase transaction count too)
   const statsDocs = await Trip.findOneAndUpdate(
@@ -89,7 +90,7 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
       $group: {
         //2nd grouping for getting total (trip), specific metric
         _id: {
-          _id: "_id",
+          _id: "$_id",
         },
         //summary fields of raw data
         maxRpm: { $max: "$measurements.rpm" }, //dot notation needed if working with subdocuments
@@ -112,7 +113,6 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   //console.log(queryStages);
 
   //all in one query mongoose
-
   let statsDocs = await Promise.all([
     Trip.aggregate(queryStages),
     //computeSpeedComposition(tripId, fromTimestamp), (but abandoned because of time lack)
@@ -132,8 +132,7 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
     );
   });
 
-
-  // console.log("le stats ritornano:");
+  //console.log("le stats ritornano:");
   //console.log(statsDocs);
   return statsDocs.length > 0 ? statsDocs[0] : null;
 };
