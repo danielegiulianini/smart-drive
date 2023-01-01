@@ -1,5 +1,3 @@
-//const { createSchema } = require("./../utils/models.utils");
-
 const mongoose = require("mongoose");
 
 //- tours reference UserVehicle so cannot embed in users
@@ -23,7 +21,7 @@ const userVehicleSchema = mongoose.Schema({
     default: Date.now,
   },
   userId: {
-    type: Number,
+    type: String,
   },
   retired: {
     type: Boolean,
