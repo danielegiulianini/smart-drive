@@ -7,38 +7,12 @@
         <!--<span class="d-none d-sm-block ps-2">DriveSmart</span>-->
         <span class="ps-2">DriveSmart</span>
       </a>
-      <!-- <i class="bi bi-list toggle-sidebar-btn"></i>-->
     </div>
     <!-- End Logo -->
-
-    <!--<div class="search-bar">
-      <form
-        class="search-form d-flex align-items-center"
-        method="POST"
-        action="#"
-      >
-        <input
-          type="text"
-          name="query"
-          placeholder="Search"
-          title="Enter search keyword"
-        />
-        <button type="submit" title="Search">
-          <i class="bi bi-search"></i>
-        </button>
-      </form>
-    </div>-->
-    <!-- End Search Bar -->
+    <Spinner :show="isLoading"></Spinner>
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
-        <!--<li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle" href="#">
-            <i class="bi bi-search"></i>
-          </a>
-        </li>-->
-        <!-- End Search Icon-->
-
         <li class="nav-item dropdown">
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell"></i>
@@ -216,7 +190,7 @@
               class="rounded-circle"
             />
             <span class="d-none d-md-block dropdown-toggle ps-2"
-              >K. Anderson</span
+              >{{ firstNameInitial }}. {{ userSurname }}</span
             > </a
           ><!-- End Profile Iamge Icon -->
 
@@ -224,8 +198,8 @@
             class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
           >
             <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
-              <span>Web Designer</span>
+              <h6>{{ userFirstName }} {{ userSurname }}</h6>
+              <span>{{ userCountry }}</span>
             </li>
             <li>
               <hr class="dropdown-divider" />
@@ -234,7 +208,7 @@
             <li>
               <a
                 class="dropdown-item d-flex align-items-center"
-                href="users-profile.html"
+                @click="this.$router.push('/profile/')"
               >
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
@@ -243,24 +217,10 @@
             <li>
               <hr class="dropdown-divider" />
             </li>
-
-           <!-- <li>
-              <a
-                class="dropdown-item d-flex align-items-center"
-                href="users-profile.html"
-              >
-                <i class="bi bi-gear"></i>
-                <span>Account Settings</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-
             <li>
               <a
                 class="dropdown-item d-flex align-items-center"
-                href="pages-faq.html"
+                @click="this.$router.push('/')"
               >
                 <i class="bi bi-question-circle"></i>
                 <span>Need Help?</span>
@@ -268,12 +228,15 @@
             </li>
             <li>
               <hr class="dropdown-divider" />
-            </li>-->
-
+            </li>
+            <!-- maybe other things here... -->
             <li @click.prevent="$store.dispatch('logout')">
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a
+                class="dropdown-item d-flex align-items-center"
+                @click="this.$router.push('/')"
+              >
                 <i class="bi bi-box-arrow-right"></i>
-                <span><router-link to="/">Sign Out</router-link></span>
+                <span>Sign Out</span>
               </a>
             </li>
           </ul>
@@ -290,13 +253,21 @@
 
 <script>
 import TheAppSidebar from "../components/TheAppSidebar.vue";
+import axios from "axios";
+import Spinner from "../components/Spinner.vue";
+
 export default {
-  components: { TheAppSidebar },
+  components: { TheAppSidebar, Spinner },
   data() {
     return {
       unreadNotificationsCount: 0,
+      isLoading: false,
+
       //already sorted by backend
       allNotifications: [], //could have had only lastNotifications (as data)
+      userFirstName: "",
+      userSurname: "",
+      userCountry: "",
     };
   },
   computed: {
@@ -304,6 +275,9 @@ export default {
       const countOfNotificationsToDisplay = 10;
       //taking the first (=>slice) (most recent) countOfNotificationsToDisplay
       return this.allNotifications.slice(0, countOfNotificationsToDisplay);
+    },
+    firstNameInitial() {
+      return this.userFirstName ? this.userFirstName.charAt(0) : "";
     },
   },
   methods: {
@@ -326,12 +300,31 @@ export default {
     onNotificationIconPressed() {
       this.unreadNotificationsCount = 0;
     },
+    onSignout() {
+      this.$store.dispatch("logout").then(() => this.$router.push("/")); //redirecting to home (or login module) after logout
+    },
   },
   mounted() {
     console.log("the socket from header is: ", this.$store.state.users.socket);
     console.log("the users from header is: ", this.$store.state.users);
 
-    //fetching with axios
+    //fetching with axios some user detail
+    const loggedInUserId = 6; // this.$store.getters.getUser.id; //6; //this.$store.getters.getUser.id; //questa è corretta
+    axios
+      .get(`users/${loggedInUserId}`)
+      .then((userRes) => {
+        console.log("data coming from users", userRes);
+
+        const userDetail = userRes.data;
+        this.userFirstName = userDetail.name;
+        this.userSurname = userDetail.surname;
+        this.country = userDetail.country;
+      })
+      .catch((err) => console.error(err)) //a more user-friendly message here...
+      .finally(() => (this.isLoading = false));
+
+    //fetching with axios some user-detail
+
     //this.$socketio. add onNewNotification handler
   },
 };
