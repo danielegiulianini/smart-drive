@@ -185,7 +185,7 @@
             data-bs-toggle="dropdown"
           >
             <img
-              src="/src/assets/style/img/profile-img.jpg"
+              :src="actualPictureUri"
               alt="Profile"
               class="rounded-circle"
             />
@@ -255,6 +255,7 @@
 import TheAppSidebar from "../components/TheAppSidebar.vue";
 import axios from "axios";
 import Spinner from "../components/Spinner.vue";
+const defaultAvatarUri = "/src/assets/img/driverAvatar.png";
 
 export default {
   components: { TheAppSidebar, Spinner },
@@ -265,9 +266,14 @@ export default {
 
       //already sorted by backend
       allNotifications: [], //could have had only lastNotifications (as data)
+
+      //====================== user-related======================
+
       userFirstName: "",
       userSurname: "",
       userCountry: "",
+      profilePictureUri: "",
+      //=========================================================
     };
   },
   computed: {
@@ -276,9 +282,14 @@ export default {
       //taking the first (=>slice) (most recent) countOfNotificationsToDisplay
       return this.allNotifications.slice(0, countOfNotificationsToDisplay);
     },
+    //====================== user-related======================
     firstNameInitial() {
       return this.userFirstName ? this.userFirstName.charAt(0) : "";
     },
+    actualPictureUri() {
+      return this.profilePictureUri ? this.profilePictureUri : defaultAvatarUri;
+    },
+    //=========================================================
   },
   methods: {
     //hook when a notification is received!
@@ -305,8 +316,11 @@ export default {
     },
   },
   mounted() {
-    console.log("the socket from header is: ", this.$store.state.users.socket);
-    console.log("the users from header is: ", this.$store.state.users);
+    console.log(
+      "the socket from header comp is: ",
+      this.$store.state.users.socket
+    );
+    console.log("the users from header comp is: ", this.$store.state.users);
 
     //fetching with axios some user detail
     const loggedInUserId = 6; // this.$store.getters.getUser.id; //6; //this.$store.getters.getUser.id; //questa è corretta
@@ -319,11 +333,12 @@ export default {
         this.userFirstName = userDetail.name;
         this.userSurname = userDetail.surname;
         this.country = userDetail.country;
+        this.profilePictureUri = userDetail.profilePictureUri;
       })
       .catch((err) => console.error(err)) //a more user-friendly message here...
       .finally(() => (this.isLoading = false));
 
-    //fetching with axios some user-detail
+    //fetching with axios notifications
 
     //this.$socketio. add onNewNotification handler
   },
