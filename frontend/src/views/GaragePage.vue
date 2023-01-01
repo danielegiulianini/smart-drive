@@ -29,15 +29,17 @@
     <!-- garage summary -->
     <div class="card p-1 mb-3">
       <div class="d-flex justify-content-between m-2">
-        <div class="d-flex my-auto">
-          <span
-            ><i class="bi bi-speedometer2"></i>
-            {{ userVehicles.length }} vehicles</span
-          >
-          <small class="text-muted"> | </small>
-          <span><i class="bi bi-car-front"></i> 3 km </span>
-          <small class="text-muted"> | </small>
-          <span><i class="bi bi-clock"></i>1h22 mins</span>
+        <div class="my-auto">
+          <span> {{ userVehicles.length }}</span>
+          <small class="text-muted"> vehicles </small>
+        </div>
+        <div class="my-auto">
+          <span> {{ activeUserVehicles.length }}</span>
+          <small class="text-muted"> active </small>
+        </div>
+        <div class="my-auto">
+          <span> {{ ritiredUserVehicles.length }}</span>
+          <small class="text-muted"> ritired </small>
         </div>
         <div>
           <AddVehicleModal></AddVehicleModal>
@@ -73,7 +75,7 @@
             >
               <div class="accordion-body">
                 <div
-                  class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4"
+                  class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xxl-3 g-4"
                 >
                   <!-- :key is a low-level hint for Vue -->
                   <!-- _id is the _id of userVehicle (not of vehicleModel)-->
@@ -141,9 +143,6 @@
     </div>
   </main>
 
-  <!--<MobileAddVehicleButton
-    @click.native="showAddVehicleModal()"
-  ></MobileAddVehicleButton>-->
   <TheAppMobileNavbar></TheAppMobileNavbar>
   <TheAppFooter></TheAppFooter>
 </template>
@@ -155,15 +154,10 @@ import TheAppFooter from "../components/TheAppFooter.vue";
 import TheAppMobileNavbar from "../components/TheAppMobileNavbar.vue";
 import VehicleCard from "../components/VehicleCard.vue";
 import MobileAddVehicleButton from "../components/MobileAddVehicleButton.vue";
-import AddVehicleFormVue from "../components/AddVehicleForm.vue";
-//import AppModal from "../components/AppModal2.vue";
 import Spinner from "../components/Spinner.vue";
-//import AddVehicleModal from "../components/AddVehicleModal.vue";
 import axios from "axios";
 import makesLogosData from "../assets/data.json"; //vehicle-make's logos
-import AppBootstrapModal from "../components/AppBootstrapModal.vue";
 import AddVehicleModal from "../components/AddVehicleModal.vue";
-import AddVehicleModal2 from "../components/AddVehicleModal2.vue";
 
 export default {
   components: {
@@ -173,12 +167,7 @@ export default {
     TheAppMobileNavbar,
     VehicleCard,
     MobileAddVehicleButton,
-    AddVehicleModal2,
-    // AddVehicleFormVue,
-    //AppModal,
     Spinner,
-    //AddVehicleModal,
-    AppBootstrapModal,
     AddVehicleModal,
   },
   data() {
@@ -212,44 +201,43 @@ export default {
       return this.ritiredUserVehicles.length;
     },
   },
-  methods: {
-    closeMyModal() {
-      this.showModalNow = false;
-    },
-    toggleModal() {
-      this.showModalNow = !this.showModalNow;
-    },
-    showAddVehicleModal() {
-      console.log("opening modal");
-      this.$root.$emit("bv::show::modal", "staticBackdrop");
-
-      /*const myModal = new bootstrap.Modal(this.$refs.addVehicleModal); // creating modal object
-      myModal.show(); */ // show modal
-    },
-  },
+  methods: {},
   mounted() {
+    /*console.log("sending notification!");
+    this.$notification.show(
+      "Notification",
+      {
+        body: "This is a simple notification",
+      },
+      {}
+    );*/
+
     console.log("makes logo data is: ", this.makeLogoImgUrlByMake);
     console.log("l'url della fiat is:", this.makeLogoImgUrlByMake["Fiat"]);
     //fetch all the vehicles of the user from vehicles microservice and pass as props to vehicle cards!
     //manually joining userVehicles and vehicleModels here
-    const loggedInUserId = 12; //this.$store.state.user.id;
+
+    console.log("lo store is:", this.$store);
+    console.log("lo store.state is:", this.$store.state);
+
+    const loggedInUserId = this.$store.state.users.user.id; //or with vuex getter //12;
     axios
       .get(`vehicles/userVehicles?userId=${loggedInUserId}`)
       .then((result) => {
         //fetching (in parallel) all uservehicles details
         const userVehicles = result.data;
-        console.log("cio che mi riorna il backend is: ", result.data);
+        console.log("data from userVehicles:", result.data);
         console.log(
-          "il timestramp pretty pront: ",
+          "il timestramp pretty print: ",
           new Date(result.data[0].createdAt).toUTCString()
         );
-        const promises = userVehicles.map((userVehicle) =>
+        const richUserVehicles = userVehicles.map((userVehicle) =>
           axios
             .get(
               `vehicles/vehiclesModels/vehicleDetails/${userVehicle.vehicleModelId}`
             ) //retrieving vehicles details
             .then((res) => {
-              console.log("il vehicle detail per questo veicolo", res.data);
+              console.log("vehicle detail for this vehicle:", res.data);
               //could merge with object.assign
               res.data._id = userVehicle._id;
               res.data.pictureUri = userVehicle.pictureUri;
@@ -260,7 +248,7 @@ export default {
             .catch((error) => console.log(error))
         );
 
-        Promise.all(promises)
+        Promise.all(richUserVehicles)
           //assigning make url
           .then((usersVehiclesWithModelDetails) =>
             usersVehiclesWithModelDetails.map((userVehicle) => {
@@ -274,34 +262,13 @@ export default {
             console.log(usersVehiclesWithModelDetails);
             this.userVehicles = usersVehiclesWithModelDetails;
             console.log("gli active user vehicles: ", this.activeUserVehicles);
-            this.isLoading = false;
           })
           .catch((err) => {
             throw err; //re-throwing a error
           });
       })
-      .catch((err) => console.error(err)); //communicate something to user (with a mre user-friendly mapping?)
+      .catch((err) => console.error(err)) //communicate something to user (with a mre user-friendly mapping?)
+      .finally(() => (this.isLoading = false));
   },
 };
 </script>
-
-<style scoped>
-/*solo per modale*/
-
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: table;
-  transition: opacity 0.3s ease;
-}
-
-.modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-}
-</style>
