@@ -1,6 +1,6 @@
 <template>
   <TheAppHeader></TheAppHeader>
-  <!--<TheAppSidebar></TheAppSidebar>-->
+  <TheAppSidebar></TheAppSidebar>
   <Spinner :show="isLoading"></Spinner>
   <main id="main" class="main">
     <div class="pagetitle">
@@ -185,70 +185,71 @@ export default {
     },
     periodicallyRefreshLeaderboard() {
       const leaderboardRefreshPeriodInMilliseconds = 5000;
-      //refreshing leaderboard (its actual real-time update (with socket.io) would ruin leaderboard vision because of too high frequency)
+      //refreshing leaderboard (its actual real-time update (with socket.io) would ruin leaderboard vision
+      //because of too high frequency)
       setInterval(() => {
+        console.log("refreshing leaderboard...");
         return axios
           .get(`users`)
           .then((usersRes) => (this.users = usersRes.data));
       }, leaderboardRefreshPeriodInMilliseconds); //refreshing leaderboard every 5 seconds},
     },
-    mounted() {
-      //manually joining here
-      const loggedInUserId = 6; // this.$store.getters.getUser.id; //6; //this.$store.getters.getUser.id; //questa è corretta
-      //1. fetching user vehicle
-      axios
-        .get(`users/${loggedInUserId}`)
-        .then((userRes) => {
-          console.log("data coming from users", userRes);
+  },
+  mounted() {
+    //manually joining here
+    const loggedInUserId = this.$store.getters.getUser.id; //6; //this.$store.getters.getUser.id; //questa è corretta
+    //1. fetching user vehicle
+    axios
+      .get(`users/${loggedInUserId}`)
+      .then((userRes) => {
+        console.log("data coming from users micro", userRes);
 
-          const userDetail = userRes.data;
-          this.totalScore = userDetail.ecoScore;
-          this.speedScore = userDetail.speedScore;
-          this.rpmScore = userDetail.rpmScore;
-          this.feedbackConsiderationScore =
-            userDetail.feedbackConsiderationScore;
+        const userDetail = userRes.data;
+        this.totalScore = userDetail.ecoScore;
+        this.speedScore = userDetail.speedScore;
+        this.rpmScore = userDetail.rpmScore;
+        this.feedbackConsiderationScore = userDetail.feedbackConsiderationScore;
 
-          this.email = userDetail.email;
-          this.firstName = userDetail.name;
-          this.surname = userDetail.surname;
-          this.city = userDetail.city;
-          this.country = userDetail.country;
-          this.profilePictureUri = userDetail.profilePictureUri;
-          this.xp = userDetail.xp;
-          this.level = userDetail.level;
-          this.createdAt = userDetail.createdAt; // new Date(userDetail.createdAt)
-          /* .toUTCString()
+        this.email = userDetail.email;
+        this.firstName = userDetail.name;
+        this.surname = userDetail.surname;
+        this.city = userDetail.city;
+        this.country = userDetail.country;
+        this.profilePictureUri = userDetail.profilePictureUri;
+        this.xp = userDetail.xp;
+        this.level = userDetail.level;
+        this.createdAt = userDetail.createdAt; // new Date(userDetail.createdAt)
+        /* .toUTCString()
           .split(" ")
           .slice(0, 3)
           .join(" "); //pretty-printing date*/
-          this.unlockedAchievements = userDetail.unlockedAchievements;
-          this.scoresTrend = userDetail.scoresTrend;
-          console.log("now this xp is", this.xp);
-          return userRes;
-        })
-        //2. fetching users (for leaderboard)
-        .then((result) => {
-          console.log("data coming from users (for single user)", result);
-          return axios.get(`users`);
-        })
-        .then((usersRes) => {
-          const users = usersRes.data;
-          console.log("data coming from users (for leaderboard)", usersRes);
+        this.unlockedAchievements = userDetail.unlockedAchievements;
+        this.scoresTrend = userDetail.scoresTrend;
+        console.log("now this xp is", this.xp);
+        return userRes;
+      })
+      //2. fetching users (for leaderboard)
+      .then((result) => {
+        console.log("data coming from users (for single user)", result);
+        return axios.get(`users`);
+      })
+      .then((usersRes) => {
+        const users = usersRes.data;
+        console.log("data coming from users (for leaderboard)", usersRes);
 
-          this.users = users;
+        this.users = users;
 
-          this.isLoading = false;
-        })
-        .then(() => {
+        this.isLoading = false;
+      })
+      /*.then(() => {
           //3. fetching user-vehicle trips data
           return axios.get(`trips?vehicleIdentificationNumber=${this._id}`);
-        })
-        .catch((err) => console.error(err))
-        .finally(() => {
-          this.isLoading = false;
-        });
-      this.periodicallyRefreshLeaderboard();
-    },
+        })*/
+      .catch((err) => console.error(err))
+      .finally(() => {
+        this.isLoading = false;
+      });
+    this.periodicallyRefreshLeaderboard();
   },
 };
 </script>
