@@ -179,35 +179,38 @@ const performancesSinceJoined = async (userId) => {
 
 //ENTRY POINT (this could be invoked by an independent route too)
 const getAchievements = async (userId) => {
+
+  
+  console.log("searching for assignments...")
   const achievementsEvents = []; //array of strings
 
   //============= eco-friendly behaviour ======================
-  electricTripsPerformedBy(userId)
+  /*electricTripsPerformedBy(userId)
     .then((electricTripsCount) => {
       if (electricTripsCount >= 10) {
-        achievementsEvents.push("electric_trips_10");
+        achievementsEvents.push("electric_trips_100");
       } else if (electricTripsCount >= 5) {
         achievementsEvents.push("electric_trips_5");
       } else if (electricTripsCount >= 1) {
         achievementsEvents.push("electric_trips_1");
       }
     })
-    .catch((err) => console.log("error during electricTrips"));
+    .catch((err) => console.log("error during electricTrips"));*/
 
   const performances = await performancesInAMonth(userId);
-  console.log("le performances:");
-  console.log(performances);
+  console.log("le performances (for badges assignment) are:", performances);
   //max => peak performance
   const maxEcoScorePerTrip = Math.max(
     ...performances.map((o) => o.maxEcoScorePerTrip)
   );
+  /*removing because of lacking time to draw the badge 
   if (maxEcoScorePerTrip >= 95) {
     achievementsEvents.push("ecoscore_single_trip_95");
   } else if (maxEcoScorePerTrip >= 92) {
     achievementsEvents.push("ecoscore_single_trip_92");
   } else if (maxEcoScorePerTrip >= 85) {
     achievementsEvents.push("ecoscore_single_trip_85");
-  }
+  }*/
   const maxRpmScorePerTrip = Math.max(
     ...performances.map((o) => o.maxRpmEcoScorePerTrip)
   );
@@ -218,19 +221,32 @@ const getAchievements = async (userId) => {
   } else if (maxRpmScorePerTrip >= 85) {
     achievementsEvents.push("rpmScore_single_trip_85");
   }
-  /* const maxSpeedScorePerTrip = Math.max(
+
+  const maxSpeedScorePerTrip = Math.max(
     ...performances.map((o) => o.maxSpeedScorePerTrip)
   );
   if (maxSpeedScorePerTrip > 95) {
     achievementsEvents.push("speedScore_single_trip_95");
   } else if (maxSpeedScorePerTrip > 92) {
-    achievementsEvents.push("speedScore_single_trip_95");
+    achievementsEvents.push("speedScore_single_trip_92");
   } else if (maxSpeedScorePerTrip > 85) {
     achievementsEvents.push("speedScore_single_trip_85");
-  }*/
+  }
 
-  //total => perseverance (milestones)
-  const totalEcoScore = Math.max(...performances.map((o) => o.totalEcoScore));
+  const maxFeedbackConsiderationScorePerTrip = Math.max(
+    ...performances.map((o) => o.maxFeedbackConsiderationEcoScorePerTrip)
+  );
+  if (maxFeedbackConsiderationScorePerTrip > 95) {
+    achievementsEvents.push("feedbackConsiderationScore_single_trip_95");
+  } else if (maxFeedbackConsiderationScorePerTrip > 92) {
+    achievementsEvents.push("feedbackConsiderationScore_single_trip_92");
+  } else if (maxFeedbackConsiderationScorePerTrip > 85) {
+    achievementsEvents.push("feedbackConsiderationScore_single_trip_85");
+  }
+
+  //total => perseverance (milestones) (not used actually by frontend (future developments))
+  //removing those because of lacking time to draw the badge
+  /*const totalEcoScore = Math.max(...performances.map((o) => o.totalEcoScore));
   if (totalEcoScore >= 2000) {
     achievementsEvents.push("ecoscore_total_2000");
   } else if (totalEcoScore >= 500) {

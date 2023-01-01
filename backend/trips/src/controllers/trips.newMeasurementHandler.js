@@ -22,9 +22,16 @@ const handleNewMeasurement = async (vin, measurementPayload) => {
   try {
     //only saving data in driving mode
     trip = await dataAcquisitionService.addMeasurement(vin, measurementPayload);
-    console.log("the trip is:");
+    console.log("the trip to add measurements to is:");
     console.log(trip);
     if (trip) {
+      //these two lines, although inefficient, allows, by including userId into
+      //measurement from arduino, to not make user choose a vehicle when starting
+      //a new trip
+      trip.vehicleIdentificationNumber = vin;
+      await trip.save();
+      //==========================================================================
+
       //1. give advice to user via phone!... (I assume it's connected while nodemcu is sending here!)
       const feedback = await drivingAssistantService.getAndAssignFeedback(
         trip._id,

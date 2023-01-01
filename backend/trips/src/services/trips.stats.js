@@ -1,11 +1,19 @@
 //generate some stats data from data acquisition (numeri singoli che riassumono tutto il trip)
 const Trip = require("../models/trips");
-
+const mongoose = require("mongoose");
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
-  console.log("?????????????????????????????'il trip ID ", tripId);
+  /*TERRIBLE MONGOOSE ISSUE here: Mongoose "autocasts" string values for ObjectId into 
+  their correct type in regular queries, but this does not happen in the 
+  aggregation pipeline, as in described in issue #1399 
+  (https://github.com/Automattic/mongoose/issues/1399), and mongoose does not either
+  RETURNING A WARNING!!! So, casting here.*/
+  tripId = mongoose.Types.ObjectId(tripId);
+  tripId = mongoose.Types.ObjectId(tripId);
+
   const stats = await computeStats(tripId, fromTimestamp);
+  console.log("stats are: ", stats);
   //materializing stats for performances reason (should increase transaction count too)
   const statsDocs = await Trip.findOneAndUpdate(
     {
@@ -20,7 +28,7 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
       duration: stats.duration,
     },*/,
     {
-      new: true, //returning updated user
+      new: true, //returning updated trip
     }
   );
   return statsDocs;
@@ -54,7 +62,7 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
     Trip.findOne({ _id: tripId })
       //sorting here?
       .then((trip) => {
-        console.log("the trips is: ");
+        console.log("[in computeDistanceAndTimeTraveledStats] the trips is: ");
         console.log(trip);
         if (trip.measurements.length > 0) {
           const odometerAvailable =
@@ -82,6 +90,7 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
 };
 
 const computeEngineStats = async (tripId, fromTimestamp) => {
+  console.log("computing engine stats for trip with id", tripId);
   const queryStages = [
     { $match: { _id: tripId } }, //filter only data of requested trip
     { $unwind: "$measurements" }, //$unwind the services array before grouping, else group will give you array of arrays
@@ -103,14 +112,30 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
 
   //adding match stage (as third) in query to filter values by timestamp if provided
   if (fromTimestamp) {
-    console.log("splicing...");
+    console.log("SPLICING...");
     queryStages.splice(2, 0, {
       $match: { "measurements.timestamp": { $gte: fromTimestamp } },
     });
+  } else {
+    console.log("NOT SPLICING...");
   }
 
+  const queryStages2 = [
+    { $match: { _id: tripId } }, //filter only data of requested trip
+    { $unwind: "$measurements" },
+  ];
+  const myStatsFistStage = await Trip.aggregate(queryStages2);
+  console.log(
+    "in computeEngineStats, le myBasicEngineStats dopo first stage",
+    myStatsFistStage
+  );
   //console.log("the resulting query stage:");
   //console.log(queryStages);
+  const myBasicEngineStats = await Trip.aggregate(queryStages);
+  console.log(
+    "in computeEngineStats, le myBasicEngineStats complete",
+    myBasicEngineStats
+  );
 
   //all in one query mongoose
   let statsDocs = await Promise.all([

@@ -14,7 +14,7 @@ const tripsSchema = mongoose.Schema({
   },
   vehicleIdentificationNumber: {
     type: String,
-    required: true,
+    //required: true,
   },
   startTimestamp: {
     type: Date,
@@ -81,6 +81,9 @@ const tripsSchema = mongoose.Schema({
   maxKph: {
     type: Number,
   },
+  /*speedComposition :
+rpmComposition: 
+speedLimitDviationComposition*/
   //>>these for future extensions:
   avgEngineLoad: {
     type: Number,
@@ -99,12 +102,15 @@ const tripsSchema = mongoose.Schema({
   //>ecoscore-related
   totalScore: {
     type: Number,
+    default: 0,
   },
   speedScore: {
     type: Number,
+    default: 0,
   },
   rpmScore: {
     type: Number,
+    default: 0,
   },
   feedbackConsiderationScore: {
     type: Number,

@@ -11,7 +11,7 @@ const addTrip = async (trip) => {
 
   //db.nomeCollezione.find([[objSel],[objProj]])
   return Trip.findOne({
-    _id: trip._id,
+    _id: trip._id, //here id is null?
   })
     .then((result) => {
       if (result) {
@@ -29,13 +29,14 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   //- it there is: update it
 
   console.log(
-    "in addMeasurements: vin is" + vin + "and the measurement params:"
+    "in addMeasurements: userId is" + vin + "and the measurement params:"
   );
   console.log(newMeasurementParams);
 
   const currentTrip = await Trip.findOne({
     $and: [
-      { vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
+      { userId: newMeasurementParams.userId },
+      //{ vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
       { endTimestamp: null }, //returning both: 1. documents with existing endTImestamp but set to null and 2. without it
     ],
   });
@@ -71,6 +72,7 @@ const close = async (tripId) => {
       await tripToEnd.save();
     }
   }
+  //if trips has no mesurements can delete it... after cloising it
   return tripToEnd;
 };
 

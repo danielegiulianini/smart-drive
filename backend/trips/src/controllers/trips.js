@@ -31,7 +31,7 @@ const close = async (req, res) => {
 
   const tripId = req.params.tripId;
   try {
-    const trip = await tripsService.close(tripId);
+    let trip = await tripsService.close(tripId);
     //triggering computations here possibly resulting in notifications (could also expose this funtionalities in an API to pull separately (instead of a push approach!):
     //1.compute and assign scores
     //2.compute and assing statistics (check for PBs?)
@@ -55,7 +55,8 @@ const close = async (req, res) => {
     } else {
       console.log("no achievements got by trip");
     }
-    await statsService.computeAndUpdateStats(tripId);
+    //returning TRIP WITH STATISTICS
+    trip = await statsService.computeAndUpdateStats(tripId);
     res.status(201).json(trip); //todo actions to be refactored since reused
   } catch (err) {
     console.log("error happened");
@@ -81,7 +82,7 @@ const get = async (req, res) => {
 
 const getAll = async (req, res) => {
   console.log(`calling ${req.method} ${req.originalUrl}`);
-
+  console.log("received query: ", req.query);
   tripsService
     .list(req.query)
     .then((trips) => res.status(200).json(trips))

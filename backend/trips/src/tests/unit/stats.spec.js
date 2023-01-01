@@ -27,8 +27,8 @@ const constantRpmValues = [...Array(10)].map((_, i) => {
   return { rpm: 2000 };
 });
 const nonConstantRpmValues = [
-  { rpm: 1000 },
-  { rpm: 3000 },
+  { rpm: 1000, kph: 9000 },
+  { rpm: 3000, kph: 9000 },
   { rpm: 10000 },
   { rpm: 7000 },
   { rpm: 1000 },
@@ -213,7 +213,7 @@ describe("a stats calculator", () => {
   //duration
   describe("when asked for the duration of a trip", () => {
     //service methods
-    it.only("should consider its starting and ending timestamp", async () => {
+    it("should consider its starting and ending timestamp", async () => {
       const tripApproximateDuration = 1000; //milliseconds
       const savedTrip = await createTripWithMeasurements(constantRpmValues);
       await sleep(tripApproximateDuration);
@@ -309,3 +309,12 @@ describe("a stats calculator", () => {
     });
   });
 });
+
+/*this should be refactored in another test:
+      ("stats for empty (no measurement) trips should be null")
+      let emptyTrip = await createTripWithMeasurements([]);
+      await TripsService.close(emptyTrip._id);
+      let stats = await TripsStatsService.computeEngineStats(emptyTrip._id); //AndUpdateStats(savedTrip._id);
+
+      console.log("stats obtained for empty trip:");
+      console.log(stats);*/
