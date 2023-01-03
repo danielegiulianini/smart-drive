@@ -224,48 +224,53 @@ export default {
     axios
       .get(`vehicles/userVehicles?userId=${loggedInUserId}`)
       .then((result) => {
-        //fetching (in parallel) all uservehicles details
-        const userVehicles = result.data;
-        console.log("data from userVehicles:", result.data);
-        console.log(
-          "il timestramp pretty print: ",
-          new Date(result.data[0].createdAt).toUTCString()
-        );
-        const richUserVehicles = userVehicles.map((userVehicle) =>
-          axios
-            .get(
-              `vehicles/vehiclesModels/vehicleDetails/${userVehicle.vehicleModelId}`
-            ) //retrieving vehicles details
-            .then((res) => {
-              console.log("vehicle detail for this vehicle:", res.data);
-              //could merge with object.assign
-              res.data._id = userVehicle._id;
-              res.data.pictureUri = userVehicle.pictureUri;
-              res.data.createdAt = userVehicle.createdAt;
+        if (result.data && result.data.length > 0) {
+          //fetching (in parallel) all uservehicles details
+          const userVehicles = result.data;
+          console.log("data from userVehicles:", result.data);
+          console.log(
+            "il timestramp pretty print: ",
+            new Date(result.data[0].createdAt).toUTCString()
+          );
+          const richUserVehicles = userVehicles.map((userVehicle) =>
+            axios
+              .get(
+                `vehicles/vehiclesModels/vehicleDetails/${userVehicle.vehicleModelId}`
+              ) //retrieving vehicles details
+              .then((res) => {
+                console.log("vehicle detail for this vehicle:", res.data);
+                //could merge with object.assign
+                res.data._id = userVehicle._id;
+                res.data.pictureUri = userVehicle.pictureUri;
+                res.data.createdAt = userVehicle.createdAt;
 
-              return res.data;
-            })
-            .catch((error) => console.log(error))
-        );
+                return res.data;
+              })
+              .catch((error) => console.log(error))
+          );
 
-        Promise.all(richUserVehicles)
-          //assigning make url
-          .then((usersVehiclesWithModelDetails) =>
-            usersVehiclesWithModelDetails.map((userVehicle) => {
-              userVehicle.makeLogoImgUrl =
-                this.makeLogoImgUrlByMake[userVehicle.make];
-              return userVehicle;
+          Promise.all(richUserVehicles)
+            //assigning make url
+            .then((usersVehiclesWithModelDetails) =>
+              usersVehiclesWithModelDetails.map((userVehicle) => {
+                userVehicle.makeLogoImgUrl =
+                  this.makeLogoImgUrlByMake[userVehicle.make];
+                return userVehicle;
+              })
+            )
+            //assigning to data for displaying in view
+            .then((usersVehiclesWithModelDetails) => {
+              console.log(usersVehiclesWithModelDetails);
+              this.userVehicles = usersVehiclesWithModelDetails;
+              console.log(
+                "gli active user vehicles: ",
+                this.activeUserVehicles
+              );
             })
-          )
-          //assigning to data for displaying in view
-          .then((usersVehiclesWithModelDetails) => {
-            console.log(usersVehiclesWithModelDetails);
-            this.userVehicles = usersVehiclesWithModelDetails;
-            console.log("gli active user vehicles: ", this.activeUserVehicles);
-          })
-          .catch((err) => {
-            throw err; //re-throwing a error
-          });
+            .catch((err) => {
+              throw err; //re-throwing a error
+            });
+        } else Promise.resolve();
       })
       .catch((err) => console.error(err)) //communicate something to user (with a mre user-friendly mapping?)
       .finally(() => (this.isLoading = false));
