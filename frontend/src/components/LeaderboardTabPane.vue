@@ -67,8 +67,9 @@
                       {{ firstName }} {{ surname }}
                     </h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{ country }}</h6>
-                    <div class="d-flex justify-content-around align-middle">
-                      <div>
+                    <div class="d-flex justify-content-between align-middle">
+                      <!--or: justify-content-around -->
+                      <div class="me-4">
                         <span
                           class="card-text text-bf"
                           style="font-size: 300%"
@@ -140,7 +141,7 @@
                 <LeaderboardUser
                   v-for="(user, index) in sortedUsersToDisplay"
                   :key="user._id"
-                  :firstName="user.firstName"
+                  :firstName="user.name"
                   :score="
                     scoreSorting == 'totalScore'
                       ? user.ecoScore
@@ -150,7 +151,7 @@
                       ? user.speedScore
                       : user.feedbackConsiderationScore
                   "
-                  :rank="rankOf(sortedUsersToDisplay, user)"
+                  :rank="rankOf(sortedUsersToDisplay, user._id)"
                   :surname="user.surname"
                   :profilePictureUri="user.profilePictureUri"
                   :xp="user.xp"
@@ -230,19 +231,36 @@ export default {
       }
     },
     myRank() {
-      return this.rankOf(this.users, this.$store.getters.getUser.id); //this.$store.getters.getUser.id);
+      console.log(
+        "in computing rank, the this.sortedUsersToDisplay: ",
+        this.sortedUsersToDisplay,
+        "my id",
+        this.$store.getters.getUser.id
+      );
+      return this.rankOf(
+        this.sortedUsersToDisplay,
+        this.$store.getters.getUser.id
+      ); //this.$store.getters.getUser.id);
     },
   },
   methods: {
-    rankOf(users, user) {
+    rankOf(users, userId) {
       console.log(
         "il rank che ritorno: ",
-        users.map((aUser) => aUser._id).indexOf(user._id) + 1
+        users.map((aUser) => aUser._id).indexOf(userId) + 1
       );
-      console.log("searching id ", user._id," of user ", user,  " in users: ", users.map((aUser) => aUser._id));
-      return (
-        users.map((aUser) => aUser._id).indexOf(user._id) + 1 //+1 for array zero-indexing
+      console.log(
+        "searching id ",
+        userId,
+        " of user ",
+        userId,
+        " in users: ",
+        users.map((aUser) => aUser._id)
       );
+      const rank =
+        users.map((aUser) => aUser._id).indexOf(userId) + 1; //+1 for array zero-indexing
+      console.log("ritorno rank", rank);
+      return rank;
     },
     timeSince(date) {
       console.log("la date to which say timeSince", date);
@@ -275,11 +293,11 @@ export default {
   mounted() {
     console.log("i sorted users: ", this.sortedUsersToDisplay);
   },
-  /* watcher: {
-    actualPictureUri(newUri, oldUri) {
-      this.
-    }*
-  }*/
+   watch: {
+    sortedUsersToDisplay(newUri, oldUri) {
+      console.log("****************sortedUsersToDisplay updated*************************")
+    }
+  }
 };
 </script>
 
