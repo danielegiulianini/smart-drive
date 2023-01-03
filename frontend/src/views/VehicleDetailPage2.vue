@@ -13,14 +13,6 @@
 
     <Spinner :show="isLoading"></Spinner>
 
-    <!-- start of delete vehicle modal -->
-
-    <!-- end of delete vehicle modal -->
-
-    <!-- start of edit vehicle modal -->
-
-    <!-- end of edit vehicle modal -->
-
     <div class="pagetitle">
       <h1>Vehicle Detail</h1>
 
@@ -94,17 +86,20 @@
               <div
                 class="card-footer text-center d-flex justify-content-between my-auto"
               >
-                <small class="text-muted my-auto" v-if="statistics.tripsCount > 0"
+                <small
+                  class="text-muted my-auto"
+                  v-if="statistics.tripsCount > 0"
                   >Last trip 3 mins ago</small
                 >
                 <small class="text-muted my-auto" v-else
                   >No trips recorded yet</small
                 >
                 <div>
-                  <DeleteVehicleModal></DeleteVehicleModal>
+                  <DeleteVehicleModal
+                    @vehicleRemovalConfirmed="vehicleRemovalConfirmed"
+                  ></DeleteVehicleModal>
                   <EditVehicleModal
-                    v-bind:initialVehicle="overview"
-                    year="2012"
+                    :initialVehicle="overview"
                   ></EditVehicleModal>
 
                   <!--<i
@@ -326,7 +321,9 @@ export default {
   },
   computed: {
     actualPictureUri() {
-      return this.overview.pictureUri ? this.overview.pictureUri : defaultAvatarPath;
+      return this.overview.pictureUri
+        ? this.overview.pictureUri
+        : defaultAvatarPath;
     },
   },
   methods: {
@@ -376,6 +373,23 @@ export default {
       }
       return Math.floor(seconds) + " seconds";
     },
+    vehicleRemovalConfirmed() {
+      console.log("sending to axios the removal!");
+      this.notifications.show(
+        "Hello World",
+        {
+          body: "This is an example!",
+        },
+        {}
+      );
+      this.$router.push("/garage");
+      /*axios
+        .delete(`vehicles/userVehicles/${this._id}`)
+        .then((res) => {
+          //display success?? todo
+        })
+        .catch((err) => console.error(err));*/
+    },
   },
   mounted() {
     console.log(
@@ -391,15 +405,18 @@ export default {
       .get(`vehicles/userVehicles/${this._id}`)
       .then((userVehicleRes) => {
         console.log("data coming from userVehicles", userVehicleRes);
-        this.overview.pictureUri = userVehicleRes.data.pictureUri;
-        this.overview.pictureUri = "";
-        this.overview.createdAt = new Date(userVehicleRes.data.createdAt)
+        const userVehicleData = userVehicleRes.data;
+
+        this.overview = {};
+        this.overview.pictureUri = userVehicleData.pictureUri;
+        this.overview._id = userVehicleData._id;
+        this.overview.createdAt = new Date(userVehicleData.createdAt)
           .toUTCString()
           .split(" ")
           .slice(0, 3)
           .join(" ");
 
-        this.overview.retired = userVehicleRes.data.retired;
+        this.overview.retired = userVehicleData.retired;
         return userVehicleRes;
       })
       //2. fetching user-vehicle details
@@ -422,12 +439,12 @@ export default {
         this.overview.series = vehicleModel.series;
         this.overview.makeLogoImgUrl =
           this.makeLogoImgUrlByMake[vehicleModel.make];
-        this.overview.year = vehicleModel.year;
+        /*this.overview.year = vehicleModel.year;
         this.overview.make = vehicleModel.make;
         this.overview.model = vehicleModel.model;
         this.overview.series = vehicleModel.series;
         this.overview.makeLogoImgUrl =
-          this.makeLogoImgUrlByMake[vehicleModel.make];
+          this.makeLogoImgUrlByMake[vehicleModel.make];*/
 
         this.overview.startStop = vehicleModel.startStop;
         this.overview.trany = vehicleModel.trany;
@@ -521,7 +538,7 @@ export default {
         console.log("nel finally");
         this.isLoading = false;
       });
-    this.isLoading = false;
+    //this.isLoading = false;
   },
 };
 </script>
