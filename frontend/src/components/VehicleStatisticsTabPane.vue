@@ -34,60 +34,58 @@
               <div class="accordion-body">
                 <!-- could have used a v-for if using array instead of object for vehicle's properties-->
                 <ul class="list-group list-group-flush">
-                    <TripDetailItem
-                      label="max total score"
-                      :itemValue="statistics.totalScore.max"
-                    ></TripDetailItem>
+                  <TripDetailItem
+                    label="max total score"
+                    :itemValue="statistics.totalScore.max"
+                  ></TripDetailItem>
 
-                    <TripDetailItem
-                      :right="true"
-                      label="avg total score"
-                      :itemValue="statistics.totalScore.avg"
-                    ></TripDetailItem>
-                    <TripDetailItem
-                      label="min total score"
-                      :itemValue="statistics.totalScore.min"
-                    ></TripDetailItem>
-                    <TripDetailItem
-                      label="max safety score"
-                      :itemValue="statistics.speedScore.max"
-                    ></TripDetailItem>
+                  <TripDetailItem
+                    label="avg total score"
+                    :itemValue="statistics.totalScore.avg"
+                  ></TripDetailItem>
+                  <TripDetailItem
+                    label="min total score"
+                    :itemValue="statistics.totalScore.min"
+                  ></TripDetailItem>
+                  <TripDetailItem
+                    label="max safety score"
+                    :itemValue="statistics.speedScore.max"
+                  ></TripDetailItem>
 
-                    <TripDetailItem
-                      :right="true"
-                      label="avg safety score"
-                      :itemValue="statistics.speedScore.avg"
-                    ></TripDetailItem>
-                    <TripDetailItem
-                      label="min safety score"
-                      :itemValue="statistics.speedScore.min"
-                    ></TripDetailItem>
-                    <TripDetailItem
-                      label="max aggressiveness score"
-                      :itemValue="statistics.rpmScore.max"
-                    ></TripDetailItem>
+                  <TripDetailItem
+                    label="avg safety score"
+                    :itemValue="statistics.speedScore.avg"
+                  ></TripDetailItem>
+                  <TripDetailItem
+                    label="min safety score"
+                    :itemValue="statistics.speedScore.min"
+                  ></TripDetailItem>
+                  <TripDetailItem
+                    label="max aggressiveness score"
+                    :itemValue="statistics.rpmScore.max"
+                  ></TripDetailItem>
 
-                    <TripDetailItem
-                      label="avg aggressiveness score"
-                      :itemValue="statistics.rpmScore.avg"
-                    ></TripDetailItem>
-                    <TripDetailItem
-                      label="min aggressiveness score"
-                      :itemValue="statistics.rpmScore.min"
-                    ></TripDetailItem>
-                    <TripDetailItem
-                      label="max feedback score"
-                      :itemValue="statistics.feedbackConsiderationScore.max"
-                    ></TripDetailItem>
+                  <TripDetailItem
+                    label="avg aggressiveness score"
+                    :itemValue="statistics.rpmScore.avg"
+                  ></TripDetailItem>
+                  <TripDetailItem
+                    label="min aggressiveness score"
+                    :itemValue="statistics.rpmScore.min"
+                  ></TripDetailItem>
+                  <TripDetailItem
+                    label="max feedback score"
+                    :itemValue="statistics.feedbackConsiderationScore.max"
+                  ></TripDetailItem>
 
-                    <TripDetailItem
-                      label="avg feedback score"
-                      :itemValue="statistics.feedbackConsiderationScore.avg"
-                    ></TripDetailItem>
-                    <TripDetailItem
-                      label="min feedback score"
-                      :itemValue="statistics.feedbackConsiderationScore.min"
-                    ></TripDetailItem>
+                  <TripDetailItem
+                    label="avg feedback score"
+                    :itemValue="statistics.feedbackConsiderationScore.avg"
+                  ></TripDetailItem>
+                  <TripDetailItem
+                    label="min feedback score"
+                    :itemValue="statistics.feedbackConsiderationScore.min"
+                  ></TripDetailItem>
                 </ul>
               </div>
             </div>
@@ -112,34 +110,24 @@
               data-bs-parent="#accordionFlushExample2"
             >
               <ul class="list-group list-group-flush">
-                <li
-                  class="list-group-item d-flex justify-content-between align-middle"
-                >
-                  <TripDetailItem
-                    label="max total score"
-                    :value="statistics.tripDistance.max"
-                  ></TripDetailItem>
+                <TripDetailItem
+                  label="max total score"
+                  :itemValue="statistics.tripDistance.max"
+                ></TripDetailItem>
 
-                  <TripDetailItem
-                    :right="true"
-                    label="avg total score"
-                    :value="statistics.tripDistance.avg"
-                  ></TripDetailItem>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-middle"
-                >
-                  <TripDetailItem
-                    label="max total score"
-                    :value="statistics.tripDistance.max"
-                  ></TripDetailItem>
+                <TripDetailItem
+                  label="avg total score"
+                  :itemValue="statistics.tripDistance.avg"
+                ></TripDetailItem>
+                <TripDetailItem
+                  label="max total score"
+                  :itemValue="statistics.tripDistance.max"
+                ></TripDetailItem>
 
-                  <TripDetailItem
-                    :right="true"
-                    label="avg total score"
-                    :value="statistics.tripDistance.avg"
-                  ></TripDetailItem>
-                </li>
+                <TripDetailItem
+                  label="avg total score"
+                  :itemValue="statistics.tripDistance.avg"
+                ></TripDetailItem>
               </ul>
             </div>
           </div>
@@ -165,28 +153,19 @@
               data-bs-parent="#accordionFlushExample3"
             >
               <ul class="list-group list-group-flush">
-                <li
-                  class="list-group-item d-flex justify-content-between align-middle"
-                >
-                  <TripDetailItem
-                    label="max total score"
-                    :value="statistics.estimatedTripCost.max"
-                  ></TripDetailItem>
+                <TripDetailItem
+                  label="max total score"
+                  :itemValue="statistics.estimatedTripCost.max"
+                ></TripDetailItem>
 
-                  <TripDetailItem
-                    :right="true"
-                    label="avg total score"
-                    :value="statistics.estimatedTripCost.avg"
-                  ></TripDetailItem>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-middle"
-                >
-                  <TripDetailItem
-                    label="max total score"
-                    :value="statistics.estimatedTripCost.max"
-                  ></TripDetailItem>
-                </li>
+                <TripDetailItem
+                  label="avg total score"
+                  :itemValue="statistics.estimatedTripCost.avg"
+                ></TripDetailItem>
+                <TripDetailItem
+                  label="max total score"
+                  :itemValue="statistics.estimatedTripCost.max"
+                ></TripDetailItem>
               </ul>
               <!--end first col-->
             </div>
