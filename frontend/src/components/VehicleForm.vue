@@ -251,6 +251,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    overallError: { required: false },
   },
   data() {
     return {
@@ -276,7 +277,6 @@ export default {
         retired: false, // this.retired, //not needed as default in mongoose
         //---------------------------------------------
       },
-      overallError: "",
       isLoading: {
         years: false,
         makes: false,
@@ -418,7 +418,7 @@ export default {
     },
     onNewVehicleSubmit: function (e) {
       //======= VALIDATION ON SUBMIT (could also be on input or on key-press event) =========
-      console.log("submitting to backend");
+      console.log("submitting to backend vehicle", this.vehicle);
       const isValid = this.clientSideValidateForm();
       if (isValid) {
         this.$emit("validatedFormSubmit", {
