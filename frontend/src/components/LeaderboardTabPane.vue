@@ -63,8 +63,10 @@
                     alt="..."
                   />
                   <div class="card-body">
-                    <h5 class="card-title mb-0 pb-2">Daniele Giulianini</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Cesenatico</h6>
+                    <h5 class="card-title mb-0 pb-2">
+                      {{ firstName }} {{ surname }}
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ country }}</h6>
                     <div class="d-flex justify-content-around align-middle">
                       <div>
                         <span
@@ -136,7 +138,7 @@
               </thead>
               <tbody class="align-middle">
                 <LeaderboardUser
-                  v-for="(user, index) in users"
+                  v-for="(user, index) in sortedUsersToDisplay"
                   :key="user._id"
                   :firstName="user.firstName"
                   :score="
@@ -182,6 +184,10 @@ export default {
       default: false,
     },
     //me
+    firstName: { required: true },
+    surname: { required: true },
+    country: { required: true },
+
     actualPictureUri: { required: true },
     level: { required: true },
     score: { required: true },
@@ -194,11 +200,12 @@ export default {
   },
   computed: {
     usersOtherThanMe() {
-      this.users.filter(function (user) {
-        return user._id != 6; //this.$store.getters.getUser.id; TODO RESTORE!
+      //for second pane
+      this.sortedUsersToDisplay.filter(function (user) {
+        return user._id != this.$store.getters.getUser.id; //TODO RESTORE!
       });
     },
-    usersToDisplay() {
+    sortedUsersToDisplay() {
       //mapping filter from string to function
       let sortBy = {};
       sortBy["totalScore"] = (a, b) => a.ecoScore - b.ecoScore;
@@ -208,7 +215,7 @@ export default {
         a.feedbackConsiderationScore - b.feedbackConsiderationScore;
       //const sortByXp = (a, b) => a.feedbackConsiderationScore - b.feedbackConsiderationScore;
 
-      this.users.sort(sortBy[this.scoreSorting]);
+      return this.users.sort(sortBy[this.scoreSorting]);
     },
     lastUserTrip() {
       const lastScoreUpdate = this.scoresTrend[this.scoresTrend.length - 1];
