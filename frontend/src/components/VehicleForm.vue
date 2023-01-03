@@ -98,9 +98,7 @@
                   {{ item.value }}
                 </option>
               </select>
-              <div class="invalid-feedback">
-                Please choose a valid make.
-              </div>
+              <div class="invalid-feedback">Please choose a valid make.</div>
               <div
                 v-if="isLoading.makes"
                 class="spinner-border spinner-border-sm input-spinner"
@@ -152,10 +150,7 @@
                 v-model="vehicle.series"
                 required
               >
-                <option
-                  selected
-                  :value="vehicle.series"
-                >
+                <option selected :value="vehicle.series">
                   {{ this.vehicle.series ? this.vehicle.series : "Choose..." }}
                 </option>
                 <!-- no disabled as it would disable (required) validation!-->
@@ -166,7 +161,9 @@
                   {{ item.text }}
                 </option>
               </select>
-              <div class="invalid-feedback">Please choose some other vehicle details.</div>
+              <div class="invalid-feedback">
+                Please choose some other vehicle details.
+              </div>
 
               <div
                 v-if="isLoading.series"
@@ -183,11 +180,11 @@
                 type="text"
                 name="username"
                 class="form-control"
-                id="yourUsername"
+                id="yourVin"
                 :class="{ disabled: !vehicle._id }"
                 v-model="vehicle._id"
                 required
-                pattern="{17}"
+                pattern="[a-zA-Z0-9]{9}[a-zA-Z0-9-]{2}[0-9]{6}"
               />
               <div class="invalid-feedback">
                 Please specify your vehicle' VIN.
@@ -270,13 +267,13 @@ export default {
         vid: "",
       },
       vehicle: {
-        _id:"", //this._id, //the so-called "vin"
-        year:"", //this.year, //this.initialVehicle.year,
-        make:"",// this.make,
-        model:"",//this.model,
-        series:"",// this.series,
-        pictureUri:"",// this.pictureUri, //default picture uri
-        retired:false// this.retired, //not needed as default in mongoose
+        _id: "", //this._id, //the so-called "vin"
+        year: "", //this.year, //this.initialVehicle.year,
+        make: "", // this.make,
+        model: "", //this.model,
+        series: "", // this.series,
+        pictureUri: "", // this.pictureUri, //default picture uri
+        retired: false, // this.retired, //not needed as default in mongoose
         //---------------------------------------------
       },
       overallError: "",
@@ -315,7 +312,7 @@ export default {
         .finally(() => (this.isLoading.years = false));
     },
     getMakesOfYear: async function (year) {
-      console.log("getting makes in vehicle registration form");      
+      console.log("getting makes in vehicle registration form");
       this.isLoading.makes = true;
 
       axios
@@ -425,7 +422,7 @@ export default {
       const isValid = this.clientSideValidateForm();
       if (isValid) {
         this.$emit("validatedFormSubmit", {
-          user: this.user,
+          vehicle: this.vehicle,
         });
       } else console.log("form is not valid!");
     },
@@ -456,7 +453,6 @@ export default {
     },
     pictureUri: function (value) {
       //here the prop
-      console.log("8888888888888888888888 pictureUriUpdated");
       this.vehicle.pictureUri = value;
     },
     retired: function (value) {
