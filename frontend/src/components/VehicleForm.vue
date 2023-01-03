@@ -171,7 +171,7 @@
               ></div>
             </div>
           </div>
-          <div class="col-12">
+          <div class="col-12" v-if="!vehicle._id">
             <label for="yourPassword" class="form-label"
               >Your vehicle Identification Number (VIN)</label
             >
@@ -312,7 +312,7 @@ export default {
         (item) => item.value == this.vehicle.series
       )[0].text;*/
 
-      return this.domain.series.length > 0
+      return this.domain.series.length > 0 && this.vehicle.series
         ? this.domain.series.filter(
             //getting the textual version of this value
             (item) => item.value == this.vehicle.series
@@ -418,6 +418,7 @@ export default {
       this.$refs.addVehicleForm.classList.remove("was-validated");
     },
     onModelInput: function (e) {
+      this.vehicle.series = ""; //if editing, old series is to be thrown away
       console.log(
         "searching series with year:",
         this.vehicle.year,
