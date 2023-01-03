@@ -29,7 +29,7 @@
     <section class="section dashboard">
       <div class="row">
         <!-- start of col containing card-->
-        <div class="col-12 col-lg-5">
+        <div class="col-12 col-md-5 col-lg-5">
           <div class="col">
             <div class="card mb-2">
               <img :src="actualPictureUri" class="card-img-top" alt="..." />
@@ -118,7 +118,7 @@
           <!-- end of col wrapping card--><!--here the vehicle card-->
         </div>
         <!-- start of col containing data-->
-        <div class="col-12 col-lg-7">
+        <div class="col-12 col-md-7 col-lg-7"><!-- the complementary of the other col-->
           <!-- here the tabs-->
           <!-- tha tabs -->
           <ul
