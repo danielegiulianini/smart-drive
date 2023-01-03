@@ -184,10 +184,6 @@ export default {
     };
   },
   computed: {
-    /* this works? :
-    activeUserVehicles: userVehicles.filter((vehicle) => !vehicle.retired),
-    ritiredUserVehicles: userVehicles.filter((vehicle) => vehicle.retired),
-    vehiclesCount: userVehicles.length,*/
     activeUserVehicles() {
       return this.userVehicles.filter((vehicle) => !vehicle.retired);
     },
@@ -249,7 +245,7 @@ export default {
               .catch((error) => console.log(error))
           );
 
-          Promise.all(richUserVehicles)
+          return Promise.all(richUserVehicles)
             //assigning make url
             .then((usersVehiclesWithModelDetails) =>
               usersVehiclesWithModelDetails.map((userVehicle) => {
@@ -270,7 +266,7 @@ export default {
             .catch((err) => {
               throw err; //re-throwing a error
             });
-        } else Promise.resolve();
+        } else return Promise.resolve();
       })
       .catch((err) => console.error(err)) //communicate something to user (with a mre user-friendly mapping?)
       .finally(() => (this.isLoading = false));
