@@ -1,7 +1,7 @@
 <template>
   <!-- this is the vehicle overview card (wrt. vehicle detail card)-->
   <div class="col">
-    <div class="card nested-card" @click="$router.push(`/vehicle/${_id}`)">
+    <div class="card nested-card h-100" @click="$router.push(`/vehicle/${_id}`)">
       <!--src="/src/assets/style/img/mercedes_1920.jpg"-->
       <img :src="actualPictureUri" class="card-img-top" alt="..." />
       <div class="card-body">
