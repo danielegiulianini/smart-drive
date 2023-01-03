@@ -151,7 +151,7 @@
                 required
               >
                 <option selected :value="vehicle.series">
-                  {{ this.vehicle.series ? this.vehicle.series : "Choose..." }}
+                  {{ this.vehicle.series ? getSeriesFromModelId : "Choose..." }}
                 </option>
                 <!-- no disabled as it would disable (required) validation!-->
                 <option
@@ -201,6 +201,7 @@
               Close</button
             ><button
               class="btn btn-primary w-50"
+              data-bs-dismiss="modal"
               type="button"
               @click.prevent="onNewVehicleSubmit"
             >
@@ -239,7 +240,7 @@ export default {
     submitButtonName: {
       type: String,
     },
-    _id: { required: false },
+    _id: { required: false }, //the so-called "vin"
     year: { required: false },
     make: { required: false },
     model: { required: false },
@@ -287,10 +288,36 @@ export default {
   },
   computed: {
     getUserImage() {
-      console.log("77777777777777777running getUserImage computed");
       return this.vehicle.pictureUri
         ? this.vehicle.pictureUri
         : defaultAvatarUri;
+    },
+    getSeriesFromModelId() {
+      /* console.log(
+        "la textual series:",
+        this.domain.series.filter(
+          //getting the textual version of this value
+          (item) => item.value == this.vehicle.series
+        )[0].text
+      );
+      console.log(
+        "filtered series:",
+        this.domain.series.filter(
+          //getting the textual version of this value
+          (item) => item.value == this.vehicle.series
+        )
+      );
+      this.domain.series.filter(
+        //getting the textual version of this value
+        (item) => item.value == this.vehicle.series
+      )[0].text;*/
+
+      return this.domain.series.length > 0
+        ? this.domain.series.filter(
+            //getting the textual version of this value
+            (item) => item.value == this.vehicle.series
+          )[0].text
+        : "";
     },
   },
   methods: {
@@ -360,6 +387,7 @@ export default {
           params: { year: year, make: make, model: model },
         }) //axios.get(url, options)
         .then((result) => {
+          console.log("il result arrived for series: ", result);
           this.domain.series = convertToArrayIfNotAlready(result.data.menuItem);
           console.log("series arrived:", this.domain.series);
         })
@@ -430,6 +458,7 @@ export default {
     _id: function (value) {
       //here the prop
       this.vehicle._id = value;
+      console.log("invoking... watcher with _id", this.vehicle._id);
     },
     year: function (value) {
       //here the prop
@@ -440,14 +469,24 @@ export default {
       this.vehicle.make = value;
     },
     model: function (value) {
-      //here the prop
-      this.vehicle.model = value;
+      if (this.year) {
+        //otherwise watch is called with year, make and model undefined
+        //here the prop
+        this.vehicle.model = value;
+        //series is the only info is not retrievable by vehiclemodels (when a initial vehicle is provided)
+        console.log(
+          "invoking... watcher with triple",
+          this.year,
+          this.make,
+          this.model
+        );
+        this.getSeriesOfYearMakeAndModel(this.year, this.make, this.model);
+      }
     },
     series: function (value) {
       //here the prop
       this.vehicle.series = value;
-      //series is the only info is not retrievable by vehiclemodels (when a initial vehicle is provided)
-      this.getSeriesOfYearMakeAndModel(this.year, this.make, this.model);
+      console.log("invoking... watcher with series", this.vehicle.series);
     },
     pictureUri: function (value) {
       //here the prop
