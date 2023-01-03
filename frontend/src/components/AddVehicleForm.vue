@@ -21,10 +21,11 @@ export default {
   },
   methods: {
     //axios' ajax call to 1. supabase and 2. users' microservice; (in sequence)
-    onValidFormSubmit(event, vehicle) {
+    onValidFormSubmit(vehicle) {
+      console.log("the vehicle in onValidFormSubmit of add vehicle form")
       console.log("axios post");
       this.isSubmitting = true;
-      const loggedInUser = this.$store.getters.getUser();
+      const loggedInUser = this.$store.getters.getUser;
       axios
         .post(`vehicles/userVehicles/`, {
           _id: vehicle._id, //the so-called vin

@@ -3,6 +3,13 @@
     submitButtonName="Edit"
     :overallError="overallError"
     :is-submitting="isSubmitting"
+    :make="initialVehicle.make"
+    :year="initialVehicle.year"
+    :pictureUri="initialVehicle.pictureUri"
+    :_id="initialVehicle._id"
+    :retired="initialVehicle.retired"
+    :model="initialVehicle.model"
+    :series="initialVehicle.series"
     @validatedFormSubmit="onValidFormSubmit"
   ></VehicleForm>
 </template>
@@ -13,6 +20,14 @@ import axios from "axios";
 
 export default {
   components: { VehicleForm },
+  props: {
+    initialVehicle: {
+      type: Object,
+    },
+    year: {
+      type: String,
+    },
+  },
   data() {
     return {
       isSubmitting: false,
@@ -21,8 +36,8 @@ export default {
   },
   methods: {
     //axios' ajax call to 1. supabase and 2. users' microservice; (in sequence)
-    onValidFormSubmit(event, vehicle) {
-      console.log("axios post");
+    onValidFormSubmit(vehicle) {
+      console.log("axios post in user edit");
       this.isSubmitting = true;
       const loggedInUser = this.$store.getters.getUser();
       axios
@@ -41,6 +56,8 @@ export default {
         })
         .finally(() => (this.isSubmitting = false));
     },
+  },
+  mounted() {
   },
 };
 </script>
