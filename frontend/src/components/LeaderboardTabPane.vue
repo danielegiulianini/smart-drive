@@ -150,7 +150,7 @@
                       ? user.speedScore
                       : user.feedbackConsiderationScore
                   "
-                  :rank="rankOf(users, user._id)"
+                  :rank="rankOf(sortedUsersToDisplay, user)"
                   :surname="user.surname"
                   :profilePictureUri="user.profilePictureUri"
                   :xp="user.xp"
@@ -202,7 +202,7 @@ export default {
     usersOtherThanMe() {
       //for second pane
       this.sortedUsersToDisplay.filter(function (user) {
-        return user._id != this.$store.getters.getUser.id; //TODO RESTORE!
+        return user._id != this.$store.getters.getUser.id;
       });
     },
     sortedUsersToDisplay() {
@@ -230,20 +230,22 @@ export default {
       }
     },
     myRank() {
-      return this.rankOf(this.users, 6); //this.$store.getters.getUser.id);
+      return this.rankOf(this.users, this.$store.getters.getUser.id); //this.$store.getters.getUser.id);
     },
   },
   methods: {
     rankOf(users, user) {
+      console.log(
+        "il rank che ritorno: ",
+        users.map((aUser) => aUser._id).indexOf(user._id) + 1
+      );
+      console.log("searching id ", user._id," of user ", user,  " in users: ", users.map((aUser) => aUser._id));
       return (
-        users
-          .map((user) => user._id)
-          //.indexOf(this.$store.getters.getUser.id) + 1; //TO RESTORE!
-          .indexOf(user._id) + 1 //+1 for array zero-indexing
+        users.map((aUser) => aUser._id).indexOf(user._id) + 1 //+1 for array zero-indexing
       );
     },
     timeSince(date) {
-      console.log("la date to whuch say timeSince", date);
+      console.log("la date to which say timeSince", date);
       var seconds = Math.floor((new Date() - date) / 1000);
 
       var interval = seconds / 31536000;
@@ -270,7 +272,9 @@ export default {
       return Math.floor(seconds) + " seconds";
     },
   },
-  mounted() {},
+  mounted() {
+    console.log("i sorted users: ", this.sortedUsersToDisplay);
+  },
   /* watcher: {
     actualPictureUri(newUri, oldUri) {
       this.
