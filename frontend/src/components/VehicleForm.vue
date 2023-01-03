@@ -421,9 +421,7 @@ export default {
       console.log("submitting to backend vehicle", this.vehicle);
       const isValid = this.clientSideValidateForm();
       if (isValid) {
-        this.$emit("validatedFormSubmit", {
-          vehicle: this.vehicle,
-        });
+        this.$emit("validatedFormSubmit", this.vehicle);
       } else console.log("form is not valid!");
     },
   },
