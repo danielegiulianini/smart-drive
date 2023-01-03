@@ -1,9 +1,9 @@
 <template>
   <!-- this is the vehicle overview card (wrt. vehicle detail card)-->
   <div class="col">
-    <div class="card nested-card" @click="$router.push(`/vehicle2/${_id}`)">
+    <div class="card nested-card" @click="$router.push(`/vehicle/${_id}`)">
       <!--src="/src/assets/style/img/mercedes_1920.jpg"-->
-      <img :src="pictureUri" class="card-img-top" alt="..." />
+      <img :src="actualPictureUri" class="card-img-top" alt="..." />
       <div class="card-body">
         <div class="d-flex justify-content-between align-middle">
           <div>
@@ -15,7 +15,7 @@
               <!--<span class="badge bg-secondary ms-2">Most used</span>-->
             </h6>
           </div>
-          <div class="mt-3">
+          <div class="my-auto">
             <!--src="https://www.carlogos.org/logo/Volkswagen-logo-2019-640x500.jpg"-->
             <img
               :src="makeLogoImgUrl"
@@ -81,7 +81,9 @@
         </div>
       </div>
       <div class="card-footer text-center">
-        <small class="text-muted">Last trip 3 mins ago</small>
+        <small class="text-muted"
+          >registered {{ timeSince(new Date(createdAt)) }} ago</small
+        >
       </div>
     </div>
   </div>
@@ -89,10 +91,15 @@
 </template>
 
 <script>
+const defaultAvatarUri = "/src/assets/img/carAvatar.png";
+
 export default {
   props: {
     _id: {
       type: String,
+      required: true,
+    },
+    createdAt: {
       required: true,
     },
     year: {
@@ -130,6 +137,40 @@ export default {
   },
   mounted() {
     console.log("my pictureUri is", this.pictureUri);
+    console.log("il createAt: ", this.createdAt);
+  },
+  computed: {
+    actualPictureUri() {
+      return this.pictureUri ? this.pictureUri : defaultAvatarUri;
+    },
+  },
+  methods: {
+    timeSince(date) {
+      var seconds = Math.floor((new Date() - date) / 1000);
+
+      var interval = seconds / 31536000;
+
+      if (interval > 1) {
+        return Math.floor(interval) + " years";
+      }
+      interval = seconds / 2592000;
+      if (interval > 1) {
+        return Math.floor(interval) + " months";
+      }
+      interval = seconds / 86400;
+      if (interval > 1) {
+        return Math.floor(interval) + " days";
+      }
+      interval = seconds / 3600;
+      if (interval > 1) {
+        return Math.floor(interval) + " hours";
+      }
+      interval = seconds / 60;
+      if (interval > 1) {
+        return Math.floor(interval) + " minutes";
+      }
+      return Math.floor(seconds) + " seconds";
+    },
   },
 };
 </script>
@@ -137,7 +178,7 @@ export default {
 <style scoped>
 .card-img-top {
   height: 25vh;
-  object-fit: cover;
+  object-fit: contain;  /*or contain*/
 }
 .card {
   transition: transform 0.2s ease;
