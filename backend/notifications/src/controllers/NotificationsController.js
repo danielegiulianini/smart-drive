@@ -46,10 +46,10 @@ function onNewMeasurement(userId, measurement) {
 
 //used by index.html
 function onConnection(socket) {
-  users[socket.tokenUserId] = socket;
-  socket.on("logout", () => logout(socket.tokenUserId)); //each message at logout event cause the client to be logged out
+  users[socket.userId] = socket;
+  socket.on("logout", () => logout(socket.userId)); //each message at logout event cause the client to be logged out
   socket.on("disconnect", function () {
-    onUserDisconnected(socket.tokenUserId);
+    if (socket.userId) onUserDisconnected(socket.userId);
   });
 }
 
