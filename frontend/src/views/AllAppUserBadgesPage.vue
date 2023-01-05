@@ -44,105 +44,7 @@ import TheAppSidebar from "../components/TheAppSidebar.vue";
 import TheAppFooter from "../components/TheAppFooter.vue";
 import UserBadge from "../components/UserBadge.vue";
 
-const userBadges = [
-  //feedback consideration
-  {
-    name: "Gold improver",
-    description:
-      "Get a feedback consideration score of at least 95 for a trip.",
-    pictureUri: "/src/assets/img/badges/goldFeedback.png",
-  },
-  {
-    name: "Silver improver",
-    description:
-      "Get a feedback consideration score of at least 92 for a trip.",
-    pictureUri: "/src/assets/img/badges/silverFeedback.png",
-  },
-  {
-    name: "Bronze improver",
-    description:
-      "Get a feedback consideration score of at least 85 for a trip.",
-    pictureUri: "/src/assets/img/badges/bronzeFeedback.png",
-  },
-  //rpm
-  {
-    name: "Gold throttle-goose",
-    description: "Get an aggressiveness score of at least 95 for a trip.",
-    pictureUri: "/src/assets/img/badges/goldSmoothness.png",
-  },
-  {
-    name: "Silver throttle-goose",
-    description: "Get an aggressiveness score of at least 92 for a trip.",
-    pictureUri: "/src/assets/img/badges/silverSmoothness.png",
-  },
-
-  {
-    name: "Bronze throttle-goose",
-    description: "Get an aggressiveness score of at least 85 for a trip.",
-    pictureUri: "/src/assets/img/badges/bronzeSmoothness.png",
-  },
-  //speed
-  {
-    name: "Gold speed Obsedient",
-    description: "Get a safety score of at least 95 for a trip.",
-    pictureUri: "/src/assets/img/badges/goldSpeed.png",
-  },
-  {
-    name: "Silver speed Obsedient",
-    description: "Get a safety score of at least 92 for a trip.",
-    pictureUri: "/src/assets/img/badges/silverSpeed.png",
-  },
-  {
-    name: "Bronze speed Obsedient",
-    description: "Get a safety score of at least 85 for a trip.",
-    pictureUri: "/src/assets/img/badges/bronzeSpeed.png",
-  },
-  //trips length
-  {
-    name: "Gold rester",
-    description: "Get a resting score of at least 95 for a trip.",
-    pictureUri: "/src/assets/img/badges/goldRester.png",
-  },
-  {
-    name: "Silver rester",
-    description: "Get a resting score of at least 92 for a trip.",
-    pictureUri: "/src/assets/img/badges/silverRester.png",
-  },
-  {
-    name: "Bronze rester",
-    description: "Get a resting score of at least 85 for a trip.",
-    pictureUri: "/src/assets/img/badges/bronzeRester.png",
-  },
-
-  //trips
-  {
-    name: "Gold traveller",
-    description: "Perform 100 trips.",
-    pictureUri: "/src/assets/img/badges/goldTrips.png",
-  },
-  {
-    name: "Silver traveller",
-    description: "Perform 5 trips.",
-    pictureUri: "/src/assets/img/badges/silverTrips.png",
-  },
-
-  {
-    name: "Bronze traveller",
-    description: "Perform your first trip.",
-    pictureUri: "/src/assets/img/badges/bronzeTrips.png",
-  },
-  //vehicle category
-  {
-    name: "Hybrid power",
-    description: "Add a vehicle with hybrid fuel type.",
-    pictureUri: "/src/assets/img/badges/hybridCar.png",
-  },
-  {
-    name: "Electric power",
-    description: "Add a vehicle with electric fuel type.",
-    pictureUri: "/src/assets/img/badges/electricCar.png",
-  },
-];
+import badges from "../mixins/badges.vue";
 
 export default {
   components: {
@@ -151,12 +53,7 @@ export default {
     TheAppFooter,
     UserBadge,
   },
-  data() {
-    //this cannot be a field because every instance of this component must have its own state
-    return {
-      badges: userBadges,
-    };
-  },
+  mixins: [badges],
 };
 </script>
 
