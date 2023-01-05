@@ -5,6 +5,12 @@
     :display-login="false"
     @validatedFormSubmit="onValidFormSubmit"
     :is-submitting="isSubmitting"
+    :surname="initialUser.firstName"
+    :email="initialUser.email"
+    :first-name="initialUser.surname"
+    :profilePictureUri="initialUser.profilePictureUri"
+    :city="initialUser.city"
+    :country="initialUser.country"
   ></UserForm>
 </template>
 
@@ -14,20 +20,21 @@ import axios from "axios";
 
 export default {
   components: { UserForm },
-  props: { initialUser: Object },
+  props: {
+    initialUser: Object,
+    //must use singular props here
+  },
   data() {
     return {
       isSubmitting: false,
     };
   },
   methods: {
-    onValidFormSubmit(event, user) {
-      console.log("submitting to backend");
+    onValidFormSubmit(user) {
       this.isSubmitting = true;
-
       axios
-        .post(`users/${this.$store.user.id}`, {
-          name: user.name,
+        .post(`users/${this.$store.getters.getUser.id}`, {
+          name: user.firstName,
           surname: user.surname,
           email: user.email,
 
@@ -40,10 +47,31 @@ export default {
           language: user.language,
           //^^^^^^^^^^^^^^^^^
         })
-        //.then(() => this.$router.push("/Profile"))
+        .then(() => {
+          //display notification or infobox
+          this.$notification.show(
+            //this.success = true;
+            "Success",
+            {
+              body: "Profile correctly updated!",
+            },
+            {}
+          );
+          //this.$router.push("Profile").then(() => this.$router.go()) 
+          //pro of this: it updates profile page data (otherwise not updated)
+          //cons: it requires authentication
+        })
         .catch((err) => {
           //a mapping (to a more user-friendly error) could be added here (leveraging status codes returned by servers)
           //possible errors: network-related
+          //display notification or infobox
+          this.$notification.show(
+            "Error",
+            {
+              body: "Errors in profile update!",
+            },
+            {}
+          );
           this.overallError = err;
         })
         .finally(() => {
@@ -51,6 +79,7 @@ export default {
         });
     },
   },
+  mounted() {},
 };
 </script>
 
