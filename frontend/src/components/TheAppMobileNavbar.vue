@@ -7,7 +7,7 @@
       <i style="font-size: 30px" class="bi bi-speedometer"></i>
     </a>
     <!-- steering-wheel-->
-    <a class="bloc-icon" @click="this.$router.push('/drive')">
+    <a id="steering-wheel-icon" class="bloc-icon" @click="this.$router.push('/drive')">
       <!-- taken from: "https://www.svgrepo.com/svg/232240/steering-wheel-car"--><svg
         fill="currentColor"
         width="30"
@@ -69,8 +69,21 @@
 .bloc-icon img {
   width: 30px;
 }
-@media screen and (min-width: 600px) {
+
+/*
+sidebar (equivalent to this navbar) is to be shown in xxl, xl (1200px).
+this navbar in: xs, sm, md, lg.
+(could also use bootstrap class for this.)
+*/
+@media screen and (min-width: 1200px) { /*600px) {*/
   .mobile-nav {
+    display: none;
+  }
+}
+
+/* hiding driving mode in lg because it must be used in mobile (xs) only (sm is from 576)*/
+@media screen and (min-width: 576px) { 
+  #steering-wheel-icon {
     display: none;
   }
 }
