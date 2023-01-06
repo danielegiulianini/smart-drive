@@ -199,7 +199,9 @@ export default {
       console.log("feedback arrived");
 
       if (this.acousticFeedbackEnabled) {
-        //speak it!
+        this.speak(drivingFeedback.text);
+      } else {
+        console.log("not speaking as acoustic feedback disabled");
       }
     },
     speak() {
@@ -245,7 +247,7 @@ export default {
     console.log("from driveModePage: this.store.state is ", this.$store.state);
     this.$store.state.users.socket.on("measurement", this.onNewMeasurement);
     this.$store.state.users.socket.on(
-      "drivingFeedback",
+      "drivingNotifications",
       this.onNewDrivingFeedback
     );
 
@@ -265,18 +267,9 @@ export default {
     if (this.started) {
       this.displayTripCloseConfirmationModal();
     }
-    //console.log("AHHAHAHAHAHAHHAHHA")
     // called when the route that renders this component is about to
     // be navigated away from.
     // has access to `this` component instance.
-    /*this.$dialog
-      .confirm("Do you want to proceed?")
-      .then(function () {
-        next();
-      })
-      .catch(function () {
-        next(false);
-      });*/
 
     /* bad practie to use alert if (window.confirm("Are you sure you want to leave the page?")) {
     }*/
