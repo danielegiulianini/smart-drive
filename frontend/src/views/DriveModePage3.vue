@@ -5,7 +5,7 @@
   <div
     class="card pt-2"
     style="box-shadow: none"
-    v-if="hasUserRegisteredAVehicle"
+    v-if="!hasUserRegisteredAVehicle"
   >
     <!-- to fix-->
     <div class="card-body text-center">
@@ -138,12 +138,16 @@ export default {
       isLoading: true,
       started: false,
       isStarting: false,
+      isEnded: false,
       rpm: "0", //or to be replaced by "" and some logic for hiding charts if not measurement are still
       kph: "0",
       odometer: "0",
       fuelTankLevel: "0",
       _id: "", //future Trip's ID
       hasUserRegisteredAVehicle: false,
+
+      //for navigation
+      to: "",
     };
   },
   computed: {
@@ -167,8 +171,7 @@ export default {
             userId: loggedInUserId,
           })
           .then((newTripRes) => {
-            this._id = newTripRes.data._id; //"63af64c98c98e1fd4e57f221"; // newTripRes.data._id;
-            console.log("the new trip's id :", this._id);
+            this._id = newTripRes.data._id;
             this.started = true; //putting this here for not allowing to close (from the view) a trip not actually posted to backend
             this.isStarting = false;
           })
@@ -220,17 +223,27 @@ export default {
       synthesis.speak(utterance1);
     },
     displayTripCloseConfirmationModal() {
-      this.$refs.closeTripModal.toggleModal(); //bad quality code (using refs to call method) for lack of time to refactor all modals
+      this.$refs.closeTripModal.modalToggle(); //bad quality code (using refs to call method) for lack of time to refactor all modals
     },
     onTripCloseConfirmed() {
-      console.log("redirecting to", { name: "TripDetail", params: this._id });
+      console.log("redirecting to", {
+        name: "TripDetail",
+        params: { _id: this._id },
+      });
+
+      this.started = false;
 
       axios
         .post(`trips/${this._id}`)
         .catch((err) => console.error(err)) //maybe a more user-friendly message here
-        .then(() =>
-          this.$router.push({ name: "TripDetail", params: { _id: this._id } })
-        );
+        .then(() => {
+          //deciding if arriving here from close button or after moving to other pages
+          let destination = { name: "TripDetail", params: { _id: this._id } };
+          if (this.to) {
+            destination = this.to;
+          }
+          this.$router.push(destination);
+        });
     },
   },
   mounted() {
@@ -263,16 +276,20 @@ export default {
       .finally(() => (this.isLoading = false));
     this.isLoading = false;
   },
+  // called when the route that renders this component is about to
+  // be navigated away from. It has access to `this` component instance.
+  // with window.addEventListener("beforeunload", callback) I could
+  // intercept browser closing too (so it would be better)
   beforeRouteLeave(to, from, next) {
+    //if there is a trip started must ask to close it or to remain here
     if (this.started) {
+      this.to = to;
       this.displayTripCloseConfirmationModal();
+    } else {
+      next();
     }
-    // called when the route that renders this component is about to
-    // be navigated away from.
-    // has access to `this` component instance.
-
-    /* bad practie to use alert if (window.confirm("Are you sure you want to leave the page?")) {
-    }*/
+    /* bad practie to use alert if (window.confirm("Are you sure you want to leave the page?")) {},
+    so displaying a custom modal instead*/
   },
 };
 </script>
