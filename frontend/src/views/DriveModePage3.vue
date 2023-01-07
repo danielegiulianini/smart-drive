@@ -40,7 +40,7 @@
       </div>
 
       <div class="row p-3 pt-0 mt-0 pb-1" data-v-13fae52c="">
-        <div class="col" data-v-13fae52c="">
+        <div class="col">
           <RpmMeter :rpm="rpm"></RpmMeter>
         </div>
         <div class="col d-flex justify-content-center" data-v-13fae52c="">
@@ -115,7 +115,7 @@ import Odometer from "../components/Odometer.vue";
 import AppDriveButton from "../components/AppDriveButton.vue";
 import axios from "axios";
 import Spinner from "../components/Spinner.vue";
-import AAVue from "../components/AA.vue";
+
 export default {
   components: {
     TheAppHeader,
@@ -127,7 +127,6 @@ export default {
     Spinner,
     FuelTankLevelMeter,
     CloseTripModalVue,
-    AAVue,
   },
   data() {
     return {
@@ -139,10 +138,10 @@ export default {
       started: false,
       isStarting: false,
       isEnded: false,
-      rpm: "0", //or to be replaced by "" and some logic for hiding charts if not measurement are still
-      kph: "0",
-      odometer: "0",
-      fuelTankLevel: "0",
+      rpm: 0, //or to be replaced by "" and some logic for hiding charts if not measurement are still
+      kph: 0,
+      odometer: 0,
+      fuelTankLevel: 0,
       _id: "", //future Trip's ID
       hasUserRegisteredAVehicle: false,
 
@@ -165,7 +164,7 @@ export default {
     onDriveButtonClicked() {
       if (!this.started) {
         console.log("starting trip");
-        const loggedInUserId = this.$store.getters.getUser.id; //};//, { questa è corretta
+        const loggedInUserId = this.$store.getters.getUser.id;
         axios
           .post("trips", {
             userId: loggedInUserId,
@@ -181,7 +180,13 @@ export default {
         this.displayTripCloseConfirmationModal();
       }
     },
-    onNewMeasurement(measurement) {
+    onNewMeasurement(data) {
+      //decoding data
+      var buffer = new Uint8Array(data);
+      var fileString = String.fromCharCode.apply(null, buffer);
+      var measurement = JSON.parse(fileString);
+
+      console.log("il measurement: ", measurement.measurement);
       console.log(
         "measurement arrived!, with rpm:",
         measurement.rpm,
@@ -210,14 +215,10 @@ export default {
     speak() {
       console.log("speaking!");
       var synthesis = window.speechSynthesis;
-      console.log("speechSynthesis", synthesis);
-
-      console.log("the voices are", this.voiceList);
+      //console.log("speechSynthesis", synthesis);      //console.log("the voices are", this.voiceList);
       var utterance1 = new SpeechSynthesisUtterance("drive smoother");
 
-      //this.voiceList = synthesis.getVoices();
-
-      //choosing voice
+      //choosing voice      //this.voiceList = synthesis.getVoices();
       utterance1.lang = "en-US";
 
       synthesis.speak(utterance1);
@@ -247,6 +248,19 @@ export default {
     },
   },
   mounted() {
+    //simulating prop update from drivemodepage
+    /*const a = this;
+    setInterval(function () {
+      console.log("augmenting rpm!");
+      a.kph += 10;
+
+      a.rpm += 50;
+      console.log("now my rpm is ", a.rpm);
+      console.log("now my kph is ", a.kph);
+    }, 3000);
+    console.log("in mounted >my rpm is: ", this.rpm);
+    this.rpm = 4000;
+    this.kph = 50;*/
     if ("speechSynthesis" in window) {
       //speech supported
       console.log("speech supported!");
@@ -274,7 +288,6 @@ export default {
         }
       })
       .finally(() => (this.isLoading = false));
-    this.isLoading = false;
   },
   // called when the route that renders this component is about to
   // be navigated away from. It has access to `this` component instance.
@@ -288,8 +301,8 @@ export default {
     } else {
       next();
     }
-    /* bad practie to use alert if (window.confirm("Are you sure you want to leave the page?")) {},
-    so displaying a custom modal instead*/
+    // bad practie to use alert if (window.confirm("Are you sure you want to leave the page?")) {},
+    // so displaying a custom modal instead
   },
 };
 </script>
