@@ -16,11 +16,6 @@ import AllAppBadgesPage from "../views/AllAppUserBadgesPage.vue";
 import TripsOverviewPage from "../views/TripsOverviewPage.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
-//to remove:
-import StartTripPage from "../views/StartTripPage.vue";
-import SupabaseTestPage from "../views/SupabaseTestPage.vue";
-import TripSummaryPage from "../views/TripSummary.vue";
-
 const routes = [
   {
     path: "/",
@@ -43,32 +38,61 @@ const routes = [
     },
     component: GaragePage,
   }, //or vehicles...
-  { path: "/vehicle/:_id", component: VehicleDetailPage2, props: true }, //or vehicles... HERE PROPS ARE NEEDED
-  { path: "/score", component: ScorePage },
+  {
+    path: "/vehicle/:_id",
+    name: "VehicleDetail",
 
-  { path: "/supabase", component: SupabaseTestPage },
+    meta: {
+      requiresAuth: true,
+    },
+    component: VehicleDetailPage2,
+    props: true,
+  }, //or vehicles... HERE PROPS ARE NEEDED
+  {
+    path: "/score",
+    name: "Score",
+
+    meta: {
+      requiresAuth: true,
+    },
+    component: ScorePage,
+  },
 
   //==============trips-related=========================
-  //{ path: "/tripsSummary", component: TripSummaryPage },
   {
     path: "/trips/:_id",
     props: true, //HERE PROPS ARE NEEDED
+
     name: "TripDetail",
+    meta: {
+      requiresAuth: true,
+    },
     component: TripDetailPage,
   },
   {
     path: "/trips",
+    name: "Trips",
+
+    meta: {
+      requiresAuth: true,
+    },
     component: TripsOverviewPage,
   },
-  { path: "/startTrip", component: StartTripPage },
   //====================================================
   { path: "/signup", name: "signup", component: UserSignupFormPage },
   { path: "/login", name: "login", component: UserLoginFormPage },
-  { path: "/allBadges", name: "allBadges", component: AllAppBadgesPage },
+  {
+    path: "/allBadges",
+    meta: {
+      requiresAuth: true,
+    },
+    name: "allBadges",
+    component: AllAppBadgesPage,
+  },
   {
     path: "/drive",
     meta: {
-      requiresAuth: false, //TODO
+      requiresAuth: true,
     },
     component: DriveModePage3,
   },
@@ -88,7 +112,7 @@ router.beforeEach((to, from, next) => {
     console.log("store.getters.getUser returns ", store.getters.getUser);
 
     console.log("store.getters.isLoggedIn returns ", store.getters.isLoggedIn);
-    if (!store.getters.isLoggedIn) {
+    if (!store.getters.isLoggedIn || !store.getters.getSocket) {
       console.log("user not logged in");
       next({ name: "login" });
     } else {
