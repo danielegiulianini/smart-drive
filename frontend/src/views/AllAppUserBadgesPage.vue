@@ -1,5 +1,5 @@
 <template>
-  <TheAppHeader></TheAppHeader>
+  <!--<TheAppHeader></TheAppHeader>-->
 
   <main id="main" class="main">
     <div class="pagetitle">

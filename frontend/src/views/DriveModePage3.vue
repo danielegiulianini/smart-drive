@@ -1,5 +1,5 @@
 <template>
-  <TheAppHeader></TheAppHeader>
+  <!--<TheAppHeader></TheAppHeader>-->
   <Spinner :show="isLoading"></Spinner>
 
   <div
@@ -184,9 +184,9 @@ export default {
       //decoding data
       var buffer = new Uint8Array(data);
       var fileString = String.fromCharCode.apply(null, buffer);
-      var measurement = JSON.parse(fileString);
+      var measurement = JSON.parse(fileString).measurement;
 
-      console.log("il measurement: ", measurement.measurement);
+      console.log("il measurement: ", measurement);
       console.log(
         "measurement arrived!, with rpm:",
         measurement.rpm,
@@ -207,6 +207,7 @@ export default {
       console.log("feedback arrived");
 
       if (this.acousticFeedbackEnabled) {
+        //drivingNotification has text has its only property
         this.speak(drivingFeedback.text);
       } else {
         console.log("not speaking as acoustic feedback disabled");
@@ -215,7 +216,6 @@ export default {
     speak() {
       console.log("speaking!");
       var synthesis = window.speechSynthesis;
-      //console.log("speechSynthesis", synthesis);      //console.log("the voices are", this.voiceList);
       var utterance1 = new SpeechSynthesisUtterance("drive smoother");
 
       //choosing voice      //this.voiceList = synthesis.getVoices();

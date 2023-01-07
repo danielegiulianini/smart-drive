@@ -1,5 +1,5 @@
 <template>
-  <TheAppHeader></TheAppHeader>
+  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
 
   <main id="main" class="main">
@@ -174,7 +174,6 @@ import TheAppFooter from "../components/TheAppFooter.vue";
 import TheAppMobileNavbar from "../components/TheAppMobileNavbar.vue";
 import LeaderboardTabPane from "../components/LeaderboardTabPane.vue";
 import UserOverviewTabPaneVue from "../components/UserOverviewTabPane.vue";
-import BadgesTabPane from "../components/BadgesTabPane.vue";
 import AppSemiCircularProgressBarVue from "../components/AppSemiCircularProgressBar.vue";
 import AppCircularProgressBar from "../components/AppCircularProgressBar.vue";
 import ScoreComponentHorizontalBar from "../components/ScoreComponentHorizontalBar.vue";
@@ -187,18 +186,17 @@ export default {
     TheAppMobileNavbar,
     LeaderboardTabPane,
     UserOverviewTabPaneVue,
-    BadgesTabPane,
     AppSemiCircularProgressBarVue,
     AppCircularProgressBar,
     ScoreComponentHorizontalBar,
   },
   data() {
     return {
-      globalScore: "0",
-      aggressivenessScore: "0",
-      safetyScore: "0",
-      feedbackConsiderationScore: "0",
-      idlingScore: "0",
+      globalScore: 0,
+      aggressivenessScore: 0,
+      safetyScore: 0,
+      feedbackConsiderationScore: 0,
+      idlingScore: 0,
       scoresTrend: [
         { score: 98, referredTo: "2022-12-06T11:16:47.012Z" },
         { score: 84, referredTo: "2022-12-07T11:16:47.012Z" },
@@ -259,7 +257,8 @@ export default {
     /*const loggedInUserId = 12; //this.$store.state.user.id; //if I 'm here the user is authenticated for sure thanks to router redirecting (see router/index.js) => no need of: this.$store.getters.getUser()?.id;
     axios
       .get(`users/${loggedInUserId}`)
-      .then((user) => {
+      .then((res) => {
+        const user = res.data;
         //here the json of this user...
         //fields re-mapping here
         this.globalScore = user.ecoScore;

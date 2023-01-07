@@ -1,5 +1,5 @@
 <template>
-  <TheAppHeader></TheAppHeader>
+  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <main id="main" class="main">
     <!--FOR DEBUGGING ====-->
@@ -28,7 +28,7 @@
 
     <!-- garage summary -->
     <div class="card p-1 mb-3">
-      <div class="d-flex justify-content-between m-2">
+      <div class="d-flex justify-content-between m-2 px-2">
         <div class="my-auto">
           <span> {{ userVehicles.length }}</span>
           <small class="text-muted"> vehicles </small>
@@ -199,15 +199,6 @@ export default {
   },
   methods: {},
   mounted() {
-    /*console.log("sending notification!");
-    this.$notification.show(
-      "Notification",
-      {
-        body: "This is a simple notification",
-      },
-      {}
-    );*/
-
     console.log("makes logo data is: ", this.makeLogoImgUrlByMake);
     console.log("l'url della fiat is:", this.makeLogoImgUrlByMake["Fiat"]);
     //fetch all the vehicles of the user from vehicles microservice and pass as props to vehicle cards!

@@ -1,7 +1,7 @@
 <template>
   <Spinner :show="isLoading"></Spinner>
 
-  <TheAppHeader></TheAppHeader>
+  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <main id="main" class="main">
     <div class="pagetitle">
@@ -15,8 +15,6 @@
     </div>
     <!-- End Page Title -->
     <section class="section">
-      <!--        :key="trip._id"
--->
       <TripOverviewCard
         v-for="(trip, index) in trips"
         :key="trip._id"
@@ -81,7 +79,7 @@ export default {
     //must fetch only closed trip (for statistics to be computed)
     console.log("getting trip info...");
 
-    const loggedInUserId = 12; //this.$store.state.user.id; or with vuex getter
+    const loggedInUserId = this.$store.getters.getUser.id;
 
     //manually joining (trips/vehicles) backend info as trips model doesn't contain all trip's info to show
     //The { item : null } query matches documents that either contain
@@ -129,51 +127,56 @@ export default {
             //scores
             trip.globalScore = trip.totalScore;
 
-            //============================= vehicles info =============================
-            return (
-              axios
-                .get(
-                  `vehicles/userVehicles/${trip.vehicleIdentificationNumber}`
-                )
-                .then((userVehicleRes) => {
-                  console.log(
-                    "data returned by userVehicles micro is",
-                    userVehicleRes.data
-                  );
-                  return axios
-                    .get(
-                      `vehicles/vehiclesModels/vehicleDetails/${userVehicleRes.data.vehicleModelId}`
-                    )
-                    .then((vehicleRes) => {
-                      console.log(
-                        "data coming from vehiclesModels",
-                        vehicleRes.data
-                      );
-                      const vehicleData = vehicleRes.data;
+            if (trip.vehicleIdentificationNumber) {
+              //redundant if used for testing (when a trip could not have its vin)
+              //============================= vehicles info =============================
+              return (
+                axios
+                  .get(
+                    `vehicles/userVehicles/${trip.vehicleIdentificationNumber}`
+                  )
+                  .then((userVehicleRes) => {
+                    console.log(
+                      "data returned by userVehicles micro is",
+                      userVehicleRes.data
+                    );
+                    return axios
+                      .get(
+                        `vehicles/vehiclesModels/vehicleDetails/${userVehicleRes.data.vehicleModelId}`
+                      )
+                      .then((vehicleRes) => {
+                        console.log(
+                          "data coming from vehiclesModels",
+                          vehicleRes.data
+                        );
+                        const vehicleData = vehicleRes.data;
 
-                      trip.vehicleMake = vehicleData.make;
-                      trip.vehicleModel = vehicleData.model;
+                        trip.vehicleMake = vehicleData.make;
+                        trip.vehicleModel = vehicleData.model;
 
-                      return trip;
-                    });
-                })
-                //============================= reverse geoconding =============================
-                .then(() => {
-                  trip.startLocation.name = this.getLocationName(
-                    trip.startLocation.latitude,
-                    trip.startLocation.longitude
-                  );
-                  return trip;
-                })
+                        return trip;
+                      });
+                  })
+                  //============================= reverse geoconding =============================
+                  .then(async () => {
+                    trip.startLocation.name = await this.getLocationName(
+                      trip.startLocation.latitude,
+                      trip.startLocation.longitude
+                    );
+                    return trip;
+                  })
 
-                .then(() => {
-                  trip.endLocation.name = this.getLocationName(
-                    trip.endLocation.latitude,
-                    trip.endLocation.longitude
-                  );
-                  return trip;
-                })
-            );
+                  .then(async () => {
+                    trip.endLocation.name = await this.getLocationName(
+                      trip.endLocation.latitude,
+                      trip.endLocation.longitude
+                    );
+                    return trip;
+                  })
+              );
+            } else {
+              return trip;
+            }
           })
         );
       })

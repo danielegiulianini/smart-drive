@@ -1,5 +1,5 @@
 <template>
-  <TheAppHeader></TheAppHeader>
+  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <main id="main" class="main">
     <!--FOR DEBUGGING ====-->
@@ -15,10 +15,10 @@
     <div class="pagetitle">
       <h1>Trip detail</h1>
       <nav>
-        <ol class="breadcrumb">
+        <!--<ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
           <li class="breadcrumb-item active">My Trips</li>
-        </ol>
+        </ol>-->
       </nav>
     </div>
     <!-- End Page Title -->
@@ -28,20 +28,34 @@
       <!-- con header sopra (map + info) + tab sotto (quando clicki in events ti evidenzia i pin)-->
       <div class="col-12">
         <div class="card">
+          <!-- start of overview row -->
           <div class="row">
             <div class="col-12 col-lg-6">
+              <!--<TripMap v-if="!startLocation.name"></TripMap>-->
+              <!--    seems to be useless:             width="100%"
+                height="100%"--><!--</iframe
+              >-->
               <iframe
+                v-if="startLocation.name"
                 src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA0s1a7phLN0iaD6-UE7m4qP-z21pH0eSc&q=Eiffel+Tower+Paris+France"
                 class="card-img-top"
-                width="100%"
-                height="100%"
                 frameborder="0"
-                style="border: 0; min-height: 300px"
+                style="border: 0; min-height: 300px; width: 100%; height: 100%"
                 allowfullscreen
               ></iframe>
+              <div
+                v-else
+                class="d-flex flex-column justify-content-center align-items-center"
+                style="height: 300px"
+              >
+                <h1 style="font-size: 150%">No GPS data for this trip</h1>
+                <p class="text-muted">
+                  Drive with the app to see your locations.
+                </p>
+              </div>
             </div>
             <div class="col-12 col-lg-6">
-              <div class="card-body">
+              <div class="card-body ps-lg-1">
                 <div class="d-flex justify-content-between align-middle">
                   <div>
                     <h1 class="card-title mb-0 pb-2" style="font-size: 180%">
@@ -179,9 +193,12 @@
               </div>
             </div>
           </div>
+          <!-- end of overview row -->
+
           <!-- <div class="card-footer text-center">
         <small class="text-muted">Last trip 3 mins ago</small>
       </div>-->
+          <!-- start of tabs row-->
           <ul
             class="nav nav-tabs nav-tabs-bordered d-flex"
             id="borderedTabJustified"
@@ -230,9 +247,10 @@
               </button>
             </li>
           </ul>
+          <!-- end of tabs row-->
 
           <div class="card" style="box-shadow: none">
-            <div class="tab-content pt-2" id="borderedTabJustifiedContent">
+            <div class="tab-content pt-3" id="borderedTabJustifiedContent">
               <!-- first tab-pane-->
               <TripScoreTabPane
                 :isActive="isActive('scores')"
@@ -276,6 +294,7 @@ import TripStatisticsTabPane from "../components/TripStatisticsTabPane.vue";
 import TripEventsTabPane from "../components/TripEventsTabPane.vue";
 import Spinner from "../components/Spinner.vue";
 import AppSemiCircularProgressBar from "../components/AppSemiCircularProgressBar.vue";
+import TripMap from "../components/TripMap.vue";
 
 export default {
   components: {
@@ -288,6 +307,7 @@ export default {
     TheAppMobileNavbar,
     Spinner,
     AppSemiCircularProgressBar,
+    TripMap,
   },
   props: ["_id"], //uservehicleid (vin)
   data() {
@@ -351,17 +371,39 @@ export default {
           hour: "2-digit",
           minute: "2-digit",
         });
-        var month = startDate.toLocaleString("default", { month: "short" });
-        var day = startDate.getUTCDate();
-        var year = startDate.getUTCFullYear();
-        this.date = day + " " + month + " " + year;
-        /*new Date(tripData.startTimestamp)
-          .toLocaleString()
-          .split(",")[0];*/
         this.endTimestamp = new Date(tripData.endTimestamp).toLocaleTimeString(
           [],
           { hour: "2-digit", minute: "2-digit" }
         );
+
+        var month = startDate.toLocaleString("default", { month: "short" });
+        var day = startDate.getUTCDate();
+        var year = startDate.getUTCFullYear();
+        this.date =
+          day +
+          " " +
+          month +
+          " " +
+          year; /*new Date(tripData.startTimestamp).toLocaleString().split(",")[0];*/
+
+        //mapping measurements to google maps format: here, in express or directly in arduino?
+        this.positions = tripData.measurements.map(
+          (measurement) => measurement.position
+        );
+
+        //CAUTION: Array.at does not return error if passed index is null but undefined
+        this.startLocation.latitude = this.positions.at(0)?.lat; //this.positions[0]?.lat;
+        //this.positions.length == 0 ? this.positions[0].lat : "";
+        this.startLocation.longitude = this.positions.at(0)?.lng; //this.positions[0]?.lng;//this.positions?.[0]?.lat;
+        //this.positions.length == 0 ? this.positions[0].lng : "";
+        this.endLocation.latitude = this.positions.at(
+          this.positions.length - 1
+        )?.lat; //this.positions.length > 0 ? this.positions[this.positions.length-1].lat  : ""
+        //this.positions.length == 0 ? this.positions[0].lat : "";
+        this.endLocation.longitude = this.positions.at(
+          this.positions.length - 1
+        )?.lng; //this.positions?.[this.positions.length-1>0? this.positions.length-1 : ]?.lat;
+        //this.positions.length == 0 ? this.positions[0].lng : "";
 
         //statistics
         this.distanceTraveled = tripData.distanceTraveled;
@@ -371,25 +413,6 @@ export default {
         this.avgKph = tripData.avgKph;
         this.maxRpm = tripData.maxRpm;
         this.maxKph = tripData.maxKph;
-
-        //mapping measurements to google maps format: here, in express or directly in arduino?
-        this.positions = tripData.measurements.map(
-          (measurement) => measurement.position
-        );
-
-        //CAUTION: Array.at does not return error if passed index is null
-        this.startLocation.latitude = this.positions.at(0); //this.positions[0]?.lat;
-        //this.positions.length == 0 ? this.positions[0].lat : "";
-        this.startLocation.longitude = this.positions.at(0); //this.positions[0]?.lng;//this.positions?.[0]?.lat;
-        //this.positions.length == 0 ? this.positions[0].lng : "";
-        this.endLocation.latitude = this.positions.at(
-          this.positions.length - 1
-        ); //this.positions.length > 0 ? this.positions[this.positions.length-1].lat  : ""
-        //this.positions.length == 0 ? this.positions[0].lat : "";
-        this.endLocation.longitude = this.positions.at(
-          this.positions.length - 1
-        ); //this.positions?.[this.positions.length-1>0? this.positions.length-1 : ]?.lat;
-        //this.positions.length == 0 ? this.positions[0].lng : "";
 
         //scores
         this.globalScore = tripData.totalScore;
@@ -401,43 +424,69 @@ export default {
       })
       //2. fetching vehicleModelId from userVehicles
       .then((vehicleIdentificationNumber) => {
-        return axios.get(
-          `vehicles/userVehicles/${vehicleIdentificationNumber}`
-        );
+        this.vehicleIdentificationNumber = vehicleIdentificationNumber;
+
+        if (vehicleIdentificationNumber) {
+          //redundant if used for testing (when a trip could not have its vin)
+
+          return axios.get(
+            `vehicles/userVehicles/${vehicleIdentificationNumber}`
+          );
+        }
       })
       .then((userVehicleRes) => {
-        console.log("data coming from userVehicles", userVehicleRes);
-        const userVehicleData = userVehicleRes.data;
+        if (this.vehicleIdentificationNumber) {
+          //redundant if used for testing (when a trip could not have its vin)
 
-        return userVehicleData.vehicleModelId;
+          console.log("data coming from userVehicles", userVehicleRes);
+          const userVehicleData = userVehicleRes.data;
+
+          return userVehicleData.vehicleModelId;
+        }
       })
       //3. fetching vehicle make and name from vehicle Models (and cost, possibly)
       .then((vehicleModelId) => {
-        return axios.get(
-          `vehicles/vehiclesModels/vehicleDetails/${vehicleModelId}`
-        );
+        if (this.vehicleIdentificationNumber) {
+          //redundant if used for testing (when a trip could not have its vin)
+
+          return axios.get(
+            `vehicles/vehiclesModels/vehicleDetails/${vehicleModelId}`
+          );
+        }
       })
       .then((vehicleRes) => {
-        console.log("data coming from vehiclesModels", vehicleRes.data);
-        const vehicleData = vehicleRes.data;
+        if (this.vehicleIdentificationNumber) {
+          //redundant if used for testing (when a trip could not have its vin)
 
-        this.vehicleMake = vehicleData.make;
-        this.vehicleModel = vehicleData.model;
+          console.log("data coming from vehiclesModels", vehicleRes.data);
+          const vehicleData = vehicleRes.data;
 
-        return vehicleRes;
+          this.vehicleMake = vehicleData.make;
+          this.vehicleModel = vehicleData.model;
+
+          return vehicleRes;
+        }
       })
       //4. fetching latitude with google maps API
       .then(() => {
-        return axios.get(`trips?vehicleIdentificationNumber=${this._id}`);
+        if (this.vehicleIdentificationNumber) {
+          //redundant if used for testing (when a trip could not have its vin)
+
+          return axios.get(`trips?vehicleIdentificationNumber=${this._id}`);
+        }
       })
       .then((googleMapsRes) => {
-        console.log("data coming from google maps", googleMapsRes.data);
-        const tripData = googleMapsRes.data;
+        if (this.vehicleIdentificationNumber) {
+          //redundant if used for testing (when a trip could not have its vin)
 
-        this.startLocation.name = "";
-        this.endLocation.name = "";
+          console.log("data coming from google maps", googleMapsRes.data);
+          const tripData = googleMapsRes.data;
 
-        return googleMapsRes;
+          this.startLocation.name = "";
+          this.endLocation.name = "";
+
+          return googleMapsRes;
+        }
       })
       .catch((err) => {
         console.log("eccezione ricevuta:");
@@ -446,9 +495,10 @@ export default {
       })
       .finally(() => {
         console.log("nel finally");
+        console.log("startLocation is", this.startLocation);
         this.isLoading = false;
       });
-    this.isLoading = false;
+    //this.isLoading = false;
   },
 };
 </script>

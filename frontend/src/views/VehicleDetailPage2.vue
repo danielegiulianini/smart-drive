@@ -1,5 +1,5 @@
 <template>
-  <TheAppHeader></TheAppHeader>
+  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <main id="main" class="main">
     <!--FOR DEBUGGING ====-->
@@ -118,7 +118,8 @@
           <!-- end of col wrapping card--><!--here the vehicle card-->
         </div>
         <!-- start of col containing data-->
-        <div class="col-12 col-md-7 col-lg-7"><!-- the complementary of the other col-->
+        <div class="col-12 col-md-7 col-lg-7">
+          <!-- the complementary of the other col-->
           <!-- here the tabs-->
           <!-- tha tabs -->
           <ul
@@ -375,20 +376,31 @@ export default {
     },
     vehicleRemovalConfirmed() {
       console.log("sending to axios the removal!");
-      this.notifications.show(
-        "Hello World",
-        {
-          body: "This is an example!",
-        },
-        {}
-      );
-      this.$router.push("/garage");
-      /*axios
+
+      axios
         .delete(`vehicles/userVehicles/${this._id}`)
         .then((res) => {
-          //display success?? todo
+          //display success or show notification
+          this.$notification.show(
+            "Success",
+            {
+              body: "Vehicle correctly deleted!",
+            },
+            {}
+          );
+          this.$router.push("/garage");
         })
-        .catch((err) => console.error(err));*/
+        .catch((err) => {
+          //display error or show notification
+          this.$notification.show(
+            "Error",
+            {
+              body: "Something went wrong during vehicle removal!",
+            },
+            {}
+          );
+          console.error(err);
+        });
     },
   },
   mounted() {
@@ -436,7 +448,7 @@ export default {
         this.overview.year = vehicleModel.year;
         this.overview.make = vehicleModel.make;
         this.overview.model = vehicleModel.model;
-        this.overview.series = vehicleModel.series;
+        this.overview.series = vehicleModel.id;
         this.overview.makeLogoImgUrl =
           this.makeLogoImgUrlByMake[vehicleModel.make];
         /*this.overview.year = vehicleModel.year;
@@ -531,7 +543,7 @@ export default {
         }
       })
       .catch((err) => {
-        console.log("eccezione ricevuta:");
+        console.log("exception received");
         console.error(err);
       }) //communicate something to user (with a mre user-friendly mapping?)
       .finally(() => {

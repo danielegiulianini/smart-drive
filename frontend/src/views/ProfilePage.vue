@@ -1,5 +1,5 @@
 <template>
-  <TheAppHeader></TheAppHeader>
+  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <Spinner :show="isLoading"></Spinner>
   <main id="main" class="main">
@@ -105,6 +105,9 @@
             :level="level"
             :scores-trend="scoresTrend"
             :users="users"
+            :firstName="firstName"
+            :surname="surname"
+            :country="country"
           ></LeaderboardTabPane>
         </div>
         <!--</div>-->
@@ -184,7 +187,7 @@ export default {
       this.activeItem = menuItem;
     },
     periodicallyRefreshLeaderboard() {
-      const leaderboardRefreshPeriodInMilliseconds = 5000;
+      const leaderboardRefreshPeriodInMilliseconds = 15000;
       //refreshing leaderboard (its actual real-time update (with socket.io) would ruin leaderboard vision
       //because of too high frequency)
       setInterval(() => {
@@ -194,6 +197,21 @@ export default {
           .then((usersRes) => (this.users = usersRes.data));
       }, leaderboardRefreshPeriodInMilliseconds); //refreshing leaderboard every 5 seconds},
     },
+  },
+  created() {
+    /*window.addEventListener("beforeunload", function (e) {
+      window.alert("test");
+      e.preventDefault();
+      e.returnValue = "";
+    });*/
+    /*
+    window.addEventListener("beforeunload", (e) => {
+    e.preventDefault()
+    // chrome requires returnValue to be set
+    const message = "You have unsaved changes. Are you sure you wish to leave?"
+    e.returnValue = message
+    return message
+})*/
   },
   mounted() {
     //manually joining here
@@ -250,6 +268,19 @@ export default {
         this.isLoading = false;
       });
     this.periodicallyRefreshLeaderboard();
+  },
+  watch: {
+    $route(to, from) {
+      /*window.alert("test");*/
+      window.addEventListener("beforeunload", (e) => {
+        e.preventDefault();
+        // chrome requires returnValue to be set
+        const message =
+          "You have unsaved changes. Are you sure you wish to leave?";
+        e.returnValue = message;
+        return message;
+      });
+    },
   },
 };
 </script>

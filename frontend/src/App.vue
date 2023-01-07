@@ -1,32 +1,32 @@
-<script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+import TheAppHeader from "./components/TheAppHeader.vue";
+import TheAppFooter from "./components/TheAppFooter.vue";
+
+export default {
+  components: {
+    TheAppHeader,
+    TheAppFooter,
+  },
+};
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <!--<HelloWorld msg="Vite + Vue" />-->
+  <!-- including a singleton header (in all pages excepting signup and login,
+   for not deceiving replicated notifications)-->
+  <AppHeader
+    class="mt-5"
+    v-if="
+      !$route.name ||
+      !(
+        $route.name == '' ||
+        $route.name == 'signup' ||
+        $route.name == 'login' ||
+        $route.name == 'not-found'
+      )
+    "
+  >
+  </AppHeader>
   <router-view></router-view>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<style scoped></style>
