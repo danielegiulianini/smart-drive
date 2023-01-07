@@ -1,32 +1,44 @@
 <template>
-  <div>
-    <div id="chart2"></div>
-    <div
-      style="
-        position: relative;
-        top: -100px;
-        margin-bottom: -60px;
-        font-size: 250%;
-      "
-      class="text-center"
-    >
-      <div style="line-height: 100%; font-size: 100%">100</div>
-      <div class="text-muted" style="font-size: 40%; line-height: 90%">rpm</div>
-    </div>
+  <div id="chart2"></div>
+  <div
+    style="
+      position: relative;
+      top: -100px;
+      margin-bottom: -60px;
+      font-size: 250%;
+    "
+    class="text-center"
+  >
+    <div style="line-height: 100%; font-size: 100%">{{ tweened }}</div>
+    <div class="text-muted" style="font-size: 40%; line-height: 90%">rpm</div>
   </div>
 </template>
 
 <script>
+import gsap from "gsap";
+
+//apex charts wants values between 0 and 100 only
+const maxRpm = 7000;
+
 export default {
   props: {
-    progressPercentage: {
-      type: Number, // Number from 0.0 to 1.0
+    rpm: {
       required: true,
+    },
+  },
+  data() {
+    return {
+      tweened: this.rpm,
+    };
+  },
+  computed: {
+    rpmInPercentage() {
+      return (this.rpm / maxRpm) * 100;
     },
   },
   mounted() {
     const options = {
-      series: [69],
+      series: [this.rpmInPercentage],
       dataLabels: {
         enabled: false,
       },
@@ -43,11 +55,6 @@ export default {
           startAngle: -135,
           endAngle: 135,
           dataLabels: {
-            /*name: {
-              fontSize: "16px",
-              color: undefined,
-              offsetY: 120,
-            },*/
             value: {
               //offsetY: 76,
               fontSize: "22px",
@@ -76,35 +83,30 @@ export default {
       labels: [""],
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart2"), options);
-    chart.render();
-    let series = chart.series;
+    this.chart = new ApexCharts(document.querySelector("#chart2"), options);
+    this.chart.render();
+    let series = this.chart.series;
     // series[0].setData([70], false)
     console.log("le series[0] are: ", series);
-    chart.updateSeries([0]);
 
-    setTimeout(() => {
-      this.num = 100;
+    //this call is needed to refresh the chart
+    //this.chart.updateSeries([0]);
+  },
+  watch: {
+    rpm(newRpm, oldRpm) {
+      const a = this;
+      const TEXTUAL_UPDATE_DURATION_IN_SECONDS = 3
+      this.chart.updateSeries([this.rpmInPercentage]);
+      var zero = { val: oldRpm };
+      //from, to
+      gsap.to(zero, { duration: TEXTUAL_UPDATE_DURATION_IN_SECONDS, val: newRpm, onUpdate: countNumber });
 
-      //THIS IS THE KEY METHOD!!!!
-      chart.updateSeries([50]);
-      //htmlBar.animate(0.3);
-    }, 2000);
-    setTimeout(() => {
-      //htmlBar.animate(0.6);
-      this.num += 20;
-      chart.updateSeries([70]);
-    }, 3000);
-    setTimeout(() => {
-      this.num -= 30;
-
-      //htmlBar.animate(0.8);
-    }, 4000);
-
-    setInterval(function () {
-      console.log("augmenting number!");
-      this.num += 1;
-    }, 1000);
+      //removing decimals
+      function countNumber() {
+        var final = gsap.utils.snap(1, zero.val);
+        a.tweened = final;
+      }
+    },
   },
 };
 </script>
