@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const notificationSchema = mongoose.Schema({
-  //using default _id
-  title: {
+  //using default mongoose _id
+  subject: {
     type: String,
     required: true,
   },
