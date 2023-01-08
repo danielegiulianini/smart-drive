@@ -4,21 +4,30 @@
     <ul class="sidebar-nav" id="sidebar-nav">
       <li class="nav-heading">Pages</li>
 
-      <li class="nav-item">
+      <!--with home page:
+        <li class="nav-item">
         <a class="nav-link" @click="this.$router.push('/')">
           <i class="fa fa-home"></i>
           <span>Home</span>
         </a>
-      </li>
+      </li>-->
       <!-- End Home Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link" @click="this.$router.push('/profile')">
+          <i class="bi bi-person-circle"></i>
+          <span>Home</span>
+        </a>
+      </li>
+      <!-- End Profile Page Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" @click="this.$router.push('/score')">
           <i class="bi bi-speedometer"></i>
-          <span>Dashboard</span>
+          <span>Driving Score</span>
         </a>
       </li>
-      <!-- End Dashboard Page Nav -->
+      <!-- End score Page Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" @click="this.$router.push('/garage')">
@@ -83,6 +92,11 @@
   background-color: #aab7cf;
 }
 
+/*
+sidebar (equivalent to TheAppMobileNavbar) is to be shown in xxl, xl.
+this navbar in: xs, sm, md, lg.
+(could also use bootstrap class for this.)
+*/
 @media (min-width: 1200px) {
   #main,
   #footer {

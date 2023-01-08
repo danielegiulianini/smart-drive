@@ -1,7 +1,11 @@
 <template>
   <nav class="mobile-nav">
-    <a class="bloc-icon" @click="this.$router.push('/')">
+    <!--with home:
+      <a class="bloc-icon" @click="this.$router.push('/')">
       <i style="font-size: 30px" class="fa fa-home"></i>
+    </a>-->
+    <a class="bloc-icon" @click="this.$router.push('/profile')">
+      <i style="font-size: 30px" class="bi bi-person-circle"></i>
     </a>
     <a class="bloc-icon" @click="this.$router.push('/score')">
       <i style="font-size: 30px" class="bi bi-speedometer"></i>
