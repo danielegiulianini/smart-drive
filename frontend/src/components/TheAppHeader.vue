@@ -262,6 +262,7 @@ import Spinner from "../components/Spinner.vue";
 const defaultAvatarUri = "/src/assets/img/driverAvatar.png";
 import { mapGetters } from "vuex";
 const countOfNotificationsToDisplay = 10;
+const notificationRestEndpoint = "http://localhost:8088/api/v1/notifications";
 
 export default {
   components: { Spinner },
@@ -328,12 +329,22 @@ export default {
       );
     },
     onNotificationIconPressed() {
-      console.log("onNotificationIconPressed");
-      //this.unreadNotificationsCount = 0;
-      //must mark current unseen notifications as seen on backend => unreadNotificationsCount=0
+      console.log(
+        "onNotificationIconPressed, marking lastNotifications as read"
+      );
+      //1. must mark current unseen notifications as seen on backend => unreadNotificationsCount=0
       this.lastNotifications.forEach(
         (notification) => (notification.isRead = true)
       );
+      Promise.all(
+        this.lastNotifications.map((notification) =>
+          axios.post(`${notificationRestEndpoint}/${notification._id}`, {
+            isRead: true,
+          })
+        )
+      )
+        // .then()
+        .catch(() => console.log("error happened")); //maybe a more user-friendly msg here
     },
     onSignout() {
       this.$store.dispatch("logout").then(() => this.$router.push("/")); //redirecting to home (or login module) after logout
@@ -367,7 +378,7 @@ export default {
         //2.fetching unseen notifications with axios
         .then(() =>
           axios.get(
-            `http://localhost:8088/api/v1/notifications?userId=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
+            `${notificationRestEndpoint}?userId=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
           )
         ) //filtering and sorting
         .then((notificationRes) => {
