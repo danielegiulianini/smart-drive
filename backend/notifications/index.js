@@ -20,11 +20,22 @@ async function startServer() {
 
   console.log("Setting up routes...");
 
-  //REST endpoint routes (ex. for showing all users notifications)
+  const cors = require("cors");
+  const corsOptions = {
+    origin: true, //set origin to true to reflect the request origin (stricter than wildcard *) so browsers allow to view response
+    allowedHeaders: ["Content-Type", "Authorization"],
+  };
+  app.use(cors(corsOptions));
+
+  //it avoids that req's body are undefined
+  const bodyParser = require("body-parser");
+  app.use(bodyParser.json());
+
+  //1. REST endpoint routes (ex. for showing all users notifications)
   const routes = require("./src/routes");
   app.use("/api/v1", routes);
 
-  //mqtt routed
+  //2. mqtt routes
   setupRoutes();
   console.log("routes bound");
 
@@ -32,22 +43,25 @@ async function startServer() {
 
   const io = require("socket.io")(server, {
     cors: {
-      origin: true,
+      origin: "*", // "http://localhost:8000",
       methods: ["GET", "POST"],
+      transports: ["websocket", "polling"],
+      allowEIO3: true,
+      credentials: true,
     },
   });
 
-  //auth middleware
+  //socket.io auth middleware
+  io.use(authenticateAndSaveUserId); //to re-enable after testing
+
   io.on("connection", (socket) => {
-    //.use(authenticateAndSaveUserId)//to re-enable after testing
-    console.log("New connection available");
+    console.log("New connection available from user with id", socket.userId);
     notificationsController.onConnection(socket);
   });
 
-  console.log("socket.io endopoint setup");
+  console.log("socket.io endpoint setup");
 
   //only used if exposing REST endpoint tpo (ex. for showing all users notifications)
-
   server.listen(port, () =>
     console.log(
       `Notification backend listening on port ${port} and subscribed for MQTT data (notification)`
