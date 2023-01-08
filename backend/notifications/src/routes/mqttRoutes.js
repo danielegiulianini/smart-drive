@@ -22,20 +22,22 @@ const measurementsEventsRegex = new RegExp(
 const measurementsTopics = measurementsTopixPrefix + "+";
 
 const setupRoutes = () => {
+  publishSubscribe.subscribe(
+    [notificationsTopics, drivingNotificationsTopics, measurementsTopics],
+    () => {
+      
+      console.log(
+        `notifications backend subscribed to topic '${[
+          notificationsTopics,
+          drivingNotificationsTopics,
+        ]}'`
+      );
+    }
+  );
   publishSubscribe.onConnect(() => {
     console.log("notifications backend connected to mqtt broker");
 
-    publishSubscribe.subscribe(
-      [notificationsTopics, drivingNotificationsTopics, measurementsTopics],
-      () => {
-        console.log(
-          `notifications backend subscribed to topic '${[
-            notificationsTopics,
-            drivingNotificationsTopics,
-          ]}'`
-        );
-      }
-    );
+    
   });
 
   publishSubscribe.onMessage((topic, payload) => {
