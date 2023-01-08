@@ -279,11 +279,19 @@ export default {
   },
   computed: {
     unreadNotificationsCount() {
+      console.log(
+        "updating unreadNotificationsCount, that is:",
+        this.lastUnreadNotifications.length
+      );
       return this.lastUnreadNotifications.length;
     },
     lastUnreadNotifications() {
+      console.log(
+        "updating lastUnreadNotifications, that are:",
+        this.lastNotifications
+      );
       return this.lastNotifications.filter(
-        (notification) => notification.isRead
+        (notification) => !notification.isRead
       );
     },
     //====================== user-related======================
@@ -307,8 +315,8 @@ export default {
 
       //here notification mirrors mongoose database structure
       console.log("in app header a new notification arrived!", notification);
-      //this.unreadNotificationsCount++;
-      this.allNotifications.push(notification);
+      notification.isRead = false;
+      this.lastNotifications.unshift(notification); //inserting at the start
 
       //only the real-time-upcoming notification displays a popup
       this.$notification.show(
@@ -320,8 +328,9 @@ export default {
       );
     },
     onNotificationIconPressed() {
-      this.unreadNotificationsCount = 0;
-      //must mark current unseen notifications as seen on backend
+      console.log("onNotificationIconPressed")
+      //this.unreadNotificationsCount = 0;
+      //must mark current unseen notifications as seen on backend => unreadNotificationsCount=0
     },
     onSignout() {
       this.$store.dispatch("logout").then(() => this.$router.push("/")); //redirecting to home (or login module) after logout
