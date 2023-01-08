@@ -1,6 +1,18 @@
 <template>
   <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
+  <header
+    id="header"
+    class="header fixed-top d-flex align-items-center"
+    v-if="
+      !$route.name ||
+      !(
+        $route.name == '' ||
+        $route.name == 'signup' ||
+        $route.name == 'login' ||
+        $route.name == 'not-found'
+      )
+    "
+  >
     <div class="d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo d-flex align-items-center">
         <img src="/src/assets/style/img/webappLogo/favicon-32x32.png" alt="" />
@@ -41,6 +53,7 @@
             </li>
 
             <!-- notification -->
+
             <li class="notification-item">
               <i class="bi bi-exclamation-circle text-warning"></i>
               <div>
@@ -184,11 +197,7 @@
             href="#"
             data-bs-toggle="dropdown"
           >
-            <img
-              :src="actualPictureUri"
-              alt="Profile"
-              class="rounded-circle"
-            />
+            <img :src="actualPictureUri" alt="Profile" class="rounded-circle" />
             <span class="d-none d-md-block dropdown-toggle ps-2"
               >{{ firstNameInitial }}. {{ userSurname }}</span
             > </a
@@ -205,11 +214,8 @@
               <hr class="dropdown-divider" />
             </li>
 
-            <li>
-              <a
-                class="dropdown-item d-flex align-items-center"
-                @click="this.$router.push('/profile/')"
-              >
+            <li @click="this.$router.push('/profile')">
+              <a class="dropdown-item d-flex align-items-center">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -217,11 +223,10 @@
             <li>
               <hr class="dropdown-divider" />
             </li>
-            <li>
-              <a
-                class="dropdown-item d-flex align-items-center"
-                @click="this.$router.push('/')"
-              >
+            <li @click="this.$router.push('/')">
+              <a class="dropdown-item d-flex align-items-center">
+                <!--                @click="this.$router.push('/')"
+-->
                 <i class="bi bi-question-circle"></i>
                 <span>Need Help?</span>
               </a>
@@ -248,27 +253,23 @@
     <!-- End Icons Navigation -->
   </header>
   <!-- End Header -->
-  <TheAppSidebar></TheAppSidebar>
 </template>
 
 <script>
-import TheAppSidebar from "../components/TheAppSidebar.vue";
 import axios from "axios";
+
 import Spinner from "../components/Spinner.vue";
 const defaultAvatarUri = "/src/assets/img/driverAvatar.png";
+import { mapGetters } from "vuex";
+const countOfNotificationsToDisplay = 10;
 
 export default {
-  components: { TheAppSidebar, Spinner },
+  components: { Spinner },
   data() {
     return {
-      unreadNotificationsCount: 0,
       isLoading: false,
-
-      //already sorted by backend
-      allNotifications: [], //could have had only lastNotifications (as data)
-
+      lastNotifications: [], //already sorted by backend      //allNotifications: [], //could have had only lastNotifications (as data)
       //====================== user-related======================
-
       userFirstName: "",
       userSurname: "",
       userCountry: "",
@@ -277,10 +278,13 @@ export default {
     };
   },
   computed: {
-    lastNotifications() {
-      const countOfNotificationsToDisplay = 10;
-      //taking the first (=>slice) (most recent) countOfNotificationsToDisplay
-      return this.allNotifications.slice(0, countOfNotificationsToDisplay);
+    unreadNotificationsCount() {
+      return this.lastUnReadNotifications.length;
+    },
+    lastUnreadNotifications() {
+      return this.lastNotifications.filter(
+        (notification) => notification.isRead
+      );
     },
     //====================== user-related======================
     firstNameInitial() {
@@ -289,15 +293,22 @@ export default {
     actualPictureUri() {
       return this.profilePictureUri ? this.profilePictureUri : defaultAvatarUri;
     },
-    //=========================================================
+    //================= notifications-related =================
+    ...mapGetters(["getUser"]),
+    ...mapGetters(["getSocket"]),
   },
   methods: {
     //hook when a notification is received!
     onNewNotification(notification) {
-      //here notification mirrors mongoose database structure
+      //decoding data (because of mqtt sending; could be done in backend before socket.io)
+      var buffer = new Uint8Array(notification);
+      var fileString = String.fromCharCode.apply(null, buffer);
+      var notification = JSON.parse(fileString);
 
-      this.unreadNotificationsCount++;
-      this.notifications.push(notification);
+      //here notification mirrors mongoose database structure
+      console.log("in app header a new notification arrived!", notification);
+      //this.unreadNotificationsCount++;
+      this.allNotifications.push(notification);
 
       //only the real-time-upcoming notification displays a popup
       this.$notification.show(
@@ -310,6 +321,7 @@ export default {
     },
     onNotificationIconPressed() {
       this.unreadNotificationsCount = 0;
+      //must mark current unseen notifications as seen on backend
     },
     onSignout() {
       this.$store.dispatch("logout").then(() => this.$router.push("/")); //redirecting to home (or login module) after logout
@@ -317,30 +329,65 @@ export default {
   },
   mounted() {
     console.log(
-      "the socket from header comp is: ",
-      this.$store.state.users.socket
+      "this is from app header!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     );
-    console.log("the users from header comp is: ", this.$store.state.users);
+  },
+  watch: {
+    //
+    getUser(newValue) {
+      console.log(
+        "attaching user handler now!>>>>>>>>>>>>>>>>>>>>>>>>>>",
+        newValue
+      );
+      //1.fetching some user details with axios
+      const loggedInUserId = this.$store.getters.getUser.id;
+      axios
+        .get(`users/${loggedInUserId}`)
+        .then((userRes) => {
+          console.log("data coming from users (in header)", userRes);
 
-    //fetching with axios some user detail
-    const loggedInUserId = 6; // this.$store.getters.getUser.id; //6; //this.$store.getters.getUser.id; //questa è corretta
-    axios
-      .get(`users/${loggedInUserId}`)
-      .then((userRes) => {
-        console.log("data coming from users", userRes);
+          const userDetail = userRes.data;
+          this.userFirstName = userDetail.name;
+          this.userSurname = userDetail.surname;
+          this.country = userDetail.country;
+          this.profilePictureUri = userDetail.profilePictureUri;
+        })
+        //2.fetching unseen notifications with axios
+        .get(
+          `notifications?userId=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
+        ) //filtering and sorting
+        .then((notificationRes) => {
+          console.log(
+            "data coming from notifications (in header)",
+            notificationRes.data
+          );
+          this.lastNotifications = notificationRes.data;
+        })
+        .catch((err) => console.error(err)) //a more user-friendly message here...
+        .finally(() => {
+          console.log("nel finally");
+          this.isLoading = false;
+        });
+    },
+    getSocket(newValue) {
+      console.log(
+        "attaching socket handler now!>>>>>>>>>>>>>>>>>>>>>>>>>>",
+        newValue
+      );
+      //3. bindind io for notifications
+      console.log(
+        "from header:this.$store is: ",
+        this.$store //this.$store.state.users.socket
+      );
+      console.log(
+        "from header:this.$store.getters.getSocket is: ",
+        this.$store.getters.getSocket //this.$store.state.users.socket
+      );
+      console.log("the users from header comp is: ", this.$store.state.users);
 
-        const userDetail = userRes.data;
-        this.userFirstName = userDetail.name;
-        this.userSurname = userDetail.surname;
-        this.country = userDetail.country;
-        this.profilePictureUri = userDetail.profilePictureUri;
-      })
-      .catch((err) => console.error(err)) //a more user-friendly message here...
-      .finally(() => (this.isLoading = false));
-
-    //fetching with axios notifications
-
-    //this.$socketio. add onNewNotification handler
+      //I must wait for the socket to be ready before binding observer to it
+      newValue.on("notification", this.onNewNotification);
+    },
   },
 };
 </script>
@@ -587,5 +634,9 @@ export default {
 
 .header-nav .profile .dropdown-item:hover {
   background-color: #f6f9ff;
+}
+
+.header-nav a {
+  cursor: pointer;
 }
 </style>

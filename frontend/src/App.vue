@@ -11,21 +11,7 @@ export default {
 </script>
 
 <template>
-  <!-- including a singleton header (in all pages excepting signup and login,
-   for not deceiving replicated notifications)-->
-  <AppHeader
-    class="mt-5"
-    v-if="
-      !$route.name ||
-      !(
-        $route.name == '' ||
-        $route.name == 'signup' ||
-        $route.name == 'login' ||
-        $route.name == 'not-found'
-      )
-    "
-  >
-  </AppHeader>
+  <TheAppHeader></TheAppHeader>
   <router-view></router-view>
 </template>
 
