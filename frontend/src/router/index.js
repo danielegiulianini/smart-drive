@@ -9,7 +9,6 @@ import VehicleDetailPage2 from "../views/VehicleDetailPage2.vue";
 import ScorePage from "../views/ScorePage.vue";
 import DriveModePage3 from "../views/DriveModePage3.vue";
 
-import HomePage from "../views/HomePage.vue";
 import UserSignupFormPage from "../views/UserSignupFormPage.vue";
 import UserLoginFormPage from "../views/UserLoginPage.vue";
 import AllAppBadgesPage from "../views/AllAppUserBadgesPage.vue";
@@ -17,11 +16,6 @@ import TripsOverviewPage from "../views/TripsOverviewPage.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: HomePage,
-  },
   {
     path: "/profile",
     name: "Profile",
