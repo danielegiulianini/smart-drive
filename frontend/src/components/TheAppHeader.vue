@@ -27,7 +27,7 @@
       <ul class="d-flex align-items-center">
         <li class="nav-item dropdown">
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-bell"></i>
+            <i class="bi bi-bell" @click="onNotificationIconPressed"></i>
             <span
               class="badge bg-primary badge-number"
               v-if="unreadNotificationsCount > 0"
@@ -328,9 +328,12 @@ export default {
       );
     },
     onNotificationIconPressed() {
-      console.log("onNotificationIconPressed")
+      console.log("onNotificationIconPressed");
       //this.unreadNotificationsCount = 0;
       //must mark current unseen notifications as seen on backend => unreadNotificationsCount=0
+      this.lastNotifications.forEach(
+        (notification) => (notification.isRead = true)
+      );
     },
     onSignout() {
       this.$store.dispatch("logout").then(() => this.$router.push("/")); //redirecting to home (or login module) after logout
