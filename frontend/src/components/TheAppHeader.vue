@@ -279,7 +279,7 @@ export default {
   },
   computed: {
     unreadNotificationsCount() {
-      return this.lastUnReadNotifications.length;
+      return this.lastUnreadNotifications.length;
     },
     lastUnreadNotifications() {
       return this.lastNotifications.filter(
@@ -353,8 +353,10 @@ export default {
           this.profilePictureUri = userDetail.profilePictureUri;
         })
         //2.fetching unseen notifications with axios
-        .get(
-          `notifications?userId=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
+        .then(() =>
+          axios.get(
+            `http://localhost:8088/api/v1/notifications?userId=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
+          )
         ) //filtering and sorting
         .then((notificationRes) => {
           console.log(
