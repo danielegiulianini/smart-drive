@@ -37,34 +37,40 @@
 
           <!-- notification list -->
           <ul
-            class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications"
-            style="overflow-y: scroll; max-height: 500px"
+            class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications pb-1"
+            style="overflow-y: scroll; max-height: 500px; min-width: 300px"
           >
-            <li class="dropdown-header">
+            <!--<li class="dropdown-header text-muted" style="font-size:95%">
               You have {{ unreadNotificationsCount }} new notifications
-              <a href="#"
-                ><span class="badge rounded-pill bg-primary p-2 ms-2"
-                  >View all</span
-                ></a
-              >
             </li>
             <li>
               <hr class="dropdown-divider" />
-            </li>
+            </li>-->
 
             <!-- ===================== START OF NOTIFICATIONS HERE ======================== -->
-            <DropdownNotification
+            <template
               v-for="notification in lastNotifications"
-              :key="vehicle._id"
+              :key="notification._id"
               :notification="notification"
-            ></DropdownNotification>
+            >
+              <DropdownNotification
+                :notification="notification"
+              ></DropdownNotification>
+              <li>
+                <hr class="dropdown-divider" /></li
+            ></template>
+
             <!-- ===================== END OF NOTIFICATIONS HERE ======================== -->
 
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li class="dropdown-footer">
-              <a href="#">Show all notifications</a>
+            <li class="dropdown-footer py-1">
+              <span
+                href="#"
+                class="text-muted"
+                style="font-size: 95%"
+                id="show-all"
+                @click="$router.push('/notifications')"
+                >Show all</span
+              >
             </li>
           </ul>
           <!-- End Notification Dropdown Items -->
@@ -104,22 +110,23 @@
             <li>
               <hr class="dropdown-divider" />
             </li>
-            <li @click="this.$router.push('/')">
-              <a class="dropdown-item d-flex align-items-center">
-                <!--                @click="this.$router.push('/')"
--->
+            <!-- removed with home page: <li @click="this.$router.push('/')">
+              <a
+                class="dropdown-item d-flex align-items-center"
+                @click="this.$router.push('/')"
+              >
                 <i class="bi bi-question-circle"></i>
                 <span>Need Help?</span>
               </a>
             </li>
             <li>
               <hr class="dropdown-divider" />
-            </li>
+            </li>-->
             <!-- maybe other things here... -->
-            <li @click.prevent="$store.dispatch('logout')">
+            <li>
               <a
                 class="dropdown-item d-flex align-items-center"
-                @click="this.$router.push('/')"
+                @click="onSignout"
               >
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
@@ -191,11 +198,6 @@ export default {
   methods: {
     //hook when a notification is received!
     onNewNotification(notification) {
-      //decoding data (because of mqtt sending; could be done in backend before socket.io)
-      var buffer = new Uint8Array(notification);
-      var fileString = String.fromCharCode.apply(null, buffer);
-      var notification = JSON.parse(fileString);
-
       //here notification mirrors mongoose database structure
       console.log("in app header a new notification arrived!", notification);
       notification.isRead = false;
@@ -210,7 +212,7 @@ export default {
         {}
       );
     },
-    onNotificationIconPressed() {
+    async onNotificationIconPressed() {
       console.log(
         "onNotificationIconPressed, marking lastNotifications as read"
       );
@@ -219,17 +221,24 @@ export default {
         (notification) => (notification.isRead = true)
       );
       Promise.all(
-        this.lastNotifications.map((notification) =>
-          axios.post(`${notificationRestEndpoint}/${notification._id}`, {
-            isRead: true,
-          })
-        )
-      )
-        // .then()
-        .catch(() => console.log("error happened")); //maybe a more user-friendly msg here
+        this.lastNotifications.map((notification) => {
+          console.log(
+            "la notification che sto settando a read is: ",
+            notification
+          );
+          return axios.post(`${notificationRestEndpoint}/${notification._id}`, {
+            isRead: "true",
+          });
+        })
+      ).catch(() => console.log("error happened")); //maybe a more user-friendly msg here
     },
     onSignout() {
-      this.$store.dispatch("logout").then(() => this.$router.push("/")); //redirecting to home (or login module) after logout
+      this.$store.dispatch("logout").then(() => {
+        console.log(
+          "redirecting to login page!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!00000"
+        );
+        return this.$router.push("login");
+      }); //redirecting to home (or login module) after logout
     },
   },
   mounted() {
@@ -238,62 +247,67 @@ export default {
     );
   },
   watch: {
-    //
     getUser(newValue) {
       console.log(
         "attaching user handler now!>>>>>>>>>>>>>>>>>>>>>>>>>>",
         newValue
       );
-      //1.fetching some user details with axios
-      const loggedInUserId = this.$store.getters.getUser.id;
-      axios
-        .get(`users/${loggedInUserId}`)
-        .then((userRes) => {
-          console.log("data coming from users (in header)", userRes);
+      //must not trigger watcher edit to getUser are due to logout
 
-          const userDetail = userRes.data;
-          this.userFirstName = userDetail.name;
-          this.userSurname = userDetail.surname;
-          this.country = userDetail.country;
-          this.profilePictureUri = userDetail.profilePictureUri;
-        })
-        //2.fetching unseen notifications with axios
-        .then(() =>
-          axios.get(
-            `${notificationRestEndpoint}?userId=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
-          )
-        ) //filtering and sorting
-        .then((notificationRes) => {
-          console.log(
-            "data coming from notifications (in header)",
-            notificationRes.data
-          );
-          this.lastNotifications = notificationRes.data;
-        })
-        .catch((err) => console.error(err)) //a more user-friendly message here...
-        .finally(() => {
-          console.log("nel finally");
-          this.isLoading = false;
-        });
+      if (this.getUser) {
+        //1.fetching some user details with axios
+        const loggedInUserId = this.$store.getters.getUser.id;
+        axios
+          .get(`users/${loggedInUserId}`)
+          .then((userRes) => {
+            console.log("data coming from users (in header)", userRes);
+
+            const userDetail = userRes.data;
+            this.userFirstName = userDetail.name;
+            this.userSurname = userDetail.surname;
+            this.country = userDetail.country;
+            this.profilePictureUri = userDetail.profilePictureUri;
+          })
+          //2.fetching unseen notifications with axios
+          .then(() =>
+            axios.get(
+              `${notificationRestEndpoint}?userId=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
+            )
+          ) //filtering and sorting
+          .then((notificationRes) => {
+            console.log(
+              "data coming from notifications (in header)",
+              notificationRes.data
+            );
+            this.lastNotifications = notificationRes.data;
+          })
+          .catch((err) => console.error(err)) //a more user-friendly message here...
+          .finally(() => {
+            console.log("nel finally");
+            this.isLoading = false;
+          });
+      }
     },
     getSocket(newValue) {
-      console.log(
-        "attaching socket handler now!>>>>>>>>>>>>>>>>>>>>>>>>>>",
-        newValue
-      );
-      //3. bindind io for notifications
-      console.log(
-        "from header:this.$store is: ",
-        this.$store //this.$store.state.users.socket
-      );
-      console.log(
-        "from header:this.$store.getters.getSocket is: ",
-        this.$store.getters.getSocket //this.$store.state.users.socket
-      );
-      console.log("the users from header comp is: ", this.$store.state.users);
+      if (this.getSocket) {
+        console.log(
+          "attaching socket handler now!>>>>>>>>>>>>>>>>>>>>>>>>>>",
+          newValue
+        );
+        //3. bindind io for notifications
+        console.log(
+          "from header:this.$store is: ",
+          this.$store //this.$store.state.users.socket
+        );
+        console.log(
+          "from header:this.$store.getters.getSocket is: ",
+          this.$store.getters.getSocket //this.$store.state.users.socket
+        );
+        console.log("the users from header comp is: ", this.$store.state.users);
 
-      //I must wait for the socket to be ready before binding observer to it
-      newValue.on("notification", this.onNewNotification);
+        //I must wait for the socket to be ready before binding observer to it
+        newValue.on("notification", this.onNewNotification);
+      }
     },
   },
 };
@@ -447,34 +461,7 @@ export default {
   inset: 8px -15px auto auto !important;
 }
 
-.header-nav .notifications .notification-item {
-  display: flex;
-  align-items: center;
-  padding: 15px 10px;
-  transition: 0.3s;
-}
-
-.header-nav .notifications .notification-item i {
-  margin: 0 20px 0 10px;
-  font-size: 24px;
-}
-
-.header-nav .notifications .notification-item h4 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-.header-nav .notifications .notification-item p {
-  font-size: 13px;
-  margin-bottom: 3px;
-  color: #919191;
-}
-
-.header-nav .notifications .notification-item:hover {
-  background-color: #f6f9ff;
-}
-
+/* Messages (not used yet) */
 .header-nav .messages {
   inset: 8px -15px auto auto !important;
 }
@@ -510,6 +497,7 @@ export default {
   background-color: #f6f9ff;
 }
 
+/* for profile  */
 .header-nav .profile {
   min-width: 240px;
   padding-bottom: 0;
@@ -544,6 +532,10 @@ export default {
 }
 
 .header-nav a {
+  cursor: pointer;
+}
+
+#show-all:hover {
   cursor: pointer;
 }
 </style>
