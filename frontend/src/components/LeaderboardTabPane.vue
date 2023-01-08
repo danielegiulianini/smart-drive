@@ -231,35 +231,15 @@ export default {
       }
     },
     myRank() {
-      console.log(
-        "in computing rank, the this.sortedUsersToDisplay: ",
-        this.sortedUsersToDisplay,
-        "my id",
-        this.$store.getters.getUser.id
-      );
-      return this.rankOf(
-        this.sortedUsersToDisplay,
-        this.$store.getters.getUser.id
-      ); //this.$store.getters.getUser.id);
+      //preventing to trigger chnge when logging out with ternary operator
+      return this.$store.getters.getUser
+        ? this.rankOf(this.sortedUsersToDisplay, this.$store.getters.getUser.id)
+        : "";
     },
   },
   methods: {
     rankOf(users, userId) {
-      console.log(
-        "il rank che ritorno: ",
-        users.map((aUser) => aUser._id).indexOf(userId) + 1
-      );
-      console.log(
-        "searching id ",
-        userId,
-        " of user ",
-        userId,
-        " in users: ",
-        users.map((aUser) => aUser._id)
-      );
-      const rank =
-        users.map((aUser) => aUser._id).indexOf(userId) + 1; //+1 for array zero-indexing
-      console.log("ritorno rank", rank);
+      const rank = users.map((aUser) => aUser._id).indexOf(userId) + 1; //+1 for array zero-indexing
       return rank;
     },
     timeSince(date) {
@@ -290,14 +270,7 @@ export default {
       return Math.floor(seconds) + " seconds";
     },
   },
-  mounted() {
-    console.log("i sorted users: ", this.sortedUsersToDisplay);
-  },
-   watch: {
-    sortedUsersToDisplay(newUri, oldUri) {
-      console.log("****************sortedUsersToDisplay updated*************************")
-    }
-  }
+  mounted() {},
 };
 </script>
 
