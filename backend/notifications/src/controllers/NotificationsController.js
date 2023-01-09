@@ -1,3 +1,5 @@
+const Notification = require("../models/notifications");
+
 let users = {};
 
 function logout(userId) {
@@ -10,11 +12,20 @@ function onUserDisconnected(userId) {
 }
 
 //used when sending notification
-function onNewNotification(userId, notification) {
+async function onNewNotification(userId, notification) {
   //from mqtt
+  var buffer = new Uint8Array(notification);
+  var fileString = String.fromCharCode.apply(null, buffer);
+  notification = JSON.parse(fileString);
+
+  console.log("persisting notification...", notification);
+  notification.recipient = userId;
+  notification = await Notification.create(notification); //implicitly assigning the id (and other fields) returned by mongoose
+
   const socket = users[userId];
   if (socket) {
     socket.emit("notification", notification);
+    console.log(`Sending to user ${userId} notification ${notification}`);
   } else {
     console.log(
       `User with id ${userId} is not currently logged in to notifications microservice`
@@ -26,6 +37,9 @@ function onNewDrivingNotification(userId, drivingNotification) {
   const socket = users[userId];
   if (socket) {
     socket.volatile.emit("drivingNotification", drivingNotification); //using volatile here for not saving messages whule out of connection
+    console.log(
+      `Sending to user ${userId} drivingNotification ${drivingNotification}`
+    );
   } else {
     console.log(
       `User with id ${userId} is not currently logged in to notifications microservice`
@@ -37,6 +51,7 @@ function onNewMeasurement(userId, measurement) {
   const socket = users[userId];
   if (socket) {
     socket.volatile.emit("measurement", measurement); //using volatile here for not saving messages whule out of connection
+    console.log(`Sending to user ${userId} measurement ${measurement}`);
   } else {
     console.log(
       `User with id ${userId} is not currently logged in to notifications microservice`
