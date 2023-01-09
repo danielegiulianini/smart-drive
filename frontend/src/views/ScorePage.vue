@@ -22,6 +22,7 @@
     <section class="section dashboard">
       <div class="container-fluid">
         <div class="row g-2" v-if="isDefined(globalScore)">
+          <!--or: v-if="xp>0"-->
           <div class="col-lg-6">
             <div class="card nested-card h-100 mb-2">
               <!-- padding between cards-->
@@ -45,7 +46,7 @@
 
                 <div class="justify-content-center">
                   <AppCircularProgressBar
-                    :progressPercentage="globalScore"
+                    :progress="globalScore"
                   ></AppCircularProgressBar>
                 </div>
               </div>
@@ -124,7 +125,17 @@
                 <h5 class="card-title pb-0 mb-0">Score trend</h5>
                 <!-- score trend Chart -->
 
-                <div id="scoresTrendChart"></div>
+                <div id="scoresTrendChart" v-if="scoresTrend.length > 0"></div>
+                <div
+                  class="d-flex flex-column justify-content-center align-items-center text-center"
+                  style="height: 300px"
+                  v-else
+                >
+                  <h1 style="font-size: 110%">No scores trend</h1>
+                  <p class="text-muted" style="font-size: 90%">
+                    You seem to be an app beginner.
+                  </p>
+                </div>
                 <!-- end of score trend Chart -->
               </div>
             </div>
@@ -200,16 +211,18 @@ export default {
       isLoading: true,
       globalScore: 0,
       aggressivenessScore: 0,
-      safetyScore: 0,
       feedbackConsiderationScore: 0,
+
+      safetyScore: 0,
       idlingScore: 0,
       scoresTrend: [
+        /*
         { score: 98, referredTo: "2022-12-06T11:16:47.012Z" },
         { score: 84, referredTo: "2022-12-07T11:16:47.012Z" },
         { score: 99, referredTo: "2022-12-08T11:16:47.012Z" },
         { score: 98, referredTo: "2022-12-09T11:16:47.012Z" },
         { score: 84, referredTo: "2022-12-10T11:16:47.012Z" },
-        { score: 99, referredTo: "2022-12-11T11:16:47.012Z" },
+        { score: 99, referredTo: "2022-12-11T11:16:47.012Z" },*/
       ], //for testing here, in production replace this array with []
       /*
       progresses: {
@@ -259,6 +272,7 @@ export default {
   },
   methods: {
     initCharts() {
+      console.log("initializing charts");
       new ApexCharts(document.querySelector("#scoresTrendChart"), {
         series: [
           {
@@ -306,8 +320,9 @@ export default {
             name: "Scores composition",
             data: [
               this.aggressivenessScore,
-              this.safetyScore,
               this.feedbackConsiderationScore,
+              this.safetyScore,
+
               this.idlingScore,
             ], //hardcoded here
           },
@@ -319,8 +334,9 @@ export default {
         xaxis: {
           categories: [
             "Aggressiveness",
-            "Safety",
             "FeedbackConsideration",
+            "Safety",
+
             "Idling",
           ], //hardcoded-here
         },
@@ -339,23 +355,12 @@ export default {
 
         const user = res.data;
         //fields re-mapping here
-
         this.globalScore = user.ecoScore;
-        //safetyScore=user.
-        //aggressivenessScore: "",
-        //restingScore: "",
-        //feedbackConsiderationScore: ""
-        // this.scoresTrend = user.scoresTrend;
+        this.aggressivenessScore = user.rpmScore;
+        this.feedbackConsiderationScore = user.feedbackConsiderationScore;
 
-        /*console.log(
-          "this.isDefined(this.globalScore) : ",
-          this.isDefined(this.globalScore)
-        );
-        console.log("gs", this.globalScore);
-        console.log("as", this.aggressivenessScore);
-        console.log("ss", this.safetyScore);
-        console.log("fs", this.feedbackConsiderationScore);
-        console.log("is", this.idlingScore);*/
+        this.scoreTrend = user.scoresTrend;
+
         if (
           this.isDefined(this.globalScore) &&
           this.isDefined(this.aggressivenessScore) &&
@@ -363,6 +368,7 @@ export default {
           this.isDefined(this.feedbackConsiderationScore) &&
           this.isDefined(this.idlingScore)
         ) {
+          //init tooltip
           new Tooltip(this.$refs.info);
           this.initCharts();
         }
