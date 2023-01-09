@@ -15,13 +15,13 @@
           </i>
         </h6>
         <div class="fw-bold text-center">
-          {{ score }}
+          {{ formattedValue }}
           <small style="font-size: 80%" class="text-muted">/100</small>
         </div>
       </div>
     </div>
     <AppHorizontalProgressBarVue
-      :progressPercentage="score"
+      :progressPercentage="progressPercentage"
     ></AppHorizontalProgressBarVue>
     <!--<div class="d-flex justify-content-center">
       <small style="font-size: 80%" class="d-flex ps-2 text-muted text-center">
@@ -33,8 +33,6 @@
 
 <script>
 import AppHorizontalProgressBarVue from "../components/AppHorizontalProgressBar.vue";
-//import { Tooltip } from "/assets/style/vendor/bootstrap/js/bootstrap.esm.min.js";
-
 import { Tooltip } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 export default {
@@ -44,12 +42,25 @@ export default {
       required: true,
     },
     score: {
-      type: Number, // Number from 0.0 to 1.0
+      type: Number,
       required: true,
     },
     scoreToolTip: {
       type: String,
       required: true,
+    },
+    outOf: {
+      default: 100,
+    },
+  },
+  computed: {
+    progressPercentage() {
+      // Number from 0.0 to 1.0
+      return this.score ? this.score / this.outOf : this.score; // Number from 0.0 to 1.0
+    },
+    formattedValue() {
+      const decimalDigitsCount = 2;
+      return this.score ? this.score.toFixed(decimalDigitsCount) : this.score;
     },
     /*progressWithRespectToLastMonth: {
       type: String,
