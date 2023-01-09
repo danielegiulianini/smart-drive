@@ -15,21 +15,31 @@
     </div>
     <!-- End Page Title -->
     <section class="section">
-      <TripOverviewCard
-        v-for="(trip, index) in trips"
-        :key="trip._id"
-        :_id="trip._id"
-        :globalScore="trip.globalScore"
-        :startTimestamp="trip.startTimestamp"
-        :endTimestamp="trip.endTimestamp"
-        :date="trip.date"
-        :vehicleModel="trip.vehicleModel"
-        :vehicleMake="trip.vehicleMake"
-        :startLocation="trip.startLocation"
-        :endLocation="trip.endLocation"
-        :positions="trip.positions"
-        :distanceTraveled="trip.distanceTraveled"
-      ></TripOverviewCard>
+      <div v-if="trips.length > 0">
+        <TripOverviewCard
+          v-for="(trip, index) in trips"
+          :key="trip._id"
+          :_id="trip._id"
+          :globalScore="trip.globalScore"
+          :startTimestamp="trip.startTimestamp"
+          :endTimestamp="trip.endTimestamp"
+          :date="trip.date"
+          :vehicleModel="trip.vehicleModel"
+          :vehicleMake="trip.vehicleMake"
+          :startLocation="trip.startLocation"
+          :endLocation="trip.endLocation"
+          :positions="trip.positions"
+          :distanceTraveled="trip.distanceTraveled"
+        ></TripOverviewCard>
+      </div>
+      <div
+        v-else
+        class="d-flex flex-column justify-content-center align-items-center"
+        style="height: 70vh"
+      >
+        <h1 style="font-size: 150%">Still no trips</h1>
+        <p class="text-muted">Drive with the app to see your trips.</p>
+      </div>
     </section>
   </main>
   <TheAppMobileNavbar></TheAppMobileNavbar>
