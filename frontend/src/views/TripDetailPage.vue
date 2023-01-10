@@ -69,7 +69,7 @@
                   </div>
                   <div class="mt-3 text-center">
                     <AppSemiCircularProgressBar
-                      :progressPercentage="globalScore"
+                      :progress="globalScore"
                     ></AppSemiCircularProgressBar>
                     <div
                       class="text-muted"
