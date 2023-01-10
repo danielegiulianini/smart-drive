@@ -51,19 +51,26 @@ const setupRoutes = () => {
             payloadAsObject.badgesIds //before accessing like this a message-format check should be done
           );
 
+        /*//single communication:
         publisher.publish(
           notificationsTopicPrefix + userId,
           achievementsUnlocked.map((achievementName) => ({
             subject: "New achievements unlocked",
             body: "You unlocked badge: " + achievementName,
           }))
-        );
+        );*/
+        for (unlockedAchievement of achievementsUnlocked) {
+          console.log("sending to notifications notification for badge ", unlockedAchievement)
+          publisher.publish(notificationsTopicPrefix + userId, {
+            subject: "New achievements unlocked",
+            body: "You unlocked badge: " + unlockedAchievement.id,
+          });
+        }
       } catch (err) {
         console.log(
           "error in processing message with payload: " + payload + " at users"
         ); //log the error (cannot respond to client)
         console.log(err);
-
       }
     } else if (scoreUpdatedEventsRegex.test(topic)) {
       try {
@@ -71,7 +78,10 @@ const setupRoutes = () => {
 
         LevelsService.scoresChanged(
           userId,
-          payloadAsObject.totalScoreDelta
+          payloadAsObject.totalScore,
+          payloadAsObject.rpmScore,
+          payloadAsObject.speedScore,
+          payloadAsObject.feedbackConsiderationScore
         ).then((resObj) => {
           if (resObj.levelChanged) {
             publisher.publish(notificationsTopicPrefix + userId, {
