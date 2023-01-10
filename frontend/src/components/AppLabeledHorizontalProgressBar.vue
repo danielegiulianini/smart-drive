@@ -6,7 +6,7 @@
       :aria-valuenow="progress"
       aria-valuemin="0"
       :aria-valuemax="max"
-      style="width: 85%"
+      :style="{ width: textualProgressPercentage }"
     ></div>
   </div>
 </template>
@@ -14,5 +14,13 @@
 <script>
 export default {
   props: ["progress", "max"],
+  computed: {
+    progressPercentage() {
+      return Math.round(this.progress / this.max * 100) ;
+    },
+    textualProgressPercentage() {
+      return this.progressPercentage + "%";
+    },
+  },
 };
 </script>
