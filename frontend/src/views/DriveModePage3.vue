@@ -39,11 +39,11 @@
         <Speedometer :kph="kph"></Speedometer>
       </div>
 
-      <div class="row p-3 pt-0 mt-0 pb-1" data-v-13fae52c="">
+      <div class="row p-3 pt-0 mt-0 pb-1">
         <div class="col">
           <RpmMeter :rpm="rpm"></RpmMeter>
         </div>
-        <div class="col d-flex justify-content-center" data-v-13fae52c="">
+        <div class="col d-flex justify-content-center" >
           <div class="d-flex" data-v-13fae52c="">
             <div class="my-auto" style="font-family: 'Open Sans'">
               <FuelTankLevelMeter
@@ -274,7 +274,7 @@ export default {
     console.log("from driveModePage: this.store.state is ", this.$store.state);
     this.$store.state.users.socket.on("measurement", this.onNewMeasurement);
     this.$store.state.users.socket.on(
-      "drivingNotifications",
+      "drivingNotification",
       this.onNewDrivingFeedback
     );
 
