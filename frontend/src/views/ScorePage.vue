@@ -21,8 +21,8 @@
     <!-- start of actual content:-->
     <section class="section dashboard">
       <div class="container-fluid">
-        <div class="row g-2" v-if="isDefined(globalScore)">
-          <!--or: v-if="xp>0"-->
+        <div class="row g-2" v-if="xp > 0">
+          <!--or (if app beginners have undefined score): v-if="isDefined(globalScore)-->
           <div class="col-lg-6">
             <div class="card nested-card h-100 mb-2">
               <!-- padding between cards-->
@@ -215,15 +215,8 @@ export default {
 
       safetyScore: 0,
       idlingScore: 0,
-      scoresTrend: [
-        /*
-        { score: 98, referredTo: "2022-12-06T11:16:47.012Z" },
-        { score: 84, referredTo: "2022-12-07T11:16:47.012Z" },
-        { score: 99, referredTo: "2022-12-08T11:16:47.012Z" },
-        { score: 98, referredTo: "2022-12-09T11:16:47.012Z" },
-        { score: 84, referredTo: "2022-12-10T11:16:47.012Z" },
-        { score: 99, referredTo: "2022-12-11T11:16:47.012Z" },*/
-      ], //for testing here, in production replace this array with []
+      xp: 0,
+      scoresTrend: [],
       /*
       progresses: {
         progressWithRespectToLastMonth: {
@@ -273,46 +266,47 @@ export default {
   methods: {
     initCharts() {
       console.log("initializing charts");
-      new ApexCharts(document.querySelector("#scoresTrendChart"), {
-        series: [
-          {
-            name: "Global score",
-            data: this.scoresTrend.map(
-              (scoreAndTimestamp) => scoreAndTimestamp.score
-            ),
+      if (this.scoresTrend.length > 0) {
+        new ApexCharts(document.querySelector("#scoresTrendChart"), {
+          series: [
+            {
+              name: "Global score",
+              data: this.scoresTrend.map(
+                (scoreAndTimestamp) => scoreAndTimestamp.score
+              ),
+            },
+          ],
+          chart: {
+            type: "area",
+            height: 350,
+            zoom: {
+              enabled: false,
+            },
           },
-        ],
-        chart: {
-          type: "area",
-          height: 350,
-          zoom: {
+          dataLabels: {
             enabled: false,
           },
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        stroke: {
-          curve: "straight",
-        },
-        subtitle: {
-          text: "Scores Trend",
-          align: "left",
-        },
-        labels: this.scoresTrend.map(
-          (scoreAndTimestamp) => scoreAndTimestamp.referredTo
-        ),
-        xaxis: {
-          type: "datetime",
-        },
-        yaxis: {
-          opposite: true,
-        },
-        legend: {
-          horizontalAlign: "left",
-        },
-      }).render();
-
+          stroke: {
+            curve: "straight",
+          },
+          subtitle: {
+            text: "Scores Trend",
+            align: "left",
+          },
+          labels: this.scoresTrend.map(
+            (scoreAndTimestamp) => scoreAndTimestamp.referredTo
+          ),
+          xaxis: {
+            type: "datetime",
+          },
+          yaxis: {
+            opposite: true,
+          },
+          legend: {
+            horizontalAlign: "left",
+          },
+        }).render();
+      }
       // ====== radar chart apex =============
       new ApexCharts(document.querySelector("#scoreComposition"), {
         series: [
@@ -359,7 +353,8 @@ export default {
         this.aggressivenessScore = user.rpmScore;
         this.feedbackConsiderationScore = user.feedbackConsiderationScore;
 
-        this.scoreTrend = user.scoresTrend;
+        this.scoresTrend = user.scoresTrend;
+        this.xp = user.xp;
 
         if (
           this.isDefined(this.globalScore) &&
@@ -368,9 +363,19 @@ export default {
           this.isDefined(this.feedbackConsiderationScore) &&
           this.isDefined(this.idlingScore)
         ) {
-          //init tooltip
-          new Tooltip(this.$refs.info);
-          this.initCharts();
+          console.log(
+            "before init tooltips, xp>0 : ",
+            this.xp > 0,
+            ", this.$refs.info:",
+            this.$refs.info
+          );
+
+          //wait for chart and tooltip to be in dom (reactively)
+          let those = this;
+          setTimeout(() => {
+            those.initCharts();
+            new Tooltip(those.$refs.info);
+          }, 0);
         }
         this.isLoading = false;
       })
@@ -379,6 +384,16 @@ export default {
 };
 
 /* for showing how to use:
+
+//======= scores trend ================
+scoresTrend: [
+        { score: 98, referredTo: "2022-12-06T11:16:47.012Z" },
+        { score: 84, referredTo: "2022-12-07T11:16:47.012Z" },
+        { score: 99, referredTo: "2022-12-08T11:16:47.012Z" },
+        { score: 98, referredTo: "2022-12-09T11:16:47.012Z" },
+        { score: 84, referredTo: "2022-12-10T11:16:47.012Z" },
+        { score: 99, referredTo: "2022-12-11T11:16:47.012Z" },
+        ], //for testing here, in production replace this array with []
 // ====== area chart apex =============
     const series = {
       monthDataSeries1: {
