@@ -97,7 +97,7 @@
                         <span
                           class="card-text text-bf"
                           style="font-size: 300%"
-                          >{{ score[scoreSorting] }}</span
+                          >{{ score[scoreSorting].toFixed(2) }}</span
                         >
                         <p
                           class="card-text text-muted"
@@ -173,6 +173,7 @@
 import AppCenteredSearchBarVue from "./AppCenteredSearchBar.vue";
 import AppSemiCircularProgressBar from "./AppSemiCircularProgressBar.vue";
 import LeaderboardUser from "./LeaderboardUser.vue";
+
 export default {
   components: {
     LeaderboardUser,
@@ -236,6 +237,7 @@ export default {
         ? this.rankOf(this.sortedUsersToDisplay, this.$store.getters.getUser.id)
         : "";
     },
+
   },
   methods: {
     rankOf(users, userId) {
