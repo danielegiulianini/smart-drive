@@ -80,8 +80,10 @@ export default {
   },
   mounted() {
     this.initBar();
+    this.htmlBar.animate(this.progressPercentage); // Number from 0.0 to 1.0
   },
-  watch: {  //maybe an eader watcher should be used
+  watch: {
+    //maybe an eager watcher should be used
     progressPercentage(newVal) {
       this.htmlBar.animate(newVal); // Number from 0.0 to 1.0
     },
