@@ -407,7 +407,7 @@ export default {
 
         //statistics
         this.distanceTraveled = tripData.distanceTraveled;
-        this.duration = tripData.duration;
+        this.duration = tripData.duration.toFixed(2);
         //this.fuelConsumption = tripData.fuelConsumption;
         this.avgRpm = tripData.avgRpm;
         this.avgKph = tripData.avgKph;
