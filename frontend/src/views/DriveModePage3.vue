@@ -213,10 +213,10 @@ export default {
         console.log("not speaking as acoustic feedback disabled");
       }
     },
-    speak() {
+    speak(text) {
       console.log("speaking!");
       var synthesis = window.speechSynthesis;
-      var utterance1 = new SpeechSynthesisUtterance("drive smoother");
+      var utterance1 = new SpeechSynthesisUtterance(text);
 
       //choosing voice      //this.voiceList = synthesis.getVoices();
       utterance1.lang = "en-US";
