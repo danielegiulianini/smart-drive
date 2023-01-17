@@ -144,13 +144,14 @@ export default {
       console.log("the image is", this.image);
 
       if (this.file) {
-        formData.append("images[]", this.file, this.file.name);
+        formData.append("imageToUpload", this.file, this.file.name);
         const imageUrl = URL.createObjectURL(this.file);
         console.log("successful upload");
-        this.imageSuccessfullyUploaded = true;
+        //this.imageSuccessfullyUploaded = true;
 
         //axios (this can be here or in parent component)
-        axios.post("/images-upload", formData).then((response) => {
+        axios.post("/images", formData).then((response) => { //        axios.post("/images-upload", formData).then((response) => {
+
           //display an alert
           console.log("All images uplaoded successfully");
           /* no remove
@@ -159,6 +160,10 @@ export default {
           this.imageSuccessfullyUploaded = true;
           // Emit FormData & image URL to the parent component
           this.$emit("imageUploaded", { formData, imageUrl });
+        }).catch((err) => {
+          //more user-friendly message here?
+          this.invalidImageMessage = err;
+          console.error(err)
         });
       } else {
         console.log(
