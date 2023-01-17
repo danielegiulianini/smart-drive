@@ -58,7 +58,7 @@ const getLevel = (score) => {
   //assume 3 trips for week
   //after 3 trips (week) level up
   const scorePerLevel = 300;
-  return Math.round(score / scorePerLevel);
+  return Math.floor(score / scorePerLevel);
 };
 
 const trackUsersScores = async () => {
