@@ -97,8 +97,8 @@
                         <span
                           class="card-text text-bf"
                           style="font-size: 300%"
-                          >{{ score[scoreSorting].toFixed(2) }}</span
-                        >
+                          >{{ score[scoreSorting] ? score[scoreSorting].toFixed(2) : "" }}</span
+                        ><!-- to be added: .toFixed(2) -->
                         <p
                           class="card-text text-muted"
                           style="line-height: 50%; font-size: 85%"
@@ -273,6 +273,14 @@ export default {
     },
   },
   mounted() {},
+  watch:{
+    score: {
+      deep: true,
+      handler(score) {
+        console.log("score changed, now it is:", score);
+      }
+    }
+  }
 };
 </script>
 
