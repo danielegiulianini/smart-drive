@@ -8,12 +8,11 @@
     /><!--      src="/src/assets/style/img/badges/bronzeSmoothness.png"--> <!--goldTrips-->
     <div class="card-body">
       <h5 class="card-title mb-0 pb-2">{{ name }}</h5>
-      <!--<h6 class="card-subtitle mb-2 text-muted">Cesenatico</h6>-->
       <small class="card-text text-muted">{{ description }}</small>
     </div>
     <div class="card-footer lh-sm" v-if="earnedAt">
-      <small class="text-muted lh-sm"
-        >Obtained {{ timeSince(earnedAt) }}.</small
+      <small style="font-size:80%" class="text-muted lh-sm"
+        >Obtained {{ timeSince(earnedAt) }} ago</small
       >
     </div>
   </div>
@@ -45,13 +44,21 @@
 .animate {
   animation: heartbeat 1s;
 }
+
+
+.card:hover {
+  transform: scale(1.05);
+}
+.card {
+  transition: transform 0.2s ease;
+}
 </style>
 
 <script>
 export default {
   props: {
     name: {
-      requred: true,
+      required: true,
     },
     description: {
       required: true,
@@ -92,5 +99,8 @@ export default {
       return Math.floor(seconds) + " seconds";
     },
   },
+  watch:{
+
+  }
 };
 </script>
