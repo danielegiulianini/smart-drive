@@ -40,17 +40,18 @@
               <UserBadge
                 :key="badge.id"
                 :name="
-                  badges.filter((badgeDetail) => badgeDetail.id == badge.id)
+                  badges.find((badgeDetail) => badgeDetail.id == badge.id)
                     .name
                 "
                 :description="
-                  badges.filter((badgeDetail) => badgeDetail.id == badge.id)
+                  badges.find((badgeDetail) => badgeDetail.id == badge.id)
                     .description
                 "
                 :pictureUri="
-                  badges.filter((badgeDetail) => badgeDetail.id == badge.id)
+                  badges.find((badgeDetail) => badgeDetail.id == badge.id)
                     .pictureUri
                 "
+                :earnedAt="badge.earnedAt"
               ></UserBadge>
             </div>
             <!--<div class="col"><UserBadge></UserBadge></div>
@@ -92,5 +93,13 @@ export default {
   },
   mixins: [badges],
   mounted() {},
+  watch:{
+    myBadges: {
+      deep: true,
+      handler(myBadges) {
+        console.log("myBadges changed, now it is:", myBadges);
+      }
+    }
+  }
 };
 </script>
