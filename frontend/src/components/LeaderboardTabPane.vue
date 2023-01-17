@@ -221,8 +221,8 @@ export default {
     },
     lastUserTrip() {
       const lastScoreUpdate = this.scoresTrend[this.scoresTrend.length - 1];
-      const lastScoreUpdateDate = lastScoreUpdate.referredTo;
-      return this.timeSince(lastScoreUpdateDate);
+      const lastScoreUpdateDate = new Date(lastScoreUpdate.referredTo);
+      return this.timeSince(lastScoreUpdateDate) + " ago";
     },
     lastUserActivity() {
       if (this.scoresTrend.length > 0) {
