@@ -29,7 +29,7 @@ const scoresChanged = async (
     console.log("trip's rpm score: " + rpmScore);
     console.log("trip's feedback cons score: " + feedbackConsiderationScore);
 
-    user.xp += totalScore;
+    user.xp += totalScore + 1;
 
     //user's score after one trip should be the trip score, otherwise: previous score too is taken into consideration
     user.ecoScore =
@@ -43,7 +43,7 @@ const scoresChanged = async (
         ? feedbackConsiderationScore
         : (user.feedbackConsiderationScore + feedbackConsiderationScore) / 2;
 
-    user.level = getLevel(user.ecoScore);
+    user.level = getLevel(user.xp);
     return {
       updatedUser: await user.save(),
       levelChanged: oldLevel != user.level,
