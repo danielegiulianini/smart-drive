@@ -165,17 +165,22 @@
               </p>
             </div>
             <!--</div>-->
-            <div class="pt-3 d-grid gap-2 d-flex justify-content-between">
+            <div class="pt-3 d-grid gap-2 d-flex justify-content-between text-center">
               <!-- this closes wrapping modal!-->
               <button
-                class="btn btn-secondary w-50"
+                class="btn btn-secondary"
+                :class="{'w-50': !displayLogin, 'w-100': displayLogin}"
+
                 type="button"
                 data-bs-dismiss="modal"
+                v-if="!displayLogin"
               >
                 Close
               </button>
               <div
-                class="btn btn-primary w-50"
+                class="btn btn-primary"
+                :class="{'w-50': !displayLogin, 'w-100': displayLogin}"
+
                 @click="onFormSubmit"
                 data-bs-dismiss="modal"
               >
