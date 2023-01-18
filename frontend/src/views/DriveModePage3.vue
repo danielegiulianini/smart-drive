@@ -24,7 +24,7 @@
         >
           Register a vehicle
         </div>
-        <div class="btn" @click="speak">speak</div>
+        <div class="btn" @click="speak2">speak</div>
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@
         <div class="col">
           <RpmMeter :rpm="rpm"></RpmMeter>
         </div>
-        <div class="col d-flex justify-content-center" >
+        <div class="col d-flex justify-content-center">
           <div class="d-flex" data-v-13fae52c="">
             <div class="my-auto" style="font-family: 'Open Sans'">
               <FuelTankLevelMeter
@@ -87,6 +87,16 @@
       <div class="d-none d-xl-block">xl</div>
     </div>
     <!--==================-->
+    <button
+      class="btn btn-primary"
+ @click="speak2"
+    >
+    <!--      @click="onNewDrivingFeedback({ text: 'ciao' })"---->
+          <!-- @click="speak('ciao')"---->
+
+      speak
+    </button>
+
     <div class="button-row p-3 text-center">
       <AppDriveButton
         @click="onDriveButtonClicked"
@@ -213,15 +223,38 @@ export default {
         console.log("not speaking as acoustic feedback disabled");
       }
     },
+    speak2() {
+      console.log("speaking!");
+      var synthesis = window.speechSynthesis;
+      console.log("speechSynthesis", synthesis);
+
+      var utterance1 = new SpeechSynthesisUtterance("drive smoother");
+      //this.voiceList = synthesis.getVoices();
+      //choosing voice
+      utterance1.lang = "en-US";
+      synthesis.speak(utterance1);
+    },
     speak(text) {
       console.log("speaking!");
       var synthesis = window.speechSynthesis;
-      var utterance1 = new SpeechSynthesisUtterance(text);
+      //window.speechSynthesis.cancel();
 
+      synthesis.onvoiceschanged = () => {
+        var utterance12= new SpeechSynthesisUtterance(text);
+
+        synthesis.speak(utterance12);
+
+      };
+     let voiceList = synthesis.getVoices()
+      console.log("the voices are", voiceList);
+
+      var utterance1 = new SpeechSynthesisUtterance(text);
+      utterance1.voice = voiceList[0];
       //choosing voice      //this.voiceList = synthesis.getVoices();
       utterance1.lang = "en-US";
-
       synthesis.speak(utterance1);
+      console.log("synth is: ", synthesis)
+
     },
     displayTripCloseConfirmationModal() {
       this.$refs.closeTripModal.modalToggle(); //bad quality code (using refs to call method) for lack of time to refactor all modals
