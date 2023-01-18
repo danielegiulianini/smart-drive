@@ -1,27 +1,12 @@
 <template>
-  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <main id="main" class="main">
-    <!--FOR DEBUGGING ====-->
-    current active breakpoint:
-    <div class="d-block d-sm-none">xs</div>
-    <div class="d-none d-sm-block d-md-none">sm</div>
-    <div class="d-none d-md-block d-lg-none">md</div>
-    <div class="d-none d-lg-block d-xl-none">lg</div>
-    <div class="d-none d-xl-block">xl</div>
-    <!--==================-->
+   
     <Spinner :show="isLoading"></Spinner>
 
     <div class="d-flex justify-content-between">
       <div class="pagetitle">
         <h1>My Garage</h1>
-
-        <!--  <nav>
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-            <li class="breadcrumb-item active">My Trips</li>
-          </ol>
-        </nav>-->
       </div>
       <!-- End Page Title -->
     </div>
@@ -153,7 +138,6 @@ import TheAppSidebar from "../components/TheAppSidebar.vue";
 import TheAppFooter from "../components/TheAppFooter.vue";
 import TheAppMobileNavbar from "../components/TheAppMobileNavbar.vue";
 import VehicleCard from "../components/VehicleCard.vue";
-import MobileAddVehicleButton from "../components/MobileAddVehicleButton.vue";
 import Spinner from "../components/Spinner.vue";
 import axios from "axios";
 import makesLogosData from "../assets/data.json"; //vehicle-make's logos
@@ -166,7 +150,6 @@ export default {
     TheAppFooter,
     TheAppMobileNavbar,
     VehicleCard,
-    MobileAddVehicleButton,
     Spinner,
     AddVehicleModal,
   },
@@ -176,7 +159,7 @@ export default {
       isLoading: true,
       userVehicles: [],
       //not reactive data:
-      makeLogoImgUrlByMake: makesLogosData //reducing creates a data structure optimized for access (more efficient than makesLogosData)
+      makeLogoImgUrlByMake: makesLogosData //reduce creates a data structure optimized for access (more efficient than makesLogosData)
         .reduce(function (result, item, index, array) {
           result[item.name] = item.image.source;
           return result;
@@ -199,15 +182,9 @@ export default {
   },
   methods: {},
   mounted() {
-    console.log("makes logo data is: ", this.makeLogoImgUrlByMake);
-    console.log("l'url della fiat is:", this.makeLogoImgUrlByMake["Fiat"]);
     //fetch all the vehicles of the user from vehicles microservice and pass as props to vehicle cards!
     //manually joining userVehicles and vehicleModels here
-
-    console.log("lo store is:", this.$store);
-    console.log("lo store.state is:", this.$store.state);
-
-    const loggedInUserId = this.$store.state.users.user.id; //or with vuex getter //12;
+    const loggedInUserId = this.$store.state.users.user.id; //or with vuex getter
     axios
       .get(`vehicles/userVehicles?userId=${loggedInUserId}`)
       .then((result) => {
@@ -215,10 +192,7 @@ export default {
           //fetching (in parallel) all uservehicles details
           const userVehicles = result.data;
           console.log("data from userVehicles:", result.data);
-          console.log(
-            "il timestramp pretty print: ",
-            new Date(result.data[0].createdAt).toUTCString()
-          );
+
           const richUserVehicles = userVehicles.map((userVehicle) =>
             axios
               .get(
@@ -249,10 +223,6 @@ export default {
             .then((usersVehiclesWithModelDetails) => {
               console.log(usersVehiclesWithModelDetails);
               this.userVehicles = usersVehiclesWithModelDetails;
-              console.log(
-                "gli active user vehicles: ",
-                this.activeUserVehicles
-              );
             })
             .catch((err) => {
               throw err; //re-throwing a error

@@ -1,4 +1,5 @@
 <template>
+  <TheAppSidebar></TheAppSidebar>
   <Spinner :show="isLoading"></Spinner>
 
   <main id="main">
@@ -12,15 +13,6 @@
           :notification="notification"
         ></DropdownNotificationVue>
       </div>
-      <!--<div class="card">
-      <DropdownNotificationVue
-        :notification="{
-          class: 'success',
-          subject: 'ciaooo',
-          body: 'ciaooo',
-        }"
-      ></DropdownNotificationVue>
-    </div>-->
       <div class="btn btn-light text-center d-flex justify-content-center">
         Load more notifications
       </div>
@@ -34,11 +26,19 @@
       <p class="text-muted">Use the app to gather notifications.</p>
     </div>
   </main>
+
+  <TheAppMobileNavbar></TheAppMobileNavbar>
+  <TheAppFooter></TheAppFooter>
 </template>
 
 <script>
+import TheAppSidebar from "../components/TheAppSidebar.vue";
+import TheAppFooter from "../components/TheAppFooter.vue";
+import TheAppMobileNavbar from "../components/TheAppMobileNavbar.vue";
 import DropdownNotificationVue from "../components/DropdownNotification.vue";
 import Spinner from "../components/Spinner.vue";
+import axios from "axios";
+
 const notificationRestEndpoint = "http://localhost:8088/api/v1/notifications";
 
 export default {
@@ -48,7 +48,13 @@ export default {
       notifications: [],
     };
   },
-  components: { DropdownNotificationVue, Spinner },
+  components: {
+    DropdownNotificationVue,
+    Spinner,
+    TheAppSidebar,
+    TheAppFooter,
+    TheAppMobileNavbar,
+  },
   mounted() {
     const loggedInUserId = this.$store.getters.getUser.id;
     //fetching notifications
