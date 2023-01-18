@@ -1,25 +1,10 @@
 <template>
-  <!--<TheAppHeader></TheAppHeader>-->
-
   <main id="main" class="main">
     <div class="pagetitle">
       <h1>All SmartDrive badges</h1>
-      <!--<nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Fiat Panda 100</li>
-        </ol>
-      </nav>-->
     </div>
     <!-- End Page Title -->
-    <!--FOR DEBUGGING ====-->
-    current active breakpoint:
-    <div class="d-block d-sm-none">xs</div>
-    <div class="d-none d-sm-block d-md-none">sm</div>
-    <div class="d-none d-md-block d-lg-none">md</div>
-    <div class="d-none d-lg-block d-xl-none">lg</div>
-    <div class="d-none d-xl-block">xl</div>
-    <!--==================-->
+    
     <!-- start of actual content:-->
     <section class="section">
       <div class="row row-cols-2 row-cols-md-4 g-2">

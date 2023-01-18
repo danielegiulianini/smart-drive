@@ -1,5 +1,4 @@
 <template>
-  <!--<TheAppHeader></TheAppHeader>-->
   <Spinner :show="isLoading"></Spinner>
 
   <div
@@ -7,7 +6,6 @@
     style="box-shadow: none"
     v-if="!hasUserRegisteredAVehicle"
   >
-    <!-- to fix-->
     <div class="card-body text-center">
       <div
         class="d-flex flex-column justify-content-center align-items-center"
@@ -24,7 +22,6 @@
         >
           Register a vehicle
         </div>
-        <div class="btn" @click="speak2">speak</div>
       </div>
     </div>
   </div>
@@ -77,25 +74,6 @@
     </div>
     <!-- end of row-->
 
-    <!--FOR DEBUGGING ====-->
-    <div>
-      current active breakpoint:
-      <div class="d-block d-sm-none">xs</div>
-      <div class="d-none d-sm-block d-md-none">sm</div>
-      <div class="d-none d-md-block d-lg-none">md</div>
-      <div class="d-none d-lg-block d-xl-none">lg</div>
-      <div class="d-none d-xl-block">xl</div>
-    </div>
-    <!--==================-->
-    <button
-      class="btn btn-primary"
- @click="speak2"
-    >
-    <!--      @click="onNewDrivingFeedback({ text: 'ciao' })"---->
-          <!-- @click="speak('ciao')"---->
-
-      speak
-    </button>
 
     <div class="button-row p-3 text-center">
       <AppDriveButton
@@ -125,6 +103,7 @@ import Odometer from "../components/Odometer.vue";
 import AppDriveButton from "../components/AppDriveButton.vue";
 import axios from "axios";
 import Spinner from "../components/Spinner.vue";
+import EasySpeech from "easy-speech";
 
 export default {
   components: {
@@ -196,9 +175,8 @@ export default {
       var fileString = String.fromCharCode.apply(null, buffer);
       var measurement = JSON.parse(fileString).measurement;
 
-      console.log("il measurement: ", measurement);
       console.log(
-        "measurement arrived!, with rpm:",
+        "measurement arrived, with rpm:",
         measurement.rpm,
         " kph:",
         measurement.kph,
@@ -217,43 +195,14 @@ export default {
       console.log("feedback arrived");
 
       if (this.acousticFeedbackEnabled) {
-        //drivingNotification has text has its only property
-        this.speak(drivingFeedback.text);
+        speak(drivingFeedback.feedback.text)
       } else {
         console.log("not speaking as acoustic feedback disabled");
       }
     },
-    speak2() {
-      console.log("speaking!");
-      var synthesis = window.speechSynthesis;
-      console.log("speechSynthesis", synthesis);
-
-      var utterance1 = new SpeechSynthesisUtterance("drive smoother");
-      //this.voiceList = synthesis.getVoices();
-      //choosing voice
-      utterance1.lang = "en-US";
-      synthesis.speak(utterance1);
-    },
     speak(text) {
       console.log("speaking!");
-      var synthesis = window.speechSynthesis;
-      //window.speechSynthesis.cancel();
-
-      synthesis.onvoiceschanged = () => {
-        var utterance12= new SpeechSynthesisUtterance(text);
-
-        synthesis.speak(utterance12);
-
-      };
-     let voiceList = synthesis.getVoices()
-      console.log("the voices are", voiceList);
-
-      var utterance1 = new SpeechSynthesisUtterance(text);
-      utterance1.voice = voiceList[0];
-      //choosing voice      //this.voiceList = synthesis.getVoices();
-      utterance1.lang = "en-US";
-      synthesis.speak(utterance1);
-      console.log("synth is: ", synthesis)
+      EasySpeech.speak({ text: text });
 
     },
     displayTripCloseConfirmationModal() {
@@ -281,30 +230,18 @@ export default {
     },
   },
   mounted() {
-    //simulating prop update from drivemodepage
-    /*const a = this;
-    setInterval(function () {
-      console.log("augmenting rpm!");
-      a.kph += 10;
-
-      a.rpm += 50;
-      console.log("now my rpm is ", a.rpm);
-      console.log("now my kph is ", a.kph);
-    }, 3000);
-    console.log("in mounted >my rpm is: ", this.rpm);
-    this.rpm = 4000;
-    this.kph = 50;*/
+    EasySpeech.detect();
+    EasySpeech.init()
+      .catch((e) => console.error("no speech synthesis:", error.message))
     if ("speechSynthesis" in window) {
-      //speech supported
-      console.log("speech supported!");
+      console.log("speech supported");
     } else {
       console.log("speech not supported");
       //display error notification
       this.acousticFeedbackSupported = false;
       this.acousticFeedbackEnabled = false;
     }
-    //here it comes data from io
-    console.log("from driveModePage: this.store.state is ", this.$store.state);
+
     this.$store.state.users.socket.on("measurement", this.onNewMeasurement);
     this.$store.state.users.socket.on(
       "drivingNotification",
@@ -334,7 +271,7 @@ export default {
     } else {
       next();
     }
-    // bad practie to use alert if (window.confirm("Are you sure you want to leave the page?")) {},
+    // bad practice to use alert if (window.confirm("Are you sure you want to leave the page?")) {},
     // so displaying a custom modal instead
   },
 };
@@ -347,8 +284,8 @@ export default {
   flex-direction: column;
 }
 /*main {
-  height: 85vh; /*[or 700 px] for 1. Containing the image but 2. Not force user to scroll*/
-/*  background-image: url(/src/assets/img/road.jpg);
+  height: 85vh; /*[or 700 px] for 1. Containing the image but 2. Not force user to scroll
+  background-image: url(/src/assets/img/road.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
