@@ -1,5 +1,4 @@
 <template>
-  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <Spinner :show="isLoading"></Spinner>
 
@@ -8,16 +7,7 @@
       <h1>Score page</h1>
     </div>
     <!-- End Page Title -->
-    <!--FOR DEBUGGING ====-->
-    <div class="d-flex">
-      current active breakpoint:
-      <div class="d-block d-sm-none">xs</div>
-      <div class="d-none d-sm-block d-md-none">sm</div>
-      <div class="d-none d-md-block d-lg-none">md</div>
-      <div class="d-none d-lg-block d-xl-none">lg</div>
-      <div class="d-none d-xl-block">xl</div>
-    </div>
-    <!--==================-->
+    
     <!-- start of actual content:-->
     <section class="section dashboard">
       <div class="container-fluid">
@@ -51,16 +41,6 @@
                 </div>
               </div>
               <!-- end of crd body-->
-              <!--opzione 4-->
-
-              <!--<div class="card nested-card m-4 mt-0">
-                <div class="card-body text-center">
-                  <div class="card-title">Almost done!</div>
-                  <div class="card-text">
-                    Yout score is already good! try to improve
-                  </div>
-                </div>
-              </div>-->
               <div class="m-4 mb-0 mt-0" v-html="scoreComment"></div>
               <!--<div class="card-footer">
                 <div
@@ -113,7 +93,6 @@
                   improver. In this way, it act as an indicator of your skill in improving yourself. As well as the others, this
                    metrics considers the data coming from all the vehicles you registered to the app."
                 ></ScoreComponentHorizontalBar>
-                <!-- feedback cons score  -->
               </div>
             </div>
           </div>
@@ -146,9 +125,7 @@
               <div class="card-body">
                 <h5 class="card-title pb-0 mb-0">Driving skills</h5>
 
-                <!-- score composition Chart -->
                 <div id="scoreComposition" class="echart text-center"></div>
-                <!-- End score composition Chart -->
               </div>
             </div>
           </div>
@@ -265,7 +242,7 @@ export default {
   },
   methods: {
     initCharts() {
-      console.log("initializing charts");
+      console.log("initializing charts...");
       if (this.scoresTrend.length > 0) {
         new ApexCharts(document.querySelector("#scoresTrendChart"), {
           series: [
@@ -316,7 +293,6 @@ export default {
               this.aggressivenessScore,
               this.feedbackConsiderationScore,
               this.safetyScore,
-
               this.idlingScore,
             ], //hardcoded here
           },
@@ -363,12 +339,6 @@ export default {
           this.isDefined(this.feedbackConsiderationScore) &&
           this.isDefined(this.idlingScore)
         ) {
-          console.log(
-            "before init tooltips, xp>0 : ",
-            this.xp > 0,
-            ", this.$refs.info:",
-            this.$refs.info
-          );
 
           //wait for chart and tooltip to be in dom (reactively)
           let those = this;
@@ -382,101 +352,4 @@ export default {
       .catch((err) => console.error(err)); //communicate something to user in a more user friendly way?
   },
 };
-
-/* for showing how to use:
-
-//======= scores trend ================
-scoresTrend: [
-        { score: 98, referredTo: "2022-12-06T11:16:47.012Z" },
-        { score: 84, referredTo: "2022-12-07T11:16:47.012Z" },
-        { score: 99, referredTo: "2022-12-08T11:16:47.012Z" },
-        { score: 98, referredTo: "2022-12-09T11:16:47.012Z" },
-        { score: 84, referredTo: "2022-12-10T11:16:47.012Z" },
-        { score: 99, referredTo: "2022-12-11T11:16:47.012Z" },
-        ], //for testing here, in production replace this array with []
-// ====== area chart apex =============
-    const series = {
-      monthDataSeries1: {
-        prices: [
-          8107.85, 8128.0, 8122.9, 8165.5, 8340.7, 8423.7, 8423.5, 8514.3,
-          8481.85, 8487.7, 8506.9, 8626.2, 8668.95, 8602.3, 8607.55, 8512.9,
-          8496.25, 8600.65, 8881.1, 9340.85,
-        ],
-        dates: [
-          "13 Nov 2017",
-          "14 Nov 2017",
-          "15 Nov 2017",
-          "16 Nov 2017",
-          "17 Nov 2017",
-          "20 Nov 2017",
-          "21 Nov 2017",
-          "22 Nov 2017",
-          "23 Nov 2017",
-          "24 Nov 2017",
-          "27 Nov 2017",
-          "28 Nov 2017",
-          "29 Nov 2017",
-          "30 Nov 2017",
-          "01 Dec 2017",
-          "04 Dec 2017",
-          "05 Dec 2017",
-          "06 Dec 2017",
-          "07 Dec 2017",
-          "08 Dec 2017",
-        ],
-      },
-    };
-    new ApexCharts(document.querySelector("#areaChartApex"), {
-      series: [
-        {
-          name: "STOCK ABC",
-          data: series.monthDataSeries1.prices,
-        },
-      ],
-      chart: {
-        type: "area",
-        height: 350,
-        zoom: {
-          enabled: false,
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        curve: "straight",
-      },
-      subtitle: {
-        text: "Price Movements",
-        align: "left",
-      },
-      labels: series.monthDataSeries1.dates,
-      xaxis: {
-        type: "datetime",
-      },
-      yaxis: {
-        opposite: true,
-      },
-      legend: {
-        horizontalAlign: "left",
-      },
-    }).render();
-
-    // ====== radar chart apex =============
-    new ApexCharts(document.querySelector("#radarChartApex"), {
-      series: [
-        {
-          name: "Series 1",
-          data: [80, 50, 30, 40],
-        },
-      ],
-      chart: {
-        height: 350,
-        type: "radar",
-      },
-      xaxis: {
-        categories: ["January", "February", "March", "April"],
-      },
-    }).render();
-  }, */
 </script>

@@ -1,31 +1,14 @@
 <template>
-  <!--<TheAppHeader></TheAppHeader>-->
+  <!-- this template resembles vehicleCard, but more in detail...-->
   <TheAppSidebar></TheAppSidebar>
   <main id="main" class="main">
-    <!--FOR DEBUGGING ====-->
-    current active breakpoint:
-    <div class="d-block d-sm-none">xs</div>
-    <div class="d-none d-sm-block d-md-none">sm</div>
-    <div class="d-none d-md-block d-lg-none">md</div>
-    <div class="d-none d-lg-block d-xl-none">lg</div>
-    <div class="d-none d-xl-block">xl</div>
-    <!--==================-->
-
     <Spinner :show="isLoading"></Spinner>
 
     <div class="pagetitle">
       <h1>Vehicle Detail</h1>
-
-      <!-- <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">My Trips</li>
-        </ol>
-      </nav>-->
     </div>
     <!-- End Page Title -->
 
-    <!--QUI INIZIA IL VERO CONTENUTO-->
     <section class="section dashboard">
       <div class="row">
         <!-- start of col containing card-->
@@ -52,7 +35,7 @@
                       :src="overview.makeLogoImgUrl"
                       class="my-auto"
                       style="max-width: 65px; max-height: 65px"
-                      alt="..."
+                      alt="car make logo"
                     />
                   </div>
                 </div>
@@ -101,35 +84,22 @@
                   <EditVehicleModal
                     :initialVehicle="overview"
                   ></EditVehicleModal>
-
-                  <!--<i
-                    class="mybtn bi bi-trash3-fill"
-                    style="font-size: 150%; color: #aab7cf"
-                  ></i>-->
-
-                  <!--<i
-                    class="mybtn bi bi-pencil ps-3"
-                    style="font-size: 150%; color: #aab7cf"
-                  ></i>-->
                 </div>
               </div>
             </div>
           </div>
-          <!-- end of col wrapping card--><!--here the vehicle card-->
+          <!-- end of col wrapping card-->
         </div>
         <!-- start of col containing data-->
         <div class="col-12 col-md-7 col-lg-7">
           <!-- the complementary of the other col-->
           <!-- here the tabs-->
-          <!-- tha tabs -->
           <ul
             class="nav nav-tabs nav-tabs-bordered d-flex"
             id="borderedTabJustified"
             role="tablist"
           >
             <li class="nav-item flex-fill" role="presentation">
-              <!--                data-bs-toggle="tab"
-                data-bs-target="#bordered-justified-home"-->
               <button
                 class="nav-link w-100"
                 id="home-tab"
@@ -214,7 +184,6 @@ import Spinner from "../components/Spinner.vue";
 import VehicleStatisticsTabPane from "../components/VehicleStatisticsTabPane.vue";
 import VehicleOverviewTabPane from "../components/VehicleOverviewTabPane.vue";
 import VehicleLocationTabPane from "../components/VehicleLocationTabPane.vue";
-//it resembles vehicleCard, but more in detail...
 import DeleteVehicleModal from "../components/DeleteVehicleModal.vue";
 import EditVehicleModal from "../components/EditVehicleModal.vue";
 import makesLogosData from "../assets/data.json"; //vehicle-make's logos
@@ -375,8 +344,6 @@ export default {
       return Math.floor(seconds) + " seconds";
     },
     vehicleRemovalConfirmed() {
-      console.log("sending to axios the removal!");
-
       axios
         .delete(`vehicles/userVehicles/${this._id}`)
         .then((res) => {
@@ -404,12 +371,6 @@ export default {
     },
   },
   mounted() {
-    console.log(
-      "**************** in vehicledetail: initialvehicle is: ",
-      this.overview
-    );
-
-    console.log("la last location is: ", this.lastLocation);
     //manually joining userVehicles and vehicleModels here assigning to data properties
     console.log("l'id is: ", this._id);
     //1. fetching user vehicle
@@ -433,9 +394,7 @@ export default {
       })
       //2. fetching user-vehicle details
       .then((result) => {
-        console.log("lo result", result);
         const userVehicle = result.data;
-        console.log("lo user vehicle: ", result.data);
         return axios.get(
           `vehicles/vehiclesModels/vehicleDetails/${userVehicle.vehicleModelId}`
         );
@@ -489,7 +448,6 @@ export default {
         );
 
         //1.a. computing statistics (could re-sort operations by computing before some ajax calls to improve reduce latency )
-
         this.statistics.tripsCount = vehicleTripsSortedByTimestamp.length;
 
         if (vehicleTripsSortedByTimestamp.length > 0) {
@@ -543,14 +501,11 @@ export default {
         }
       })
       .catch((err) => {
-        console.log("exception received");
         console.error(err);
       }) //communicate something to user (with a mre user-friendly mapping?)
       .finally(() => {
-        console.log("nel finally");
         this.isLoading = false;
       });
-    //this.isLoading = false;
   },
 };
 </script>

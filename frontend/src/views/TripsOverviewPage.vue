@@ -1,17 +1,10 @@
 <template>
   <Spinner :show="isLoading"></Spinner>
 
-  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <main id="main" class="main">
     <div class="pagetitle">
       <h1>My Trips</h1>
-      <!--<nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">My Trips</li>
-        </ol>
-      </nav>-->
     </div>
     <!-- End Page Title -->
     <section class="section">
@@ -75,7 +68,7 @@ export default {
     async getLocationName(latitude, longitude) {
       new Promise((resolve, reject) => {
         if (latitude && longitude) {
-          resolve(""); //to be callend inside callback
+          resolve(""); //to be called inside callback
         } else {
           console.log(
             "no latitude or longitude => so, not performing geocoding"
@@ -92,7 +85,7 @@ export default {
     const loggedInUserId = this.$store.getters.getUser.id;
 
     //manually joining (trips/vehicles) backend info as trips model doesn't contain all trip's info to show
-    //The { item : null } query matches documents that either contain
+    //for retrieving close trips only: the { item : null } query matches documents that either contain
     //the item field whose value is null or that do not contain the item field.
     const aPromise = axios
       .get(`trips?userId=${loggedInUserId}`)
@@ -118,7 +111,7 @@ export default {
             var year = startDate.getUTCFullYear();
             trip.date = day + " " + month + " " + year;
 
-            //mapping measurements to google maps format: here, in express or directly in arduino?
+            //mapping measurements to google maps format
             trip.positions = trip.measurements.map(
               (measurement) => measurement.position
             );
@@ -191,7 +184,6 @@ export default {
         );
       })
       .catch((err) => {
-        console.log("exceotion received");
         console.error(err);
         //maybe communicate something to user (with a mre user-friendly mapping?)
       })
@@ -200,14 +192,7 @@ export default {
         this.isLoading = false;
       });
 
-    const a = await aPromise;
-    this.trips = a;
-    console.log("i trips raffianti: ", a);
-  },
-  watch: {
-    trips(newVal, oldVal) {
-      console.log("trips updated inside watcher!");
-    },
+    this.trips = await aPromise;
   },
 };
 </script>

@@ -4,7 +4,7 @@
       <h1>All SmartDrive badges</h1>
     </div>
     <!-- End Page Title -->
-    
+
     <!-- start of actual content:-->
     <section class="section">
       <div class="row row-cols-2 row-cols-md-4 g-2">
@@ -21,6 +21,7 @@
   </main>
   <TheAppSidebar></TheAppSidebar>
   <TheAppFooter></TheAppFooter>
+  <TheAppMobileNavbar></TheAppMobileNavbar>
 </template>
 
 <script>
@@ -28,6 +29,7 @@ import TheAppHeader from "../components/TheAppHeader.vue";
 import TheAppSidebar from "../components/TheAppSidebar.vue";
 import TheAppFooter from "../components/TheAppFooter.vue";
 import UserBadge from "../components/UserBadge.vue";
+import TheAppMobileNavbar from "../components/TheAppMobileNavbar.vue";
 
 import badges from "../mixins/badges.vue";
 

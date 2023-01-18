@@ -1,31 +1,15 @@
 <template>
-  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
-  <main id="main" class="main">
-    <!--FOR DEBUGGING ====-->
-    current active breakpoint:
-    <div class="d-block d-sm-none">xs</div>
-    <div class="d-none d-sm-block d-md-none">sm</div>
-    <div class="d-none d-md-block d-lg-none">md</div>
-    <div class="d-none d-lg-block d-xl-none">lg</div>
-    <div class="d-none d-xl-block">xl</div>
-    <!--==================-->
-    <!-- <Spinner :show="isLoading"></Spinner>-->
+  <Spinner :show="isLoading"></Spinner>
 
+  <main id="main" class="main">
+   
     <div class="pagetitle">
       <h1>Trip detail</h1>
-      <nav>
-        <!--<ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">My Trips</li>
-        </ol>-->
-      </nav>
     </div>
     <!-- End Page Title -->
 
-    <!--QUI INIZIA IL VERO CONTENUTO-->
     <section class="section dashboard">
-      <!-- con header sopra (map + info) + tab sotto (quando clicki in events ti evidenzia i pin)-->
       <div class="col-12">
         <div class="card">
           <!-- start of overview row -->
@@ -84,7 +68,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <!--rimovibile visto che uso 12 -->
+                  <!--removable since using col-12 -->
                   <div class="col-12">
                     <div class="d-flex align-items-center">
                       <i class="bi bi-geo-alt"></i>
@@ -132,7 +116,8 @@
                     </div>
                   </div>
                 </div>
-                <!--<div class="row mt-2">
+                <!--some overview info: 
+                  <div class="row mt-2">
               <div class="col-12">
                 <div class="d-flex justify-content-between align-middle">
                   <div>
@@ -384,27 +369,23 @@ export default {
           " " +
           month +
           " " +
-          year; /*new Date(tripData.startTimestamp).toLocaleString().split(",")[0];*/
+          year; //new Date(tripData.startTimestamp).toLocaleString().split(",")[0];
 
         //mapping measurements to google maps format: here, in express or directly in arduino?
         this.positions = tripData.measurements.map(
           (measurement) => measurement.position
         );
 
-        //CAUTION: Array.at does not return error if passed index is null but undefined
-        this.startLocation.latitude = this.positions.at(0)?.lat; //this.positions[0]?.lat;
-        //this.positions.length == 0 ? this.positions[0].lat : "";
-        this.startLocation.longitude = this.positions.at(0)?.lng; //this.positions[0]?.lng;//this.positions?.[0]?.lat;
-        //this.positions.length == 0 ? this.positions[0].lng : "";
+        //CAUTION: Array.at does not return error  but undefined if passed index is null
+        this.startLocation.latitude = this.positions.at(0)?.lat; 
+        this.startLocation.longitude = this.positions.at(0)?.lng; 
         this.endLocation.latitude = this.positions.at(
           this.positions.length - 1
-        )?.lat; //this.positions.length > 0 ? this.positions[this.positions.length-1].lat  : ""
-        //this.positions.length == 0 ? this.positions[0].lat : "";
+        )?.lat; 
         this.endLocation.longitude = this.positions.at(
           this.positions.length - 1
-        )?.lng; //this.positions?.[this.positions.length-1>0? this.positions.length-1 : ]?.lat;
-        //this.positions.length == 0 ? this.positions[0].lng : "";
-
+        )?.lng; 
+        
         //statistics
         this.distanceTraveled = tripData.distanceTraveled;
         this.duration = tripData.duration.toFixed(2);
@@ -457,7 +438,6 @@ export default {
       .then((vehicleRes) => {
         if (this.vehicleIdentificationNumber) {
           //redundant if used for testing (when a trip could not have its vin)
-
           console.log("data coming from vehiclesModels", vehicleRes.data);
           const vehicleData = vehicleRes.data;
 
@@ -471,7 +451,6 @@ export default {
       .then(() => {
         if (this.vehicleIdentificationNumber) {
           //redundant if used for testing (when a trip could not have its vin)
-
           return axios.get(`trips?vehicleIdentificationNumber=${this._id}`);
         }
       })
@@ -489,16 +468,13 @@ export default {
         }
       })
       .catch((err) => {
-        console.log("eccezione ricevuta:");
         console.error(err);
         //maybe communicate something to user (with a mre user-friendly mapping?)
       })
       .finally(() => {
-        console.log("nel finally");
-        console.log("startLocation is", this.startLocation);
+        console.log("trips' startLocation is", this.startLocation);
         this.isLoading = false;
       });
-    //this.isLoading = false;
   },
 };
 </script>

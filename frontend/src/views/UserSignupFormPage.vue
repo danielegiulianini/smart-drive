@@ -1,5 +1,5 @@
 <template>
-  <spinner :show1="true"></spinner>
+  <spinner :show="true"></spinner>
   <div class="container">
     <div class="row justify-content-center">
       <div

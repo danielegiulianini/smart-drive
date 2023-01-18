@@ -1,26 +1,11 @@
 <template>
-  <!--<TheAppHeader></TheAppHeader>-->
   <TheAppSidebar></TheAppSidebar>
   <Spinner :show="isLoading"></Spinner>
   <main id="main" class="main">
     <div class="pagetitle">
       <h1>My Profile</h1>
-      <!--<nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Fiat Panda 100</li>
-        </ol>
-      </nav>-->
     </div>
     <!-- End Page Title -->
-    <!--FOR DEBUGGING ====-->
-    current active breakpoint:
-    <div class="d-block d-sm-none">xs</div>
-    <div class="d-none d-sm-block d-md-none">sm</div>
-    <div class="d-none d-md-block d-lg-none">md</div>
-    <div class="d-none d-lg-block d-xl-none">lg</div>
-    <div class="d-none d-xl-block">xl</div>
-    <!--==================-->
     <!-- start of actual content:-->
     <section class="section dashboard">
       <ul
@@ -72,7 +57,6 @@
         </li>
       </ul>
 
-      <!-- QUI INIZIA CARD WRAPPING TABS-->
       <!--      <div class="card pt-2" style="box-shadow: none">
                 <div class="tab-content pt-2" id="bordered-justified-contactssss">-->
       <div class="card" style="box-shadow: none">
@@ -115,7 +99,6 @@
       <!-- end of card Wrapping tabs-->
     </section>
   </main>
-  <TheAppHeader></TheAppHeader>
   <TheAppFooter></TheAppFooter>
   <TheAppMobileNavbar></TheAppMobileNavbar>
 </template>
@@ -130,6 +113,7 @@ import UserOverviewTabPaneVue from "../components/UserOverviewTabPane.vue";
 import BadgesTabPane from "../components/UserBadgesTabPane.vue";
 import Spinner from "../components/Spinner.vue";
 import axios from "axios";
+import { mapGetters } from "vuex";
 const defaultAvatarUri = "/src/assets/img/driverAvatar.png";
 
 export default {
@@ -157,7 +141,7 @@ export default {
       country: "",
       profilePictureUri: "",
       createdAt: "",
-      xp: "",
+      xp: 0,
       level: "",
       scoresTrend: [],
       totalScore: "",
@@ -169,6 +153,9 @@ export default {
 
       //leaderboard:
       users: [],
+
+      //for disabling leaderboard fetching whn log out
+      intervalId: "",
     };
   },
   computed: {
@@ -178,6 +165,8 @@ export default {
     actualPictureUri() {
       return this.profilePictureUri ? this.profilePictureUri : defaultAvatarUri;
     },
+    ...mapGetters(["getUser"]), //for disabling setInterval
+
   },
   methods: {
     isActive(menuItem) {
@@ -190,7 +179,7 @@ export default {
       const leaderboardRefreshPeriodInMilliseconds = 15000;
       //refreshing leaderboard (its actual real-time update (with socket.io) would ruin leaderboard vision
       //because of too high frequency)
-      setInterval(() => {
+      this.intervalId = setInterval(() => {
         console.log("refreshing leaderboard...");
         return axios
           .get(`users`)
@@ -198,24 +187,10 @@ export default {
       }, leaderboardRefreshPeriodInMilliseconds); //refreshing leaderboard every 5 seconds},
     },
   },
-  created() {
-    /*window.addEventListener("beforeunload", function (e) {
-      window.alert("test");
-      e.preventDefault();
-      e.returnValue = "";
-    });*/
-    /*
-    window.addEventListener("beforeunload", (e) => {
-    e.preventDefault()
-    // chrome requires returnValue to be set
-    const message = "You have unsaved changes. Are you sure you wish to leave?"
-    e.returnValue = message
-    return message
-})*/
-  },
+  created() {},
   mounted() {
     //manually joining here
-    const loggedInUserId = this.$store.getters.getUser.id; //6; //this.$store.getters.getUser.id; //questa è corretta
+    const loggedInUserId = this.$store.getters.getUser.id; 
     //1. fetching user vehicle
     axios
       .get(`users/${loggedInUserId}`)
@@ -236,14 +211,9 @@ export default {
         this.profilePictureUri = userDetail.profilePictureUri;
         this.xp = userDetail.xp;
         this.level = userDetail.level;
-        this.createdAt = userDetail.createdAt; // new Date(userDetail.createdAt)
-        /* .toUTCString()
-          .split(" ")
-          .slice(0, 3)
-          .join(" "); //pretty-printing date*/
-        this.unlockedAchievements = userDetail.unlockedAchievements;
+        this.createdAt = userDetail.createdAt;
+        this.achievements = userDetail.unlockedAchievements;
         this.scoresTrend = userDetail.scoresTrend;
-        console.log("now this xp is", this.xp);
         return userRes;
       })
       //2. fetching users (for leaderboard)
@@ -270,16 +240,10 @@ export default {
     this.periodicallyRefreshLeaderboard();
   },
   watch: {
-    $route(to, from) {
-      /*window.alert("test");*/
-      window.addEventListener("beforeunload", (e) => {
-        e.preventDefault();
-        // chrome requires returnValue to be set
-        const message =
-          "You have unsaved changes. Are you sure you wish to leave?";
-        e.returnValue = message;
-        return message;
-      });
+    getUser(newVal){
+      if(!newVal){
+        clearInterval(this.intervalId);
+      }
     },
   },
 };
