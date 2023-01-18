@@ -15,7 +15,6 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-const imagesBaseUrl = "/api/v1";
 
 //body-parser extracts the entire body portion of an incoming request stream and exposes it on req.body
 const bodyParser = require("body-parser");
@@ -38,7 +37,7 @@ async function startServer() {
 
   /*micro's base path*/
   app.use(imagesBaseUrl, routes);
-  app.use(imagesBaseUrl, express.static("uploads"));
+  app.use(imagesBaseUrl + "/images", express.static("uploads"));
 
   console.log("routes bound");
 
