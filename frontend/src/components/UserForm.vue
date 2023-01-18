@@ -161,7 +161,7 @@
             <div class="col-12" v-if="displayLogin">
               <p class="small mb-0">
                 Already have an account?
-                <a href="pages-login.html">Log in</a>
+                <router-link to="/login">Log in</router-link>
               </p>
             </div>
             <!--</div>-->
@@ -174,7 +174,12 @@
               >
                 Close
               </button>
-              <div class="btn btn-primary w-50" @click="onFormSubmit">
+              <div
+                class="btn btn-primary w-50"
+                @click="onFormSubmit"
+                data-bs-dismiss="modal"
+              >
+                <!--data-bs-dismiss="modal" CAN BE REMOVED IF WANT TO SHOW A SPINNER-->
                 <span
                   class="spinner-border spinner-border-sm"
                   role="status"
@@ -227,7 +232,7 @@ export default {
     country: { required: false },
     city: { required: false },
     profilePictureUri: { required: false },
-    overallError: "",
+    overallError: { required: false },
   },
   computed: {
     getUserImage() {
@@ -239,7 +244,6 @@ export default {
   data() {
     return {
       //================form-related data ========================
-      //surnameA: this.surname,
       user: {
         firstName: this.firstName,
         surname: this.surname,
@@ -274,13 +278,14 @@ export default {
       console.log("submitting to backend");
       console.log("useris: ", this.user);
       const isValid = this.clientSideValidateForm();
+      this.user.name = this.user.firstName; //mapping to real (as epected from backend) name
       if (isValid) {
         this.$emit("validatedFormSubmit", this.user);
       } else console.log("form is not valid!");
     },
   },
   emits: ["validatedFormSubmit"],
-  //this watchers
+  //this watchers are neede to keep props reactive when using form for editing user
   watch: {
     email: function (value) {
       //here the prop
