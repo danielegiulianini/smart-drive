@@ -15,8 +15,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-
-app.use('/uploads', express.static('uploads'));
+const imagesBaseUrl = "/api/v1";
 
 //body-parser extracts the entire body portion of an incoming request stream and exposes it on req.body
 const bodyParser = require("body-parser");
@@ -38,10 +37,14 @@ async function startServer() {
   const routes = require("./src/routes");
 
   /*micro's base path*/
-  app.use("/api/v1", routes);
+  app.use(imagesBaseUrl, routes);
+  app.use(imagesBaseUrl, express.static("uploads"));
+
   console.log("routes bound");
 
-  app.listen(port, () => console.log(`Images backend listening on port ${port}!`));
+  app.listen(port, () =>
+    console.log(`Images backend listening on port ${port}!`)
+  );
 }
 
 startServer();
