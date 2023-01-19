@@ -1,0 +1,208 @@
+version: "3"
+
+#could use working_dir for specifying base dir and avoid relative paths inside each container
+
+services:
+  #-------------------------------------------------------------------------------------------
+  #--api gateway
+  #-------------------------------------------------------------------------------------------
+
+  nginx-proxy:
+    image: tekn0ir/nginx-stream
+    ports:
+      - ${REVERSE_PROXY_MQTT_EXTERNAL_PORT}:${REVERSE_PROXY_MQTT_INTERNAL_PORT}
+      - ${REVERSE_PROXY_HTTP_EXTERNAL_PORT}:${REVERSE_PROXY_HTTP_INTERNAL_PORT}
+    volumes:
+      - ./backend/reverse-proxy/conf/stream:/opt/nginx/stream.conf.d
+      - ./backend/reverse-proxy/conf/http:/opt/nginx/http.conf.d
+    depends_on:
+      - vehicles TODO COMMENTEND FOR TESTING SOCKET IO WITH REVERSE PROXY
+      # - mosquitto #this is transitively obtainable from others, actually...
+      - users
+      - images
+      - notifications
+      - trips
+    networks:
+      - backend
+      - frontend
+
+  #-------------------------------------------------------------------------------------------
+  #--MQTT broker
+  #-------------------------------------------------------------------------------------------
+
+  mosquitto:
+    image: eclipse-mosquitto
+    volumes:
+      - /backend/mqtt-broker/log:/mosquitto/log
+      - /backend/mqtt-broker/data/:/mosquitto/data
+      - ./backend/mqtt-broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - ${MQTT_BROKER_MQTT_EXTERNAL_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything!     #  - ${MQTT_BROKER_WEBSOCKET_EXTERNAL_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT} not used
+    depends_on:
+      - vehicles #as it's a broker with queues, this is actually not required!
+    networks:
+      - backend
+
+  #-------------------------------------------------------------------------------------------
+  #--microservices
+  #-------------------------------------------------------------------------------------------
+
+  users:
+    build:
+      context: ./backend/users
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}"
+    volumes:
+      - ./backend/users:/usr/src/users #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
+    ports:
+      - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - mosquitto
+      - mongodb-users
+    networks:
+      - backend
+
+  vehicles:
+    build:
+      context: ./backend/vehicles
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${VEHICLES_MICROSERVICE_INTERNAL_PORT}"
+    volumes:
+      - ./backend/vehicles:/usr/src/vehicles #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
+    ports:
+      - 8086:${VEHICLES_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - mongodb-vehicles
+    networks:
+      - backend
+
+  images:
+    build:
+      context: ./backend/images
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${IMAGES_MICROSERVICE_INTERNAL_PORT}"
+    volumes:
+      - ./backend/images:/usr/src/images #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
+    ports:
+      - 8087:${IMAGES_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - mongodb-images
+    networks:
+      - backend
+
+  trips:
+    build:
+      context: ./backend/trips
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${TRIPS_MICROSERVICE_INTERNAL_PORT}"
+    volumes:
+      - ./backend/trips:/usr/src/trips #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
+    ports:
+      - 8089:${TRIPS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - mosquitto
+      - mongodb-trips
+    networks:
+      - backend
+
+  notifications:
+    build:
+      context: ./backend/notifications
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT}"
+    volumes:
+      - ./backend/notifications:/usr/src/notifications #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
+    ports:
+      - ${NOTIFICATIONS_MICROSERVICE_EXTERNAL_PORT}:${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - mosquitto
+      - mongodb-notifications
+    networks:
+      - backend
+
+  #-------------------------------------------------------------------------------------------
+  #--DBs
+  #-------------------------------------------------------------------------------------------
+
+  mongodb-users:
+    image: mongo
+    restart: always
+    #volumes:
+    #- "users-volume:/data/db" #for saving data for demo (on my local machine only)
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${USERS_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${USERS_DB_ROOT_PASSWORD}
+    networks:
+      - backend
+
+  mongodb-vehicles:
+    image: mongo
+    restart: always
+    #volumes:
+    # - "vehicles-volume:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${VEHICLES_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${VEHICLES_DB_ROOT_PASSWORD}
+    networks:
+      - backend
+
+  mongodb-trips:
+    image: mongo
+    restart: always
+    #volumes:
+    #  - "trips-volume:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${TRIPS_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${TRIPS_DB_ROOT_PASSWORD}
+    networks:
+      - backend
+
+  mongodb-images:
+    image: mongo
+    restart: always
+    #volumes: #for persist updates
+    #  - "images-volume:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${IMAGES_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${IMAGES_DB_ROOT_PASSWORD}
+    networks:
+      - backend
+
+  mongodb-notifications:
+    image: mongo
+    restart: always
+    #volumes: #for persist updates
+    #  - "notifications-volume:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${NOTIFICATIONS_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${NOTIFICATIONS_DB_ROOT_PASSWORD}
+    networks:
+      - backend
+
+  #-------------------------------------------------------------------------------------------
+  #--frontend
+  #-------------------------------------------------------------------------------------------
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/usr/src/frontend #not actually needed since no nodemon is required as for HMR (this entry must be updated if moving docker-compose)
+    ports:
+      - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - nginx-proxy #leveraging dependencies' transitivity here
+    networks:
+      - frontend
+
+#volumes shared among services(containers):
+networks:
+  backend:
+  frontend:
+  db:
