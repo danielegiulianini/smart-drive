@@ -18,25 +18,25 @@ A responsive, mobile-first web app for the automatic management of data and even
 
 Steps to deploy and use smart-drive web application are:
 
-1. clonare il progetto nella cartella di interesse
+1. clone the repo into the desired folder:
 
 ```bash
 	git clone https://github.com/danielegiulianini/smart-drive
 ```
 
-2.	spostarsi dentro la radice del progetto
+2.	move inside the downloaded project root folder:
 ```bash
     cd smart-drive
 ```
 
-3.	costruire, creare ed avviare i container per i servizi (eventualmente utilizzando l’opzione –build se è necessario ricompilare le immagini):
+3.	build, create and start service containers (possibly with the --build option to recompoile Docker images):
 ```bash
     docker-compose -f docker-compose.prod.yml up --build
 ```
 
-4.	collegarsi con un browser all’indirizzo "localhost://8000" digitandolo nella barra di ricerca,
+4.	connect with a browser to the address "localhost://8000" by typing it into to the search bar
 
-5.	quando si intende terminare l’esecuzione dei container, rimuovendoli insieme alle risorse allocate, digitare:
+5.	when you want to stop containers execution, deleting them together with allocated resources, type:
 ```bash
     docker-compose down
 ```
