@@ -1,9 +1,4 @@
 <template>
-  <!--<div
-        ref="container"
-        class="d-flex my-auto mx-auto"
-        style="width: 230px; height: 230px"
-      ></div>-->
   <div id="chart"></div>
   <div
     style="
@@ -51,7 +46,7 @@ export default {
         show: false,
       },
       chart: {
-        height: 220,
+        height: 300,
         type: "radialBar",
         offsetY: -10,
       },
@@ -94,6 +89,10 @@ export default {
   watch: {
     kph(newKph, oldKph) {
       const a = this;
+
+      if (newKph > 200) {
+        this.kph = 200;
+      }
       const TEXTUAL_UPDATE_DURATION_IN_SECONDS = 3;
       //this call is needed to refresh the chart
       this.chart.updateSeries([this.kphInPercentage]);

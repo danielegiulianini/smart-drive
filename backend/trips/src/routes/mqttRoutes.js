@@ -25,10 +25,14 @@ const setupRoutes = () => {
     if (vehiclesEventsRegex.test(topic)) {
       //substring(indexStart, indexEnd)
       const vin = topic.substring(vehiclesTopixPrefix.length);
-      console.log("the topic is: " + topic);
+      //console.log("the topic is: " + topic); TO RESTORE
 
-      console.log("the vin in mqttRoutes: " + vin);
-      TripController.handleNewMeasurement(vin, JSON.parse(payload));
+      try {
+        //console.log("the vin in mqttRoutes: " + vin); TO RESTORE
+        TripController.handleNewMeasurement(vin, JSON.parse(payload));
+      } catch (parseError) {
+        console.log("json payload not valid");
+      }
     }
   });
 };

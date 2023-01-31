@@ -21,6 +21,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
 const port = 8086; //const port = Number(process.env.USERS_MICROSERVICE_INTERNAL_PORT);
+const imagesBaseUrl = "/api/v1"
 
 //retrieve connection string from config file (.env or inside config folder)
 const dbConfig = require("./src/config/db.config");

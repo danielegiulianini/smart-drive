@@ -23,7 +23,7 @@ describe("A Vehicle models service", () => {
   describe("when production years are requested", () => {
     it("should return them correctly", async () => {
       const response = await request(app).get(
-        "api/v1/vehicles/vehiclesModels/productionYears/" //no query params
+        "/api/v1/vehicles/vehiclesModels/productionYears/" //no query params
       );
 
       //expect(response.status).toBe(200);

@@ -11,7 +11,6 @@
       style="border: 0; padding: 0; margin-left: -30px; background: none"
     >
       <i class="bi bi-search"></i>
-      <!-- or  <span class="fa fa-search form-control-feedback"></span>-->
     </button>
   </div>
 </template>

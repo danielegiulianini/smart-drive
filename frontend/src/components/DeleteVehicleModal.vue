@@ -45,11 +45,19 @@
             <button
               type="button"
               class="btn btn-secondary"
+              @click="$emit('vehicleRemovalConfirmed')"
               data-bs-dismiss="modal"
             >
-              Close
+              Delete
             </button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+              <!--Save changes-->
+            </button>
           </div>
         </div>
       </div>
@@ -59,12 +67,7 @@
 
 <script>
 export default {
-  method: {
-    deleteVehicle: function () {
-      console.log("ciao");
-      //ajax call for removing vehicle...
-    },
-  },
+  emits: ["vehicleRemovalConfirmed"],
 };
 </script>
 

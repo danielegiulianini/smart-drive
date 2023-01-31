@@ -34,6 +34,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      htmlBar: "",
+    };
+  },
   computed: {
     progressPercentage() {
       return this.progress ? this.progress / this.outOf : this.progress; // Number from 0.0 to 1.0
@@ -49,21 +54,11 @@ export default {
     isDefined(variable) {
       return !(typeof variable === "undefined" || variable === null);
     },
-  },
-  mounted() {
-    console.log("il progress in ciruclar app is", this.progress);
-
-    console.log(
-      "il progressPercentage in ciruclar app is",
-      this.progressPercentage
-    );
-  },
-  watch: {
-    progressPercentage(newVal) {
+    initBar() {
       if (this.isDefined(this.progressPercentage)) {
         var htmlBar = this.$refs.container;
         console.log("la bar is", htmlBar);
-        htmlBar = new ProgressBar.Circle(htmlBar, {
+        this.htmlBar = new ProgressBar.Circle(htmlBar, {
           strokeWidth: 7,
           //easing: "easeInOut",
           duration: 1400,
@@ -95,9 +90,17 @@ export default {
           },
         });
 
-        htmlBar.path.style.strokeLinecap = "round";
-        htmlBar.animate(this.progressPercentage); // Number from 0.0 to 1.0
+        this.htmlBar.path.style.strokeLinecap = "round";
       }
+    },
+  },
+  mounted() {
+    this.initBar();
+    this.htmlBar.animate(this.progressPercentage); // Number from 0.0 to 1.0
+  },
+  watch: {
+    progressPercentage(newVal) {
+      this.htmlBar.animate(newVal); // Number from 0.0 to 1.0
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="loader text-center" v-show="show">
+  <div class="loader text-center" v-show="show"  style="z-index: 5000">
     <div class="loader-inner" style="z-index: 5000" v-show="show">
       <!-- Animated Spinner -->
       <div class="lds-roller mb-3" style="color: white" v-show="show">
@@ -14,7 +14,7 @@
       </div>
 
       <p class="font-italic" style="color: white">
-        Loading page, please be patient. {{ show }}
+        Loading page, please be patient.
       </p>
     </div>
   </div>

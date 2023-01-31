@@ -34,9 +34,14 @@ async function onNewNotification(userId, notification) {
 }
 
 function onNewDrivingNotification(userId, drivingNotification) {
+
+  var buffer = new Uint8Array(drivingNotification);
+  var fileString = String.fromCharCode.apply(null, buffer);
+  drivingNotification = JSON.parse(fileString);
+
   const socket = users[userId];
   if (socket) {
-    socket.volatile.emit("drivingNotification", drivingNotification); //using volatile here for not saving messages whule out of connection
+    socket.emit("drivingNotification", drivingNotification); //cannot use volatile here (for not saving messages while out of connection) because I use the connection for ordinary notifications too and would not be ready for driving feedback
     console.log(
       `Sending to user ${userId} drivingNotification ${drivingNotification}`
     );

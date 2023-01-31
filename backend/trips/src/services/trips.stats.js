@@ -62,8 +62,8 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
     Trip.findOne({ _id: tripId })
       //sorting here?
       .then((trip) => {
-        console.log("[in computeDistanceAndTimeTraveledStats] the trips is: ");
-        console.log(trip);
+        //console.log("[in computeDistanceAndTimeTraveledStats] the trips is: ");
+        //console.log(trip);
         if (trip.measurements.length > 0) {
           const odometerAvailable =
             trip.measurements[trip.measurements.length - 1].odometer &&
@@ -125,10 +125,10 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
     { $unwind: "$measurements" },
   ];
   const myStatsFistStage = await Trip.aggregate(queryStages2);
-  console.log(
+  /*console.log(
     "in computeEngineStats, le myBasicEngineStats dopo first stage",
     myStatsFistStage
-  );
+  );*/
   //console.log("the resulting query stage:");
   //console.log(queryStages);
   const myBasicEngineStats = await Trip.aggregate(queryStages);

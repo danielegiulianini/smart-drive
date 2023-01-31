@@ -1,5 +1,5 @@
 <template>
-  <div class="card nested-card text-center align-items-center m-2 h-100">
+  <div class="card nested-card text-center align-items-center m-2 h-100" @click="$router.push('/allBadges')">
     <img
       class="card-img-top badge-image mt-4"
       :src="pictureUri"
@@ -48,6 +48,10 @@
 
 .card:hover {
   transform: scale(1.05);
+}
+
+.card:hover {
+  cursor: pointer;
 }
 .card {
   transition: transform 0.2s ease;

@@ -88,6 +88,10 @@ describe("A Profile service", () => {
       expect(fetchedUser.ecoScore).toBe(0);
       expect(fetchedUser.level).toBe(0);
       expect(fetchedUser.unlockedAchievements).toEqual([]);
+/*
+      console.log("la date of createdUser is:::", fetchedUser.createdAt)
+      console.log("la date of createdUser is of type:::", typeof fetchedUser.createdAt)
+*/
     });
   });
 

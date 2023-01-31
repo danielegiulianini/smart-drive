@@ -14,7 +14,7 @@
     <div class="container">
       <div class="row justify-content-center">
         <div
-          class="col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center"
+          class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column align-items-center justify-content-center"
         >
           <div class="card mb-3" style="z-index: 10">
             <!-- editing z-index for display spinner that would lies on the bottom of the card, otherwise-->
@@ -29,7 +29,7 @@
               </div>
 
               <!-- start user info-->
-              <div class="p-lg-5 p-4" style="padding-bottom: 20%">
+              <div class="py-lg-5 p-4" style="padding-bottom: 20%"><!-- old spacing (to be consistent with userloginform): class="p-lg-5 p-4"-->
                 <!-- Error alert -->
                 <div
                   class="alert alert-danger alert-dismissible fade show"
@@ -83,6 +83,7 @@
                       required
                       v-model="user.password"
                       :disabled="isSubmitting"
+                      autocomplete="on"
                     />
                     <div class="invalid-feedback">
                       Please enter your password!
@@ -158,6 +159,7 @@ export default {
     clientSideValidateForm() {
       //triggering bootstrap validation here
       const form = this.$refs.userLoginForm;
+      console.log("la form is ", form)
       const isValid = form.checkValidity();
       form.classList.add("was-validated");
       return isValid;
@@ -179,6 +181,7 @@ export default {
             //a mapping (to a more user-friendly error) could be added here (leveraging status codes returned by servers)
             //possible errors: network-related
             this.overallError = err;
+            console.error(err);
           })
           .finally(() => {
             this.isSubmitting = false;

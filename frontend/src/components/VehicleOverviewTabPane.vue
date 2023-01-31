@@ -72,7 +72,7 @@
                     ></TripDetailItem>
                     <TripDetailItem
                       label="Vehicle identification number"
-                      :itemValue="overview.vin"
+                      :itemValue="overview._id"
                     ></TripDetailItem>
                 </ul>
               </div>

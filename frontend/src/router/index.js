@@ -14,6 +14,7 @@ import UserLoginFormPage from "../views/UserLoginPage.vue";
 import AllAppBadgesPage from "../views/AllAppUserBadgesPage.vue";
 import TripsOverviewPage from "../views/TripsOverviewPage.vue";
 import PageNotFound from "../views/PageNotFound.vue";
+import NotificationsPage from "../views/NotificationsPage.vue";
 
 const routes = [
   {
@@ -31,7 +32,7 @@ const routes = [
       requiresAuth: true,
     },
     component: GaragePage,
-  }, //or vehicles...
+  },
   {
     path: "/vehicle/:_id",
     name: "VehicleDetail",
@@ -41,7 +42,7 @@ const routes = [
     },
     component: VehicleDetailPage2,
     props: true,
-  }, //or vehicles... HERE PROPS ARE NEEDED
+  },
   {
     path: "/score",
     name: "Score",
@@ -55,7 +56,7 @@ const routes = [
   //==============trips-related=========================
   {
     path: "/trips/:_id",
-    props: true, //HERE PROPS ARE NEEDED
+    props: true,
 
     name: "TripDetail",
     meta: {
@@ -90,6 +91,14 @@ const routes = [
     },
     component: DriveModePage3,
   },
+  {
+    path: "/notifications",
+    name: "Notifications",
+    meta: {
+      requiresAuth: true,
+    },
+    component: NotificationsPage,
+  },
   { path: "/:pathMatch(.*)*", name: "not-found", component: PageNotFound },
 ];
 
@@ -108,7 +117,7 @@ router.beforeEach((to, from, next) => {
     console.log("store.getters.isLoggedIn returns ", store.getters.isLoggedIn);
     if (!store.getters.isLoggedIn || !store.getters.getSocket) {
       console.log("user not logged in");
-      next({ name: "login" });
+      next({ name: "login" });  //could save destination in login page (for not restarting each time from profile)
     } else {
       console.log("user logged in");
 

@@ -11,7 +11,16 @@
         <div class="card nested-card text-center h-100">
           <div class="card-body profile-card pt-4 text-center">
             <div class="filter">
-              <UserEditModal></UserEditModal>
+              <UserEditModal
+                :initialUser="{
+                  firstName: this.firstName,
+                  surname: this.surname,
+                  city: this.city,
+                  country: this.country,
+                  email: this.email,
+                  actualPictureUri: this.actualPictureUri,
+                }"
+              ></UserEditModal>
             </div>
 
             <img
@@ -40,14 +49,7 @@
       </div>
       <div class="col-md-4 col-lg-4">
         <div class="row h-50">
-          <!--<div class="col-md-6 col-lg-6 B h-50 pb-3">
-                    <div class="card card-inverse card-success h-100"></div>
-                  </div>
-                  <div class="col-md-6 col-lg-6 B h-50 pb-3">
-                    <div class="card card-inverse bg-success h-100"></div>
-                  </div>-->
           <div class="col-md-12 h-100 pb-4">
-            <!--<div class="card card-inverse bg-danger h-100"></div>-->
             <div class="card d-flex nested-card h-100 mb-5">
               <div class="card-body profile-card pb-1">
                 <h6 class="card-title mb-0">XP</h6>
@@ -55,25 +57,19 @@
                 <div
                   class="text-center d-flex justify-content-center align-items-center"
                 >
-                  <!--<div class="card-title">XP</div>-->
                   <div>
                     <div class="filter">
-                      <a class="icon" href="#">
+                      <a class="icon">
                         <AppTooltip
                           content="Experience Points (XP) are gained by performing trips."
                         ></AppTooltip
                       ></a>
                     </div>
-                    <!--<div class="d-flex flex-row-reverse bd-highlight">-->
-                    <!--<a class="btn btn-secondary rounded-pill btn-sm" id="edit-badge" style="color: #999999">Edit</a>-->
-                    <!--<a class="badge rounded-pill bg-light" id="edit-badge">Edit</a>-->
-                    <!--</div>-->
-
-                    <h4 style="font-size: 200%">{{ xp }}</h4>
+                    <h4 style="font-size: 200%">{{ formattedXp }}</h4>
                     <!---->
                     <div class="text-center">
                       <span class="text-muted small ps-1"
-                        >{{ xpGatheredDuringThisLevel }}/300 to level
+                        >{{ formattedXpGatheredDuringThisLevel }}/300 to level
                         {{ level + 1 }}</span
                       >
                       <AppLabeledHorizontalProgressBar
@@ -93,9 +89,9 @@
               <div class="card-body profile-card pb-1">
                 <div class="mb-5 mb-sm-0">
                   <div class="filter">
-                    <a class="icon" href="#"
+                    <a class="icon"
                       ><AppTooltip
-                        content="A given level is reached by gathering XPs. The higher the level the better your reputation and available features are."
+                        content="A given level is reached by gathering XPs. The higher the level the better your reputation and available features are. Each level corresponds to a category, a nice characterization of user experience."
                       ></AppTooltip
                     ></a>
                   </div>
@@ -109,7 +105,9 @@
                       />
                     </div>
                     <div class="mb-0 pb-0 text-center">
-                      <div class="d-flex my-auto align-middle">
+                      <div
+                        class="d-flex my-auto align-middle justify-content-center"
+                      >
                         <div style="font-size: 200%">{{ level }}</div>
                         <small
                           class="text-muted align-middle mt-3 ps-1"
@@ -118,13 +116,14 @@
                         >
                       </div>
                       <div class="text-center">
-                        <span class="text-muted small ps-1"
-                          >80/150 to level 10</span
+                        <!--  very interesting! (abandoned because of lack of time) 
+                          <span class="text-muted small ps-1"
+                          >80/150 to category 10</span
                         >
                         <AppLabeledHorizontalProgressBar
                           progress=""
                           max=""
-                        ></AppLabeledHorizontalProgressBar>
+                        ></AppLabeledHorizontalProgressBar>-->
                       </div>
                     </div>
                   </div>
@@ -161,9 +160,7 @@
                 You seem to be an app beginner.
               </p>
             </div>
-            <!--<div class="activity h-75" style="background-color: red">
-              ciao (prova per fare display di "no reent activities...")
-            --><!--
+            <!--
             <div class="activity">
               <div class="activity-item d-flex">
                 <div class="activite-label">32 min</div>
@@ -224,8 +221,8 @@
 import AppTooltip from "./AppTooltip.vue";
 import AppLabeledHorizontalProgressBar from "./AppLabeledHorizontalProgressBar.vue";
 import UserEditModal from "./UserEditModal.vue";
+import timeSinceComputer from "../mixins/timeSinceComputer.vue";
 
-const defaultAvatarUri = "/src/assets/img/driverAvatar.png";
 const categories = [
   {
     name: "tricycle",
@@ -249,36 +246,6 @@ const categories = [
   },
 ];
 
-/*_id:
-email:
-    name:
-    surname:
-    gender: NO, NON LI PROIETTO
-    language: NO, NON LI PROIETTO
-    city:
-    country:
-    profilePictureUri:
-    createdAt:
-    updatedAt:
-    lastLoginAt:
-    unlockedAchievements:
-
-    ecoScore: NO, IN OTHER PAGE
-    speedScore: NO, IN OTHER PAGE
-    rpmScore:  NO, IN OTHER PAGE
-    feedbackConsiderationScore:  NO, IN OTHER PAGE
-
-    xp:
-    level:
-    scoresTrend: [
-      {
-        score: Number,
-        referredTo: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],*/
 export default {
   components: { AppLabeledHorizontalProgressBar, AppTooltip, UserEditModal },
   props: {
@@ -291,39 +258,49 @@ export default {
     email: { required: true },
     city: { required: true },
     country: { required: true },
-    profilePictureUri: { required: true },
+    actualPictureUri: { required: true },
     createdAt: { required: true }, //this is already a date (not a string)
+
     xp: { required: true },
     level: { required: true },
   },
-  /*data() {
-    /*return {
-      email: "",
-      name: "",
-      surname: "",
-      city: "",
-      country: "",
-      profilePictureUri: "",
-      createdAt: "",
-      xp: "",
-      level: "",
-    };*/
-  /*},*/
   computed: {
-    actualPictureUri() {
-      return this.profilePictureUri ? this.profilePictureUri : defaultAvatarUri;
-    },
     xpGatheredDuringThisLevel() {
+      console.log("this.xp: ", this.xp);
+      console.log("this.level: ", this.level);
+
       return this.xp - this.level * 300;
     },
+    formattedXp() {
+      return this.xp.toFixed(2);
+    },
+    formattedXpGatheredDuringThisLevel() {
+      return this.xpGatheredDuringThisLevel.toFixed(2);
+    },
+    nextCategory() {
+      let nextCategoryIndex =
+        this.scale(
+          this.level,
+          0,
+          10, //max level
+          0,
+          categories.length
+        ) + 1;
+      if (nextCategoryIndex > lastCategoryIndex) {
+        categoryIndex = lastCategoryIndex;
+      }
+      console.log("il mio category index: ", categoryIndex);
+      return categories[categoryIndex];
+    },
     category() {
-      console.log("calling catgory!");
-      let categoryIndex = this.scale(
-        this.level,
-        0,
-        100, //max level
-        0,
-        categories.length
+      let categoryIndex = Math.round(
+        this.scale(
+          this.level,
+          0,
+          100, //max level
+          0,
+          categories.length
+        )
       );
       console.log("il category index,", categoryIndex);
 
@@ -332,46 +309,23 @@ export default {
       if (categoryIndex > lastCategoryIndex) {
         categoryIndex = lastCategoryIndex;
       }
-      console.log("il category index,", categoryIndex);
-      console.log("la gategory is", categories[categoryIndex]);
       return categories[categoryIndex];
     },
   },
+  mixins: [timeSinceComputer],
 
   methods: {
     scale(number, inMin, inMax, outMin, outMax) {
       return ((number - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
     },
-    timeSince(date) {
-      console.log("la date to whuch say timeSince", date);
-      var seconds = Math.floor((new Date() - date) / 1000);
-
-      var interval = seconds / 31536000;
-
-      if (interval > 1) {
-        return Math.floor(interval) + " years";
-      }
-      interval = seconds / 2592000;
-      if (interval > 1) {
-        return Math.floor(interval) + " months";
-      }
-      interval = seconds / 86400;
-      if (interval > 1) {
-        return Math.floor(interval) + " days";
-      }
-      interval = seconds / 3600;
-      if (interval > 1) {
-        return Math.floor(interval) + " hours";
-      }
-      interval = seconds / 60;
-      if (interval > 1) {
-        return Math.floor(interval) + " minutes";
-      }
-      return Math.floor(seconds) + " seconds";
-    },
   },
-  mounted() {
-    //ajax call...
+  watch: {
+    category: {
+      deep: true,
+      handler(category) {
+        console.log("category changed, now it is:", category);
+      },
+    },
   },
 };
 </script>

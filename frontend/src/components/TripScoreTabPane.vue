@@ -32,7 +32,7 @@
 
               <div class="justify-content-center">
                 <AppCircularProgressBar
-                  :progressPercentage="totalScore"
+                  :progress="totalScore"
                 ></AppCircularProgressBar>
               </div>
             </div>

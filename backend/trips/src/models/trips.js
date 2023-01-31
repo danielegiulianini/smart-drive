@@ -102,15 +102,15 @@ speedLimitDviationComposition*/
   //>ecoscore-related
   totalScore: {
     type: Number,
-    default: 0,
+    //default: 0, //removed 09/01/23
   },
   speedScore: {
     type: Number,
-    default: 0,
+    //default: 0, //removed 09/01/23
   },
   rpmScore: {
     type: Number,
-    default: 0,
+    //default: 0, //removed 09/01/23
   },
   feedbackConsiderationScore: {
     type: Number,

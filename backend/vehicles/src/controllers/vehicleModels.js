@@ -7,7 +7,7 @@ const getYears = async (req, res) => {
   console.log("a request for years arrived");
 
   setResponseWithGetJsonDataFrom(
-    "https://www.fueleconomy.gov/ws/rest/vehicle/menu/year",
+    "https://www.fueleconomy.gov/ws/rest/vehicle/menu/year/",
     {}, //no req.query's nor req.params' params
     res
   );

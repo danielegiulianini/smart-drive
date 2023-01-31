@@ -5,39 +5,24 @@ const router = express.Router();
 const AuthMiddleware = require("./../middlewares/auth");
 const UserVehiclesController = require("../controllers/userVehicles");
 
-//get all the associations
+//TODO: instead of the controller's handler (directly) could bind to the path an action method that
+//does some prints (so removing them from tha handlers)
 
-router
-  //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
-  .route("/userVehicles/")
-  .get(UserVehiclesController.getAll);
+//router.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody);
+
+//get all the associations
+router.route("/userVehicles/").get(UserVehiclesController.getAll);
 
 //get a specific association
-
-router
-  //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
-  .route("/userVehicles/:vin")
-  .get(UserVehiclesController.get);
+router.route("/userVehicles/:_id").get(UserVehiclesController.get);
 
 //create an association
-
-router
-  //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
-  .route("/userVehicles/")
-  .post(UserVehiclesController.create);
+router.route("/userVehicles/").post(UserVehiclesController.create);
 
 //edit an association
+router.route("/userVehicles/:_id").post(UserVehiclesController.edit);
 
-router
-  //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
-  .route("/userVehicles/:vin")
-  .post(UserVehiclesController.edit);
 //delete an association
+router.route("/userVehicles/:_id").delete(UserVehiclesController.remove);
 
-router
-  //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody)
-  .route("/userVehicles/:vin")
-  .delete(UserVehiclesController.remove);
-
-
-  module.exports = router;
+module.exports = router;

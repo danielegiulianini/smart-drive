@@ -1,4 +1,5 @@
 const ProfileService = require("../services/users");
+const AchievementsService = require("../services/achievements");
 
 const create = async (req, res) => {
   //params contained in client's post request
@@ -11,14 +12,16 @@ const create = async (req, res) => {
     email: req.body.email,
     city: req.body.city,
     country: req.body.country,
+    //profilePictureUri: req.body.profilePictureUri,
   };
 
+  console.log("la req ottenuta: ");
+  console.log(req.body);
 
-  console.log("la req ottenuta: ")
-  console.log(req.body)
+  console.log("i params ottenuti: ");
+  console.log(params);
+  //await AchievementsService.unlockAchievements([params._id], ["feedbackConsiderationScore_single_trip_95"])
 
-  console.log("i params ottenuti: ")
-  console.log(params)
 
   ProfileService.add(params)
     .then((profile) => res.status(201).json(profile)) //todo actions to be refactored since reused
@@ -26,7 +29,7 @@ const create = async (req, res) => {
 };
 
 const get = (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.params.userId; //same identifier contained in routes file
 
   ProfileService.get(userId)
     .then((profile) => res.status(200).json(profile))
@@ -35,14 +38,14 @@ const get = (req, res) => {
 };
 
 const edit = (req, res) => {
-  const userId = req.params.userId;
-
+  const userId = req.params.userId; //same identifier contained in routes file
+  console.log("edit request for users received");
   //params to be filtered before DB interaction for safety reason
   const params = req.body;
 
   ProfileService.edit(userId, params)
     .then((profile) => res.status(200).json(profile))
-    //should use a dto here (response containing sensitive info!)
+    //should use a dto here (response containing sensitive info! not, actually)
     .catch((err) => res.status(400).json(err));
 };
 

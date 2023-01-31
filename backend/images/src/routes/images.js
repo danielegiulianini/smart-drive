@@ -6,23 +6,26 @@ const ImageController = require("../controllers/images");
 const ImageService = require("../services/images.upload");
 
 //TODO: instead of the controller's handler (directly) could bind to the path an action method that
-//does some prints (so removing them from tha handlers)
+//does some prints (so removing them from tha handlers) about what method is being called
 
 //routes' base url: images/
-var path = require('path');
 
-const imagesDestinationFolder = path.join(__dirname, require("./../config/images.config"));
-console.log("limage dest folder is: >>>>>>>>>>>>>>" + imagesDestinationFolder);
+var path = require("path");
 
-router
-  //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) commented for testing
-  .route("/:imageId")
-  .get(function (req, res, next) {
-    console.log("received get request");
-    console.log("Request URL:", req.originalUrl);
-    console.log("searching in " + imagesDestinationFolder);
-    next();
-  }, express.static(imagesDestinationFolder));
+//leveraging __dirname for preventing that running the express app from another directory from
+//the one of index.js breaks paths
+const imagesDestinationFolder = path.join(
+  __dirname,
+  require("./../config/images.config")
+);
+
+console.log("the image destination folder: ", imagesDestinationFolder);
+
+router.get(function (req, res, next) {  //10/1/22 before there was a use instead of a get
+  console.log("get request for image arrived!");
+  console.log(req.originalUrl);
+  next();
+}, express.static(imagesDestinationFolder));
 
 //routes for other image info (date of creation...)
 
@@ -31,6 +34,7 @@ router
   .route("/")
   .post(function (req, res, next) {
     //debugging middleware
+
     console.log("received post request");
     next();
   }, ImageController.storeImage);

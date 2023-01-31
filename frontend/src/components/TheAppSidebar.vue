@@ -16,7 +16,7 @@
       <li class="nav-item">
         <a class="nav-link" @click="this.$router.push('/profile')">
           <i class="bi bi-person-circle"></i>
-          <span>Home</span>
+          <span>Profile</span>
         </a>
       </li>
       <!-- End Profile Page Nav -->

@@ -47,7 +47,10 @@ describe("A Levels service", () => {
       await Profile.create(fakeUserData);
       const { updatedUser, levelChanged } = await LevelsService.scoresChanged(
         fakeUserData._id,
-        100
+        100, //total
+        0, //speed
+        0, //rpm
+        0 //feedback consideration
       );
 
       expect(updatedUser._id).toBe(fakeUserData._id);
@@ -65,11 +68,14 @@ describe("A Levels service", () => {
   });
 
   it("should update its level too if a new level is reached", async () => {
-    //check return value
+    const scoreNeededForOneLevel = 300;
     await Profile.create(fakeUserData);
     const { updatedUser, levelChanged } = await LevelsService.scoresChanged(
       fakeUserData._id,
-      300
+      scoreNeededForOneLevel, //total
+      0, //speed
+      0, //rpm
+      0 //feedback consideration
     );
 
     //the most important
@@ -81,7 +87,10 @@ describe("A Levels service", () => {
     await Profile.create(fakeUserData);
     const { updatedUser, levelChanged } = await LevelsService.scoresChanged(
       fakeUserData._id,
-      300 //the mimimum for raising user level
+      300, //the mimimum for raising user level //total
+      0, //speed
+      0, //rpm
+      0 //feedback consideration
     );
     expect(levelChanged).toBe(true);
   });
@@ -91,7 +100,10 @@ describe("A Levels service", () => {
     await Profile.create(fakeUserData);
     const { updatedUser, levelChanged } = await LevelsService.scoresChanged(
       fakeUserData._id,
-      100 //less than the mimimum for raising user level
+      100, //less than the mimimum for raising user level //total
+      0, //speed
+      0, //rpm
+      0 //feedback consideration
     );
 
     expect(levelChanged).toBe(false);
@@ -102,7 +114,10 @@ describe("A Levels service", () => {
     await Profile.create(fakeUserData);
     const { updatedUser, levelChanged } = await LevelsService.scoresChanged(
       fakeUserData._id,
-      100
+      100, //total
+      0, //speed
+      0, //rpm
+      0 //feedback consideration
     );
 
     //the most important
@@ -114,7 +129,10 @@ describe("A Levels service", () => {
     await Profile.create(fakeUserData);
     const { updatedUser, levelChanged } = await LevelsService.scoresChanged(
       fakeUserData._id,
-      100
+      100, //total
+      0, //speed
+      0, //rpm
+      0 //feedback consideration
     );
     const fetchedTrip = await Profile.findById(fakeUserData._id);
     expect(updatedUser.level).toBe(fetchedTrip.level);
@@ -124,7 +142,10 @@ describe("A Levels service", () => {
     await Profile.create(fakeUserData);
     const { updatedUser, levelChanged } = await LevelsService.scoresChanged(
       fakeUserData._id,
-      300 //the mimimum for raising user level
+      300, //the mimimum for raising user level //total
+      0, //speed
+      0, //rpm
+      0 //feedback consideration
     );
     const fetchedTrip = await Profile.findById(fakeUserData._id);
     expect(updatedUser.level).toBe(fetchedTrip.level);
@@ -147,7 +168,6 @@ describe("A Levels service", () => {
   describe("when asked to track a users scores", () => {
     it("should only persist the last X scores of each user", async () => {
       const X = 14;
-      const user = await Profile.create(fakeUserData);
       for (var i = 1; i <= X + 10; i++) {
         await LevelsService.trackUsersScores();
       }

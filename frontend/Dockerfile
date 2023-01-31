@@ -10,10 +10,8 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm install
-# If building for production: RUN npm ci --only=production
 
 # Bundle microservice source
 COPY . .
 
 CMD [ "npm", "run", "dev" ]   
-#CMD [ "npm", "run", "preview" ] if building for production

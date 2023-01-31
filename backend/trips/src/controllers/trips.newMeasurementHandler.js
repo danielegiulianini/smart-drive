@@ -22,8 +22,6 @@ const handleNewMeasurement = async (vin, measurementPayload) => {
   try {
     //only saving data in driving mode
     trip = await dataAcquisitionService.addMeasurement(vin, measurementPayload);
-    console.log("the trip to add measurements to is:");
-    console.log(trip);
     if (trip) {
       //these two lines, although inefficient, allows, by including userId into
       //measurement from arduino, to not make user choose a vehicle when starting

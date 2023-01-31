@@ -10,6 +10,7 @@
     :retired="initialVehicle.retired"
     :model="initialVehicle.model"
     :series="initialVehicle.series"
+    :edit="true"
     @validatedFormSubmit="onValidFormSubmit"
   ></VehicleForm>
 </template>
@@ -39,26 +40,42 @@ export default {
     onValidFormSubmit(vehicle) {
       console.log("axios post in user edit");
       this.isSubmitting = true;
-      const loggedInUser = this.$store.getters.getUser();
+      const loggedInUser = this.$store.getters.getUser;
+      console.log("lo url posted: ")
       axios
         .post(`vehicles/userVehicles/${vehicle._id}`, {
           pictureUri: vehicle.pictureUri,
           vehicleModelId: vehicle.series,
           userId: loggedInUser,
         })
-        //redirect to vehicle detail page TODO
-        //.then(() => this.$router.push({ name: "VehicleDetail" }))
-        //.then(() => (this.success = true))
+        .then(() => {
+          //display notification or infobox
+          this.$notification.show(
+            //this.success = true;
+            "Success",
+            {
+              body: "Vehicle correctly updated!",
+            },
+            {}
+          );
+        })
         .catch((err) => {
           //maybe a mapping (to a more user-friendly error) could be added here
           //possible errors: network-related
+          //display notification or infobox
+          this.$notification.show(
+            "Error",
+            {
+              body: "Errors in vehicle edit!",
+            },
+            {}
+          );
           this.overallError = err;
         })
         .finally(() => (this.isSubmitting = false));
     },
   },
-  mounted() {
-  },
+  mounted() {},
 };
 </script>
 

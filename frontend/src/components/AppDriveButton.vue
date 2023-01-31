@@ -1,10 +1,11 @@
 <template>
   <button
+    @click="onButtonClicked"
+    :class="{ clicked: clicked, notClicked: !clicked }"
     id="driveButton"
     type="button"
     class="acceso"
-    style="
-      font-size: 120%;
+    style="font-size: 120%;
       border-radius: 100%;
       width: 100px;
       height: 100px;
@@ -29,32 +30,40 @@
 </template>
 
 <style scoped>
-#driveButton.nonacceso {
+#driveButton.notClicked {
   background-color: #efefef;
   border-color: #012970;
   color: #012970;
 }
-#driveButton.acceso {
+#driveButton.clicked {
   background-color: #012970;
   border-color: #efefef;
   color: #efefef;
 }
 
-#driveButton.acceso:hover {
+#driveButton.clicked:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-#driveButton.nonacceso:hover {
+#driveButton.notClicked:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 </style>
 
 <script>
-/*here the logic */
-
 export default {
+  methods: {
+    onButtonClicked() {
+      this.clicked = true;
+    },
+  },
+  data() {
+    return {
+      clicked: false,
+    };
+  },
   props: {
     driveButtonName: { required: true },
-    isStarting: { default: false },
+    spin: { default: false },
   },
 };
 </script>

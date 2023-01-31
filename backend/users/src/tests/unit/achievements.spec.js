@@ -43,25 +43,39 @@ describe("A achievements service", () => {
       await Profile.create(fakeUserData);
       await AchievementsService.unlockAchievements(
         [fakeUserData._id],
-        achievement
+        [achievement]
       );
 
       const fetchedUser = await Profile.findById(fakeUserData._id);
-      expect(fetchedUser.unlockedAchievements).toContain(achievement);
+      console.log("il fetched user: ", fetchedUser)
+      expect(
+        fetchedUser.unlockedAchievements.map((achievement) => achievement.id)
+      ).toContain(achievement);
     });
   });
-  
-  describe("when a user unlocks many ahchievements", () => {
+
+  describe("when a user unlocks many achievements", () => {
     it("should persist all of them", async () => {
-      const achievements = ["firstAchievement","secondAchievement"];
+      const achievements = ["firstAchievement", "secondAchievement"];
       await Profile.create(fakeUserData);
       await AchievementsService.unlockAchievements(
         [fakeUserData._id],
-        achievements[0], achievements[1]
+        [achievements[0], achievements[1]]
       );
 
       const fetchedUser = await Profile.findById(fakeUserData._id);
-      expect(fetchedUser.unlockedAchievements).toEqual(expect.arrayContaining(achievements));
+      console.log("il fetched user: ", fetchedUser)
+
+      expect(
+        fetchedUser.unlockedAchievements.map((achievement) => achievement.id)
+      ).toEqual(
+        expect.arrayContaining(
+          achievements
+        )
+      );
     });
   });
+
+  //to test: 
+  //don't unlock two times the same achievement...
 });

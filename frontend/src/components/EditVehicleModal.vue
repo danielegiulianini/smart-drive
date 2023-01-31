@@ -17,7 +17,6 @@
     data-bs-toggle="modal"
   ></i>
 
-
   <!-- Modal -->
   <teleport to="body">
     <div
@@ -38,7 +37,11 @@
                   aria-label="Close"
                 ></button>
               </div>-->
-          <div class="modal-body"><EditVehicleForm></EditVehicleForm></div>
+          <div class="modal-body">
+            lo year (in edit vehicle modal) by object is: {{initialVehicle.year}}
+            lo year by string is: {{year}}
+            <EditVehicleForm v-bind:initialVehicle="initialVehicle" :year="year"></EditVehicleForm>
+          </div>
           <!--<div class="modal-footer">
                 <button
                   type="button"
@@ -60,6 +63,15 @@ import EditVehicleForm from "./EditVehicleForm.vue";
 
 export default {
   components: { EditVehicleForm },
+  props: {
+    initialVehicle: {
+      type: Object,
+    },
+    year: String,
+  },
+  mounted() {
+    console.log("initial vehicle passed is", this.initialVehicle);
+  },
 };
 </script>
 
@@ -99,7 +111,7 @@ export default {
   height: 85px;
   line-height: 85px;
   font-size: 1.3rem;
-  z-index:100000;
+  z-index: 100000;
 }
 
 #btndisclaimer {

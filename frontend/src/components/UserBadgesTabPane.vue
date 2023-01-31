@@ -51,14 +51,11 @@
                   badges.find((badgeDetail) => badgeDetail.id == badge.id)
                     .pictureUri
                 "
-                :earnedAt="badge.earnedAt"
+                :earnedAt="new Date(badge.earnedAt)"
               ></UserBadge>
             </div>
-            <!--<div class="col"><UserBadge></UserBadge></div>
-          <div class="col"><UserBadge></UserBadge></div>
-          <div class="col"><UserBadge></UserBadge></div>-->
           </div>
-          <div class="card-title pb-0 mb-0 ms-2 mt-0">Achieving</div>
+          <!-- possible extension (with progress bars at footer): <div class="card-title pb-0 mb-0 ms-2 mt-0">Achieving</div>-->
         </div>
         <div
           v-else
@@ -97,7 +94,6 @@ export default {
     myBadges: {
       deep: true,
       handler(myBadges) {
-        console.log("myBadges changed, now it is:", myBadges);
       }
     }
   }

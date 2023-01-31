@@ -3,9 +3,9 @@
     <i class="bi" :class="contextualClass"></i>
     <!--bi-exclamation-circle text-warning"></i>-->
     <div>
-      <h4>{{ notification.subject }}</h4>
-      <p>{{ notification.body }}</p>
-      <p>{{ timeSinceCreation }}</p>
+      <h4 style="font-size: 100%">{{ notification.subject }}</h4>
+      <p style="font-size: 90%">{{ notification.body }}</p>
+      <p style="font-size: 80%">{{ timeSinceCreation }} ago</p>
     </div>
   </li>
 </template>
@@ -30,7 +30,7 @@ export default {
   },*/
   computed: {
     timeSinceCreation() {
-      return this.timeSince(this.notification.createdAt);
+      return this.timeSince(new Date(this.notification.createdAt));
     },
     contextualClass() {
       //responsible of the icon / color pairs based on notification's class
@@ -76,31 +76,30 @@ export default {
 
 <style scoped>
 /*for single notification */
-.header-nav .notifications .notification-item {
+.notification-item {
   display: flex;
   align-items: center;
   padding: 15px 10px;
   transition: 0.3s;
 }
 
-.header-nav .notifications .notification-item i {
+.notification-item i {
   margin: 0 20px 0 10px;
   font-size: 24px;
 }
 
-.header-nav .notifications .notification-item h4 {
+ .notification-item h4 {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 5px;
 }
-
-.header-nav .notifications .notification-item p {
+.notification-item p {
   font-size: 13px;
   margin-bottom: 3px;
   color: #919191;
 }
 
-.header-nav .notifications .notification-item:hover {
+.notification-item:hover {
   background-color: #f6f9ff;
 }
 </style>

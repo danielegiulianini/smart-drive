@@ -14,9 +14,9 @@
     "
   >
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="#" class="logo d-flex align-items-center">
         <img src="/src/assets/style/img/webappLogo/favicon-32x32.png" alt="" />
-        <!--<span class="d-none d-sm-block ps-2">DriveSmart</span>-->
+        <!--to remove title in xs: <span class="d-none d-sm-block ps-2">DriveSmart</span>-->
         <span class="ps-2">DriveSmart</span>
       </a>
     </div>
@@ -26,8 +26,8 @@
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
         <li class="nav-item dropdown">
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-bell" @click="onNotificationIconPressed"></i>
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown"  @click="onNotificationIconPressed">
+            <i class="bi bi-bell"></i>
             <span
               class="badge bg-primary badge-number"
               v-if="unreadNotificationsCount > 0"

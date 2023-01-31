@@ -20,16 +20,21 @@ PublishSubscribe.prototype.onMessage = function (callback) {
 
 PublishSubscribe.prototype.publish = function (topic, messageAsObject) {
   console.log(
-    "sending message: " + JSON.stringify(messageAsObject) + " to topic: " + topic
-  );
+    "sending message: " +
+      JSON.stringify(messageAsObject) +
+      " to topic: " +
+      topic
+  ); 
 
   this.client.publish(
     topic,
-    JSON.stringify(messageAsObject, { qos: 0, retain: false }, (error) => {
-      if (error) {
+    JSON.stringify(messageAsObject),
+    { qos: 0, retain: false },
+    (error) => {
+      if (error) { 
         console.error(error);
       }
-    })
+    }
   );
 };
 

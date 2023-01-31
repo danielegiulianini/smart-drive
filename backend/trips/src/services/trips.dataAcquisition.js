@@ -85,6 +85,8 @@ const close = async (tripId) => {
 
 //read-only:
 const list = async (query) => {
+  //await Trip.deleteMany(query); //for testing
+
   return Trip.find(query);
 };
 

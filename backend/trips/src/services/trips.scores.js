@@ -11,7 +11,9 @@ const computeAndAssignScores = async (tripId) => {
   aggregation pipeline, as in described in issue #1399 
   (https://github.com/Automattic/mongoose/issues/1399), and mongoose does not either
   RETURNING A WARNING!!! So, casting here.*/
+  tripId = mongoose.Types.ObjectId(tripId);
 
+  //console.log("the trip the scores are to be assigned:", trip);
   console.log("computing and assigning scores");
   const scores = await computeScores(tripId);
   console.log("scores are", scores);
@@ -20,10 +22,10 @@ const computeAndAssignScores = async (tripId) => {
     _id: tripId,
   });
 
-  console.log("the trip the scores are to be assigned:", trip);
   trip.rpmScore = scores.rpmScore;
   trip.feedbackConsiderationScore = scores.feedbackConsiderationScore;
   trip.speedScore = scores.speedScore;
+  //new feedbacks can be assigned here...
 
   trip.totalScore =
     0.6 * scores.rpmScore +
@@ -60,7 +62,7 @@ const computeRpmScore = async (tripId) => {
   //const dateStart = subtractSeconds(now(), windowsSizeInSeconds); //new Date(Date.now() - slidingWindowSizeinSeconds);
   const windowsSizeInSeconds = 30;
 
-  const AAtrip = await Trip.findOne({
+  /*const AAtrip = await Trip.findOne({
     _id: tripId,
   });
   console.log("in computeRpmScore, trying to retrieve trip returns ", AAtrip);
@@ -104,7 +106,7 @@ const computeRpmScore = async (tripId) => {
       },
     },
   ]);
-  console.log("in computeRpmScore, after 2nd stage", tripMetrics3);
+  console.log("in computeRpmScore, after 2nd stage", tripMetrics3);*/
 
   const tripMetrics = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip

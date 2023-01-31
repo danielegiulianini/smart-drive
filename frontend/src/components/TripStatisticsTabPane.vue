@@ -10,11 +10,11 @@
       <div class="card-body text-center d-flex justify-content-center" style="min-height:200px"><!--same of no events tab pane's card-->
         <ul class="list-group list-group-flush my-auto">
           <template v-for="(staticsticsValue, staticsticsKey) in tripStatistics"
-            ><VehicleDetailItem
+            ><TripDetailItem
               :label="tripStatisticsLabels[staticsticsKey]"
               :itemValue="staticsticsValue"
               v-if="staticsticsValue != undefined"
-            ></VehicleDetailItem
+            ></TripDetailItem
           ></template>
         </ul>
       </div>
@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import VehicleDetailItem from "../components/VehicleDetailItem.vue";
+import TripDetailItem from "../components/TripDetailItem.vue";
 
 export default {
   components: {
-    VehicleDetailItem,
+    TripDetailItem,
   },
   data() {
     return {

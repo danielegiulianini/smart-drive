@@ -1,7 +1,7 @@
 //not actually needed (since not copied .env file into container)
 //require('dotenv').config({ path: require('find-config')('.env'), debug: true }); //require('dotenv').config({path:__dirname + '/./../../../.env'});
 
-const connectionUri = require("./src/config/db.config.js");
+//const connectionUri = require("./src/config/db.config.js");
 
 // Require express and create an instance of it
 var express = require("express");
@@ -39,7 +39,7 @@ async function startServer() {
   const routes = require("./src/routes");
 
   //microservice's route prefix
-  app.use("/api/v1", routes); 
+  app.use("/api/v1", routes);
   console.log("routes bound");
 
   app.listen(port, () =>

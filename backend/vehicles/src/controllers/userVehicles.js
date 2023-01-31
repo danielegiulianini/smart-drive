@@ -3,19 +3,11 @@ const pick = require("../utils/jsObjectUtils");
 
 //post an association
 const create = async (req, res) => {
-  //userVehicles params:
-  /*
-  _id,
-  vehicleModelId,
-  pictureUri,
-  createdAt,
-  updatedAt
-}));
-*/
   //filtering params contained in client's post request (can use pick too)
   let params = {
-    vehicleIdentificationNumber: req.body.vin,
+    _id: req.body._id, //vehicleIdentificationNumber: req.body.vin,
     vehicleModelId: req.body.vehicleModelId,
+    userId: req.body.userId,
     pictureUri: req.body.pictureUri,
   };
 
@@ -27,7 +19,8 @@ const create = async (req, res) => {
 
 //get all the associations (with filter on userId (query param))
 const getAll = async (req, res) => {
-  console.log("(1)the userId passed is " + req.query.userId);
+  console.log("(1)the query passed is");
+  console.log(req.query);
 
   userVehiclesService
     .list(req.query)
@@ -37,11 +30,11 @@ const getAll = async (req, res) => {
 
 //get a specific association (with filter on vin (req param))
 const get = (req, res) => {
-  const vin = req.params.vin;
-  console.log("(1)the vin passed is " + vin);
+  const _id = req.params._id; // const vin = req.params.vin;
+  console.log("(1)the vin passed is " + _id);
 
   userVehiclesService
-    .get(vin)
+    .get(_id)
     .then((userVehicle) => res.status(200).json(userVehicle))
     //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));
@@ -50,14 +43,15 @@ const get = (req, res) => {
 //edit an association (with filter on vin (req param))
 const edit = async (req, res) => {
   //filtering params contained in client's post request (can use pick too)
-  const vin = req.params.vin;
+  const _id = req.params._id; // const vin = req.params.vin;
   let params = {
     vehicleModelId: req.body.vehicleModelId,
     pictureUri: req.body.pictureUri,
+    retired: req.body.retired,
   };
 
   userVehiclesService
-    .edit(vin, params)
+    .edit(_id, params)
     .then((userVehicle) => res.status(200).json(userVehicle))
     //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));
@@ -66,10 +60,10 @@ const edit = async (req, res) => {
 //delete an association (with filter on vin (req param))
 const remove = async (req, res) => {
   //checking for unauthorized? (rbac access control)
-  const vin = req.params.vin;
+  const _id = req.params._id; // const vin = req.params.vin;
 
   userVehiclesService
-    .remove(vin)
+    .remove(_id)
     .then((userVehicle) => res.status(200).json(userVehicle))
     //should use a dto here (response containing sensitive info!)
     .catch((err) => res.status(400).json(err));

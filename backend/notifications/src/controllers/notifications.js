@@ -2,6 +2,7 @@ const NotificationService = require("../services/notifications");
 
 const list = (req, res) => {
   //params to be filtered before DB interaction for safety reason (in validation middleware)
+  console.log("list request for notifications received");
 
   NotificationService.list(req.query)
     .then((notifications) => res.status(200).json(notifications))
@@ -10,7 +11,7 @@ const list = (req, res) => {
 
 const edit = (req, res) => {
   const notificationId = req.params.notificationId; //same identifier contained in routes file
-  console.log("edit request for notifications received");
+  console.log("edit request for notifications received with body", req.body);
   //params to be filtered before DB interaction for safety reason
   const params = req.body;
 

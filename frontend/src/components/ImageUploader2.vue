@@ -83,7 +83,7 @@ export default {
       type: String,
     },
   },
-  data () {
+  data() {
     return {
       isDragging: false,
       invalidImageMessage: "",
@@ -150,21 +150,27 @@ export default {
         //this.imageSuccessfullyUploaded = true;
 
         //axios (this can be here or in parent component)
-        axios.post("/images", formData).then((response) => { //        axios.post("/images-upload", formData).then((response) => {
+        axios
+          .post("/images", formData)
+          .then((response) => {
+            //        axios.post("/images-upload", formData).then((response) => {
 
-          //display an alert
-          console.log("All images uplaoded successfully");
-          /* no remove
+            //display an alert
+            console.log("All images uplaoded successfully");
+            /* no remove
         this.images = [];
         this.files = [];*/
-          this.imageSuccessfullyUploaded = true;
-          // Emit FormData & image URL to the parent component
-          this.$emit("imageUploaded", { formData, imageUrl });
-        }).catch((err) => {
-          //more user-friendly message here?
-          this.invalidImageMessage = err;
-          console.error(err)
-        });
+            this.imageSuccessfullyUploaded = true;
+            // Emit FormData & image URL to the parent component
+            console.log("la response is:", response);
+            const imageUrl = response.data;
+            this.$emit("imageUploaded", { formData, imageUrl });
+          })
+          .catch((err) => {
+            //more user-friendly message here?
+            this.invalidImageMessage = err;
+            console.error(err);
+          });
       } else {
         console.log(
           "not uploading image as it is the default as no one is selected"
@@ -193,7 +199,7 @@ export default {
   emits: ["imageUploaded", "imageRemoved"],
   watch: {
     initialImage: function (value) {
-      console.log("tttttttttttttttttttchaning image")
+      console.log("tttttttttttttttttttchaning image");
       //here the prop
       this.image = value;
     },

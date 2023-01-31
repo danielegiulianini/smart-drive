@@ -1,5 +1,7 @@
 import axios from "axios";
 import { createClient } from "@supabase/supabase-js";
+import store from "..";
+import io from "https://cdn.socket.io/4.5.4/socket.io.esm.min.js"; //import io from "socket.io-client" does not work
 
 //========== to put in config directory =============
 // Create a single supabase client for interacting with your database
@@ -13,8 +15,7 @@ const supabase = createClient(
 const {
   data: { session },
 } = await supabase.auth.getSession();
-//const { user } = session;
-let user = null;
+let user = "";
 console.log("in users's modules of vuex store, session is:");
 console.log(session);
 if (session) {
@@ -23,19 +24,27 @@ if (session) {
 //=============================================================================
 
 const state = {
-  user: user, //await supabase.auth.user(), //firebaseApp.app.auth().currentUser,
+  user: user, 
+  session: session,
   isLoadedFlag: false,
+  socket: "",
+  ciao: 1,
 };
 
 const getters = {
   getUser: (state) => state.user,
-  isLoggedIn: (state) => !!state.user,
+  getSession: (state) => state.session,
+  isLoggedIn: (state) => state.user, //before:  !!state.user,
   isLoaded: (state) => state.isLoadedFlag,
+  getSocket: (state) => state.socket,
 };
 
 const mutations = {
   setUser: (state, user) => (state.user = user),
+  setSession: (state, session) => (state.session = session),
   setLoadedFlag: (state, value) => (state.isLoadedFlag = value),
+  setSocket: (state, value) => (state.socket = value),
+  setCiao: (state, value) => (state.ciao = value),
 };
 
 const actions = {
@@ -50,6 +59,7 @@ const actions = {
 
       if (session && session.user) {
         commit("setUser", user);
+        commit("setSession", session);
         commit("setLoadedFlag", true);
 
         // Adding a request interceptor
@@ -63,7 +73,7 @@ const actions = {
     });
   },
 
-  async login({ commit }, params) {
+  async login({ commit, getters }, params) {
     const {
       data: { user, session },
       error,
@@ -78,6 +88,32 @@ const actions = {
       throw error; //throwing the error to allow login form to access it (as supabase doesn't throw it!)
     } else {
       commit("setUser", user);
+      commit("setSession", session);
+      console.log("the state is:", state);
+
+      console.log(
+        "setting the socket...?",
+        "the socket is:",
+        getters.getSocket
+      );
+      console.log("getters.getSocket returns ", getters.getSocket);
+      if (!getters.getSocket) {
+        console.log("yes, setting the socket!");
+
+        //could have already created connection (in signin) so must check
+        /*state.socket = io("http://localhost:8088", {
+          query: { token: session.access_token },
+        });*/
+        commit("setCiao", 9);
+        commit(
+          "setSocket",
+          io("http://localhost:8088", {
+            query: { token: session.access_token },
+          })
+        );
+        console.log("thesocket is:", getters.getSocket);
+      }
+
       return (axios.defaults.headers.common["Authorization"] =
         session.access_token);
     }
@@ -103,7 +139,6 @@ const actions = {
 
   async register({ commit }, params) {
     console.log("signup in (users module)");
-
     //this try-catch must be deleted for using exceptions on components
     const {
       data: { user, session },
@@ -116,9 +151,20 @@ const actions = {
     console.log("[users module] the user during register:", { user }); //implicit email verification
     console.log("[users module] the session during register:", { session }); //implicit email verification
     if (error) {
+      console.log("throwing the error");
       throw error; //throwing the error to allow login form to access it (as supabase doesn't throw it!)
     } else {
       commit("setUser", user);
+      commit("setSession", session);
+      /* store.socket = io("http://localhost:8088", {
+        query: { token: session.access_token },
+      });*/
+      commit(
+        "setSocket",
+        io("http://localhost:8088", {
+          query: { token: session.access_token },
+        })
+      );
 
       //If project's "Confirm email" is enabled (see https://app.supabase.com/project/epwsidhcgzajhezxiqyp/auth/users),
       //a user is returned but session is null. (in this case the flow continues
@@ -134,8 +180,12 @@ const actions = {
       .signOut()
       .then(() => {
         delete axios.defaults.headers.common["Authorization"];
+        //disconnecting socket
+        console.log("disconnecting socket");
+        state.socket.disconnect();
         //throw TypeError
         commit("setUser", null);
+        commit("setSession", null);
       })
       .catch((error) => console.error(`errors while logging out: ${error}`));
   },

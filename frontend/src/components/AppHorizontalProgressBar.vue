@@ -74,7 +74,7 @@ export default {
         },
       });
       this.htmlBar.path.style.strokeLinecap = "round";
-      this.htmlBar.animate(this.progressPercentage); // Number from 0.0 to 1.0
+      this.htmlBar.animate(this.progressPercentage);
     },
   },
   mounted() {

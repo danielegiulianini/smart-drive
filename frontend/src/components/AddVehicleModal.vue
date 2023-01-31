@@ -9,20 +9,12 @@
   >
     Add Vehicle
   </button>
-  <!-- mobile button-->
-  <!--<i
+  <button
     id="mobile-button"
-    class="mybtn bi bi-plus-circle"
-    style="font-size: 250%; color: #aab7cf"
-    data-bs-target="#addVehicleModal"
+    class="btn btn-light btn-circle btn-circle-xl m-1"
     data-bs-toggle="modal"
-  ></i>-->
-
-  
-  <!--<button id="btndisclaimer" class="btn btn-light btn-circle btn-circle-xl m-1">
-    <i class="fa fa-plus" style="font-size:150%"></i>
-  </button>-->
-  <button id="btndisclaimer" class="btn btn-light btn-circle btn-circle-xl m-1">
+    data-bs-target="#addVehicleModal"
+  >
     <i class="fa fa-plus"></i>
   </button>
   <!-- Modal -->
@@ -78,14 +70,10 @@ export default {
   }
 }
 /*on screens that are 600 px or more*/
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 601px) {
   #mobile-button {
     display: none;
   }
-}
-
-.mybtn:hover {
-  cursor: pointer;
 }
 
 .btn-circle {
@@ -110,7 +98,6 @@ export default {
   position: relative;
   top: -1px;
   color: #012970;
-
 }
 
 .btn-circle-sm {
@@ -133,31 +120,12 @@ export default {
   line-height: 70px;
   font-size: 1.3rem;
 }
-/*
-.btn-circle i {
-  position: relative;
-  top: 3px;
-}
-
-.btn-circle-xl {
-  width: 85px;
-  height: 85px;
-  line-height: 85px;
-  font-size: 1.3rem;
-  z-index:100000;
-}
-
 #btndisclaimer {
   position: fixed;
   right: 10px;
   bottom: 70px;
-}*/
-#btndisclaimer {
-  position: fixed;
-  right: 10px;
-  bottom: 70px;
-  z-index:1000;
-  border-color:   #012970;
-border-width: 2px;
+  z-index: 1000;
+  border-color: #012970;
+  border-width: 2px;
 }
 </style>

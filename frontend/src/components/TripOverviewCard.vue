@@ -41,7 +41,7 @@
             </div>
             <div class="mt-3 text-center">
               <AppSemiCircularProgressBar
-                :progressPercentage="globalScore"
+                :progress="globalScore"
               ></AppSemiCircularProgressBar>
               <div
                 class="text-muted"
@@ -186,9 +186,10 @@ export default {
     distanceTraveled: { required: true },
   },
   mounted() {
-    console.log("il mio startTimestamp (vehcle card)", this.startTimestamp);
-       console.log("il mio id (vehcle card)", this._id);
+    console.log("il mio startLocation (vehcle card)", this.startLocation);
 
+    console.log("il mio startTimestamp (vehcle card)", this.startTimestamp);
+    console.log("il mio id (vehcle card)", this._id);
   },
   watch: {
     startTimestamp(newVal, oldVal) {
@@ -213,6 +214,6 @@ export default {
   cursor: pointer;
 }
 .card:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 </style>

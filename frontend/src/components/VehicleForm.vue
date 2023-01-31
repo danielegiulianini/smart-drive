@@ -171,7 +171,8 @@
               ></div>
             </div>
           </div>
-          <div class="col-12" v-if="!vehicle._id">
+          <div class="col-12" v-if="!edit">
+            <!-- v-if="!vehicle._id"> in edit form you cannot edit your vin since it's the key in DB-->
             <label for="yourPassword" class="form-label"
               >Your vehicle Identification Number (VIN)</label
             >
@@ -235,8 +236,7 @@ function convertToArrayIfNotAlready(possibleArray) {
 export default {
   components: { ImageUploader2 },
   props: {
-    /* forse i vehicles per fare un po di client side validation altrimenti la faccio con axios
-    in autonomia da qui*/
+    edit: { default: false },
     submitButtonName: {
       type: String,
     },
@@ -396,6 +396,7 @@ export default {
     },
     //------------ event handlers ----------------
     onImageInput: function ({ formData, imageUrl }) {
+      console.log("lo imageUrl in vehicleorm: ", imageUrl);
       this.vehicle.pictureUri = imageUrl;
     },
     onImageRemoved: function () {

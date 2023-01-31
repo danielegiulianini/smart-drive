@@ -10,7 +10,7 @@ const add = async (notification) => {
 //2. edit a notification (for setting it as read)
 //this is a rebus: an api for every possible update (one for image, one for username etc.) or one-for-all (suited if resending all the attributes all the times)
 const edit = async (notificationId, params) => {
-  console.log(`Updating user ${notificationId} with data: ${JSON.stringify(params)}`);
+  console.log(`Updating notification ${notificationId} with data: ${JSON.stringify(params)}`);
 
   return Notification.findOneAndUpdate(
     {

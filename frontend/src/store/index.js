@@ -1,14 +1,13 @@
-import { createStore } from 'vuex'
-import users from './modules/users';
+import { createStore } from "vuex";
+import { createLogger } from "vuex";
+import users from "./modules/users";
 
 export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
+  state: {},
+  mutations: {},
+  actions: {},
   modules: {
-    users
-  }
-})
+    users,
+  },
+  plugins: [createLogger()], //to be possibly removed in production
+});
