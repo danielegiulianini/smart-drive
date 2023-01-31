@@ -16,8 +16,7 @@ services:
       - ./backend/reverse-proxy/conf/stream:/opt/nginx/stream.conf.d
       - ./backend/reverse-proxy/conf/http:/opt/nginx/http.conf.d
     depends_on:
-      - vehicles TODO COMMENTEND FOR TESTING SOCKET IO WITH REVERSE PROXY
-      # - mosquitto #this is transitively obtainable from others, actually...
+      - vehicles
       - users
       - images
       - notifications
@@ -191,7 +190,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     volumes:
       - ./frontend:/usr/src/frontend #not actually needed since no nodemon is required as for HMR (this entry must be updated if moving docker-compose)
     ports:

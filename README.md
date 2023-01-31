@@ -21,7 +21,7 @@ Steps to deploy and use smart-drive web application are:
 1. clone the repo into the desired folder:
 
 ```bash
-	git clone https://github.com/danielegiulianini/smart-drive
+    git clone https://github.com/danielegiulianini/smart-drive
 ```
 
 2.	move inside the downloaded project root folder:

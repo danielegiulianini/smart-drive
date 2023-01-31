@@ -16,10 +16,9 @@ services:
       - ./backend/reverse-proxy/conf/stream:/opt/nginx/stream.conf.d
       - ./backend/reverse-proxy/conf/http:/opt/nginx/http.conf.d
     depends_on:
-      #- vehicles TODO COMMENTEND FOR TESTING SOCKET IO WITH REVERSE PROXY
-      # - mosquitto #this is transitively obtainable from others, actually...
-      #- users
-      #- images
+      - vehicles
+      - users
+      - images
       - notifications
       - trips
     networks:
@@ -39,7 +38,7 @@ services:
     ports:
       - ${MQTT_BROKER_MQTT_EXTERNAL_PORT}:${MQTT_BROKER_MQTT_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything!     #  - ${MQTT_BROKER_WEBSOCKET_EXTERNAL_PORT}:${MQTT_BROKER_WEBSOCKER_INTERNAL_PORT} not used
     depends_on:
-      - vehicles #maybe, as it's a broker with queues, this is actually not required!
+      - vehicles #as it's a broker with queues, this is actually not required!
     networks:
       - backend
 
@@ -54,7 +53,7 @@ services:
       args:
         - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}"
     volumes:
-        - ./backend/users:/usr/src/users #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
+      - ./backend/users:/usr/src/users #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
     ports:
       - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
@@ -69,7 +68,6 @@ services:
       dockerfile: Dockerfile
       args:
         - "PORT=${VEHICLES_MICROSERVICE_INTERNAL_PORT}"
-    #command: npm run dev
     volumes:
       - ./backend/vehicles:/usr/src/vehicles #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
     ports:
@@ -94,22 +92,6 @@ services:
     networks:
       - backend
 
-  notifications:
-    build:
-      context: ./backend/notifications
-      dockerfile: Dockerfile
-      args:
-        - "PORT=${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT}"
-    volumes:
-      - ./backend/notifications:/usr/src/notifications #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
-    ports:
-      - ${NOTIFICATIONS_MICROSERVICE_EXTERNAL_PORT}:${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
-    depends_on:
-      - mosquitto
-      - mongodb-notifications
-    networks:
-      - backend
-
   trips:
     build:
       context: ./backend/trips
@@ -126,6 +108,21 @@ services:
     networks:
       - backend
 
+  notifications:
+    build:
+      context: ./backend/notifications
+      dockerfile: Dockerfile
+      args:
+        - "PORT=${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT}"
+    volumes:
+      - ./backend/notifications:/usr/src/notifications #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
+    ports:
+      - ${NOTIFICATIONS_MICROSERVICE_EXTERNAL_PORT}:${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - mosquitto
+      - mongodb-notifications
+    networks:
+      - backend
 
   #-------------------------------------------------------------------------------------------
   #--DBs
@@ -190,23 +187,20 @@ services:
   #--frontend
   #-------------------------------------------------------------------------------------------
 
-  #frontend:
-   # build:
-    #  context: ./frontend
-     # dockerfile: Dockerfile
-      #args:
-       # - "PORT=${FRONTEND_INTERNAL_PORT}"
-    #volumes:
-     # - ./frontend:/usr/src/frontend #not actually needed since no nodemon is required as for HMR (this entry must be updated if moving docker-compose)
-    #ports:
-     # - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
-    #depends_on:
-     # - nginx-proxy  #leveraging dependencies' transitivity here
-    #networks:
-     # - frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/usr/src/frontend #not actually needed since no nodemon is required as for HMR (this entry must be updated if moving docker-compose)
+    ports:
+      - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+    depends_on:
+      - nginx-proxy #leveraging dependencies' transitivity here
+    networks:
+      - frontend
 
 #volumes shared among services(containers):
-
 networks:
   backend:
   frontend:
