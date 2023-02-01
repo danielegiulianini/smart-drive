@@ -12,7 +12,6 @@ const list = (req, res) => {
 const edit = (req, res) => {
   const notificationId = req.params.notificationId; //same identifier contained in routes file
   console.log("edit request for notifications received with body", req.body);
-  //params to be filtered before DB interaction for safety reason
   const params = req.body;
 
   NotificationService.edit(notificationId, params)
@@ -20,7 +19,6 @@ const edit = (req, res) => {
     .catch((err) => res.status(400).json(err));
 };
 
-//add (for testing)
 const create = async (req, res) => {
   //params contained in client's post request
   let params = {

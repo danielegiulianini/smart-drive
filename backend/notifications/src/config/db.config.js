@@ -8,9 +8,10 @@ const options = ["retryWrites=true", "w=majority"];
 /*
  * URI Format : mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]
  * Source: https://docs.mongodb.com/manual/reference/connection-string/
+ * include port in connection string (if defined).
+ * if not defined: enable dns lookup with +srv
  */
-//include port in connection string (if defined).
-//if not defined: enable dns lookup with +srv
+
 
 function getConnectionUri(
   port,
@@ -23,7 +24,7 @@ function getConnectionUri(
   return `mongodb${port ? "" : "+srv"}://${username}:${password}@${host}${
     port ? ":" + port : ""
   }/${defaultAuthDb}?${options.join("&")}`;
-} //const getConnectionUri = require('../../sharedUtils/mongoDbUtils.js');
+} 
 
 connectionUri = getConnectionUri(
   port,
@@ -32,12 +33,6 @@ connectionUri = getConnectionUri(
   host,
   defaultAuthDb,
   options
-);
-
-console.log(
-  ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><il connection uri is: " +
-    connectionUri +
-    ">>>>>>>>>>>>>>>>>>>>>>>>>>><"
 );
 
 module.exports = {

@@ -52,8 +52,8 @@ async function startServer() {
   });
 
   //socket.io auth middleware
-  io.use(authenticateAndSaveUserId); //to re-enable after testing
-
+  io.use(authenticateAndSaveUserId); 
+  
   io.on("connection", (socket) => {
     console.log("New connection available from user with id", socket.userId);
     notificationsController.onConnection(socket);
@@ -61,7 +61,6 @@ async function startServer() {
 
   console.log("socket.io endpoint setup");
 
-  //only used if exposing REST endpoint tpo (ex. for showing all users notifications)
   server.listen(port, () =>
     console.log(
       `Notification backend listening on port ${port} and subscribed for MQTT data (notification)`

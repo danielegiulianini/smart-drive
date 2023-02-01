@@ -36,10 +36,8 @@ const extractUserIdFromTokenAndPutItToBody = async (req, res, next) => {
 };
 
 const validateToken = async (access_token) => {
-  console.log("validating token with supabase...");
   const userPromise = await supabase.auth.getUser(access_token)
   const user = userPromise.data.user;
-  console.log("lo user in valdiateToken is", user);
   return user;
 };
 

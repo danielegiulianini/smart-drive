@@ -1,5 +1,3 @@
-//only a getall with wuery params (pushing internall y8with mqtt)
-
 const express = require("express");
 
 const AuthMiddleware = require("./../middlewares/auth");
