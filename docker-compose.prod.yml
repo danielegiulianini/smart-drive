@@ -49,7 +49,7 @@ services:
   users:
     build:
       context: ./backend/users
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
       args:
         - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}"
     volumes:
@@ -65,7 +65,7 @@ services:
   vehicles:
     build:
       context: ./backend/vehicles
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
       args:
         - "PORT=${VEHICLES_MICROSERVICE_INTERNAL_PORT}"
     volumes:
@@ -80,7 +80,7 @@ services:
   images:
     build:
       context: ./backend/images
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
       args:
         - "PORT=${IMAGES_MICROSERVICE_INTERNAL_PORT}"
     volumes:
@@ -95,7 +95,7 @@ services:
   trips:
     build:
       context: ./backend/trips
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
       args:
         - "PORT=${TRIPS_MICROSERVICE_INTERNAL_PORT}"
     volumes:
@@ -111,7 +111,7 @@ services:
   notifications:
     build:
       context: ./backend/notifications
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
       args:
         - "PORT=${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT}"
     volumes:
@@ -190,7 +190,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     ports:
       - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} 
       #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!

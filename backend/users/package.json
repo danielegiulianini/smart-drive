@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm install && npm update && nodemon -L index.js",
-    "test": "jest --runInBand --detectOpenHandles"
+    "test": "jest --runInBand --detectOpenHandles",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
