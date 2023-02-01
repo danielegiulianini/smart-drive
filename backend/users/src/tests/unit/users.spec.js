@@ -88,10 +88,6 @@ describe("A Profile service", () => {
       expect(fetchedUser.ecoScore).toBe(0);
       expect(fetchedUser.level).toBe(0);
       expect(fetchedUser.unlockedAchievements).toEqual([]);
-/*
-      console.log("la date of createdUser is:::", fetchedUser.createdAt)
-      console.log("la date of createdUser is of type:::", typeof fetchedUser.createdAt)
-*/
     });
   });
 
@@ -145,11 +141,6 @@ describe("A Profile service", () => {
     it("should not list it anymore if asked", async () => {
       await ProfileService.add(fakeUserData);
       await ProfileService.remove(fakeUserData._id);
-
-      /*expect(async () => {
-        await ProfileService.get(fakeUserData._id);
-      });*/
-      //todo NULL or undefined??
 
       expect(await ProfileService.get(fakeUserData._id)).toBeNull();
     });

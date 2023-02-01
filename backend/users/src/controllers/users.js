@@ -15,13 +15,6 @@ const create = async (req, res) => {
     //profilePictureUri: req.body.profilePictureUri,
   };
 
-  console.log("la req ottenuta: ");
-  console.log(req.body);
-
-  console.log("i params ottenuti: ");
-  console.log(params);
-  //await AchievementsService.unlockAchievements([params._id], ["feedbackConsiderationScore_single_trip_95"])
-
 
   ProfileService.add(params)
     .then((profile) => res.status(201).json(profile)) //todo actions to be refactored since reused
@@ -40,7 +33,7 @@ const get = (req, res) => {
 const edit = (req, res) => {
   const userId = req.params.userId; //same identifier contained in routes file
   console.log("edit request for users received");
-  //params to be filtered before DB interaction for safety reason
+
   const params = req.body;
 
   ProfileService.edit(userId, params)

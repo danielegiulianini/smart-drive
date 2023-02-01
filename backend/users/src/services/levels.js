@@ -1,7 +1,6 @@
 const { now } = require("mongoose");
 const Profile = require("../models/users");
 
-//callback chiamata con l'aumento di punti
 const scoresChanged = async (
   userId,
   totalScore,
@@ -9,17 +8,7 @@ const scoresChanged = async (
   speedScore,
   feedbackConsiderationScore
 ) => {
-  //not reusing general edit function (in theory it should appply a filter for safety reason!)
-  //fetching previous score...
-  /*return Profile.findOneAndUpdate(
-    {
-      _id: userId,
-    },
-    { ecoScore: newTotalScore, level: getLevel(newTotalScore) },
-    {
-      new: true, //returning the new version
-    }
-  );*/
+  
   //let possible exceptions bubble up
   const user = await Profile.findById(userId);
   if (user) {

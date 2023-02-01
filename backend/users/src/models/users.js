@@ -48,7 +48,6 @@ const profileSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    //unlockedAchievements2: [{ type: String }], //the achievements' ids /urls?
     unlockedAchievements: [
       {
         id: String,
@@ -97,4 +96,3 @@ const profileSchema = mongoose.Schema(
 );
 
 module.exports = mongoose.model("users", profileSchema);
-//vehicles: [{ type: String }], //actually can put this association in vehicles since I must fetch from it too

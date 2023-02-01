@@ -21,5 +21,4 @@ COPY . .
 
 #could use "npm start" too as CMD (after setting "start" script in scripts section of micros' package.json)
 CMD [ "npm", "run", "dev" ]   
-
 #CMD [ "node", "index.js" ]

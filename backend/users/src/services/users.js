@@ -16,8 +16,6 @@ const list = async (query) => {
     "page",
     "limit"
   );
-  console.log("la selection:")
-  console.log(selection)
 
   return (
     await Profile.find(selection)
@@ -49,7 +47,7 @@ const get = async (userId) => {
 const edit = async (userId, params) => {
   console.log(`Updating user ${userId} with data: ${JSON.stringify(params)}`);
 
-  //must use a dto here for avoiding user auto-push points!
+  //could use a dto here for avoiding user auto-push points!
 
   return Profile.findOneAndUpdate(
     {

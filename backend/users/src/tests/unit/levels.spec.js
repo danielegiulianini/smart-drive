@@ -13,7 +13,6 @@ afterEach(async () => {
 //add a user
 //change its score
 //verify it has actually changed
-//const scoresChanged = async (userId, scoreDelta) => {
 
 const LevelsService = require("../../services/levels");
 const Profile = require("../../models/users");

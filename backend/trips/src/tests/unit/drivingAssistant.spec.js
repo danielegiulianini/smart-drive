@@ -105,9 +105,6 @@ describe("a driving assistant", () => {
         )
       );
 
-      console.log("il trip created:");
-      console.log(rpmExceedingTrip);
-
       const feedback = await DrivingAssistantService.getAndAssignFeedback(
         rpmExceedingTrip._id,
         rpmFeedbackDeservingMeasurements()[0]

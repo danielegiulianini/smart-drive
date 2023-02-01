@@ -1,5 +1,3 @@
-//not actually needed (since not copied .env file into container)
-//require('dotenv').config({ path: require('find-config')('.env'), debug: true }); //require('dotenv').config({path:__dirname + '/./../../../.env'});
 
 // Require express and create an instance of it
 var express = require("express");

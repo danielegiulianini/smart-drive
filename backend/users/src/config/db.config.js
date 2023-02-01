@@ -23,9 +23,7 @@ function getConnectionUri(
   return `mongodb${port ? "" : "+srv"}://${username}:${password}@${host}${
     port ? ":" + port : ""
   }/${defaultAuthDb}?${options.join("&")}`;
-} //const getConnectionUri = require('../../sharedUtils/mongoDbUtils.js');
-
-
+} 
 
 
 
@@ -38,11 +36,6 @@ connectionUri = getConnectionUri(
   options
 );
 
-console.log(
-  ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><il connection uri is: " +
-    connectionUri +
-    ">>>>>>>>>>>>>>>>>>>>>>>>>>><"
-);
 
 module.exports = {
   connectionUri,
