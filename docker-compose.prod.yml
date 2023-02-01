@@ -190,13 +190,13 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.prod
-    volumes:
-      - ./frontend:/usr/src/frontend #not actually needed since no nodemon is required as for HMR (this entry must be updated if moving docker-compose)
+      dockerfile: Dockerfile
     ports:
-      - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
+      - ${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT} 
+      #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
-      - nginx-proxy #leveraging dependencies' transitivity here
+      - nginx-proxy 
+      #leveraging dependencies' transitivity here
     networks:
       - frontend
 
