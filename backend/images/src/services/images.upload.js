@@ -9,7 +9,7 @@ const supportedMimeTypes = [
   "image/tiff",
 ];
 
-const imageInputName = "imageToUpload"; //NAME (html attribute!) OF THE INPUT CONTAINING THE IMAGE IN THE HTML! could go in config
+const imageInputName = "imageToUpload"; //NAME (html attribute!) OF THE INPUT CONTAINING THE IMAGE IN THE HTML!
 
 function imageRelativeUrlFromFile(file) {
   path = require("path");
@@ -32,7 +32,7 @@ var storage = multer.diskStorage({
   filename: function (req, file, cb) {
     console.log(file);
     file.url = imageCompleteUrlFromFile(file);
-    cb(null, imageRelativeUrlFromFile(file)); // file.originalname
+    cb(null, imageRelativeUrlFromFile(file)); //instead of file.originalname
   },
 });
 var upload = multer({ storage: storage });
@@ -42,9 +42,3 @@ const singleFileUpload = upload.single(imageInputName);
 module.exports = {
   singleFileUpload,
 };
-
-//not actually needed (used express.public instead)
-function getImage() {
-  //must read from file system
-  //must return as JsonResult
-}

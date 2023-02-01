@@ -1,9 +1,5 @@
-//not actually needed (since not copied .env file into container)
-//require('dotenv').config({ path: require('find-config')('.env'), debug: true }); //require('dotenv').config({path:__dirname + '/./../../../.env'});
-
 const connectionUri = require("./src/config/db.config.js");
 
-// Require express and create an instance of it
 var express = require("express");
 var app = express();
 
@@ -23,7 +19,7 @@ app.use(bodyParser.json());
 const port = 8086; //const port = Number(process.env.USERS_MICROSERVICE_INTERNAL_PORT);
 const imagesBaseUrl = "/api/v1"
 
-//retrieve connection string from config file (.env or inside config folder)
+//retrieve connection string from config file (could use .env or inside config folder)
 const dbConfig = require("./src/config/db.config");
 const dbUtil = require("./src/utils/mongooseUtils");
 
