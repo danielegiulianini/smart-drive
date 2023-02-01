@@ -1,33 +1,4 @@
-//this file contains all the queries for unlocking achievements
-
 const Trip = require("../models/trips");
-
-//const getAchievements = (trip) => {
-//fetching trips
-//some achievements always
-//====all the queries searching for achievements:====
-//PRIMO giro con auto diversa
-//PRIMA auto elettrica aggiunta (o PRIMO viaggio con)
-//PRIMA auto a metano aggiunta (o viaggio)
-//PRIMO trip (completato)
-//badges derivanti dal confronto con soglie fisse
-//   >soglie fisse (anche su punti parziali, #guide con caratteristiche (es auto a metano), minuti, km, consecutive active days/weeks/months, active days in a year, in a month, in a week, in a day, since ever
-//     trips in a ... , scores..., x giri con auto elettrica, min/max (PRESTAZIONE ASSOLUTA in singolo trip) o media/somma (COSTANZA)
-//badges derivanti dal confronto con altri (revocabili, non lasciano traccia, MOLTO ONEROSI)
-//   >record di qualsiasi parametro (time, score, rpm medio, active days)
-//    > since when (last month, since your join, since ever)
-//badges derivanti dal confronto con te stesso (PB etc.) => QUESTO NON INTERESSANTE x badge user! è più una cosa da 1.assegnare al trip 2.da mettere nella pag records
-//   >punti conquistati in un giorno wrt tutti altri giorni                   COSTANZA
-//   >punti conquistati in un mese wrt tutti altri mesi                       COSTANZA
-//   >record di ecoscore in un trip wrt tutti altri trip                      PRESTAZIONE DI PICCO
-//   >record di ecoscore in un trip wrt tutti altri trip della stagione (SB)  PRESTAZIONE DI PICCO
-//   >record di ecoscore medio since ever wrt tutti altri (SB)                COSTANZA
-//   >record di ecoscore medio since this year wrt tutti altri (SB)           COSTANZA
-//   >record di ecoscore medio since this year wrt tutti altri (SB)           COSTANZA
-//anniversary (dal primo trip)
-//# of emissions-free sundays
-//===================================================
-//};
 
 const monthsDrivenInAYear = (userId) => {
   const monthsDrivenInYears = Trip.aggregate([
@@ -73,49 +44,8 @@ const performancesInInterval = async (
   userIdAsKeyValueObject,
   IntervalAsKeyValueObject
 ) => {
-  /*console.log("the match stage:");
-  console.log({ $match: userIdAsKeyValueObject }); //{ userId: userId } }, //filter only data of requested user
-  //i risultati vanno poi ordinati secondo la prospettiva scelta
-  console.log("the group stage:");
-  console.log({
-    $group: {
-      _id: Object.assign({ userId: "$_id" }, IntervalAsKeyValueObject),
-      //aggregate values
-      totalTrips: { $sum: 1 },
-
-      totalEcoScore: { $sum: "$totalScore" },
-      totalSpeedEcoScore: { $sum: "$speedScore" },
-      totalRpmEcoScore: { $sum: "$rpmScore" },
-      totalFeedbackConsiderationEcoScore: {
-        $sum: "$feedbackConsiderationScore",
-      },
-      //totalKmPerTrip: { $max: "odometer" },
-      totalTripMinutesDuration: {
-        $sum: { $subtract: ["$endTimestamp", "$startTimestamp"] },
-      },
-
-      maxEcoScorePerTrip: { $max: "$totalScore" },
-      maxSpeedEcoScorePerTrip: { $max: "$speedScore" },
-      maxRpmEcoScorePerTrip: { $max: "$rpmScore" },
-      maxFeedbackConsiderationEcoScorePerTrip: {
-        $max: "$feedbackConsiderationScore",
-      },
-      /*maxKmPerTrip: { $max: "odometer" },*/
-  /*maxTripMinutesDuration: {
-        $max: {
-          $sum: { $subtract: ["$endTimestamp", "$startTimestamp"] },
-        },
-      },
-    },
-  });
-  console.log("i filtered trips:");
-  console.log(await Trip.aggregate([{ $match: userIdAsKeyValueObject }]));
-  console.log("i filtered trips by findOne:");
-
-  console.log(await Trip.find({ userIdAsKeyValueObject }));*/
-
   return await Trip.aggregate([
-    { $match: userIdAsKeyValueObject }, //{ userId: userId } }, //filter only data of requested user
+    { $match: userIdAsKeyValueObject }, //filter only data of requested user
     {
       $group: {
         _id: Object.assign({ userId: "$userId" }, IntervalAsKeyValueObject),
@@ -185,20 +115,8 @@ const getAchievements = async (userId) => {
   const achievementsEvents = []; //array of strings
 
   //============= eco-friendly behaviour ======================
-  /*electricTripsPerformedBy(userId)
-    .then((electricTripsCount) => {
-      if (electricTripsCount >= 10) {
-        achievementsEvents.push("electric_trips_100");
-      } else if (electricTripsCount >= 5) {
-        achievementsEvents.push("electric_trips_5");
-      } else if (electricTripsCount >= 1) {
-        achievementsEvents.push("electric_trips_1");
-      }
-    })
-    .catch((err) => console.log("error during electricTrips"));*/
 
   const performances = await performancesInAMonth(userId);
-  console.log("le performances (for badges assignment) are:", performances);
   //max => peak performance
   const maxEcoScorePerTrip = Math.max(
     ...performances.map((o) => o.maxEcoScorePerTrip)
@@ -301,7 +219,6 @@ const getAchievements = async (userId) => {
 
 //============encouraging eco-driving =================
 const electricTripsPerformedBy = async (userId) => {
-  //db.collection.find(selectionObj,projectionObj)
   const vins = await Trip.find(
     { userId: userId },
     { vehicleIdentificationNumber: 1 }
@@ -313,18 +230,12 @@ const electricTripsPerformedBy = async (userId) => {
   for (v of vins) {
     //todo check if array contains vins only!
     if ((await fetchFuelType(v)).includes("Electricity")) {
-      //todo check both engineType key and value!
       electricTripsCount++;
     }
   }
 
   return electricTripsCount;
-  // } catch (err) {
-  //   console.log(err); //or next(err) to log errors only in one place
-  // }
 };
-
-//const gplDrives = (trip) => {
 
 module.exports = {
   getAchievements,

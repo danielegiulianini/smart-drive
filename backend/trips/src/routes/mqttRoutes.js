@@ -2,7 +2,6 @@
 const TripController = require("../controllers/trips.newMeasurementHandler");
 const publishSubscribe = require("../utils/publishSubscribe");
 
-//to be read from (global) config (constants) file
 const vehiclesTopixPrefix = "vehicles/";
 const vehiclesEventsRegex = new RegExp("^" + vehiclesTopixPrefix + "[^/]+$"); //^vehicles\/[^/]+$
 const vehiclesTopics = vehiclesTopixPrefix + "+"; // vehicles/<VIN>/ (1. no starting / 2. + is one-level wildcard)
@@ -17,7 +16,6 @@ const setupRoutes = () => {
     console.log("trips Connected to mqtt broker");
   });
   publishSubscribe.onMessage((topic, payload) => {
-    //here calling "MQTT"controller as for HTTP
     console.log(
       `received msg at trips server of topic '${topic}' with content '${payload.toString()}'`
     );
@@ -25,10 +23,9 @@ const setupRoutes = () => {
     if (vehiclesEventsRegex.test(topic)) {
       //substring(indexStart, indexEnd)
       const vin = topic.substring(vehiclesTopixPrefix.length);
-      //console.log("the topic is: " + topic); TO RESTORE
 
       try {
-        //console.log("the vin in mqttRoutes: " + vin); TO RESTORE
+        //console.log("the vin in mqttRoutes: " + vin);
         TripController.handleNewMeasurement(vin, JSON.parse(payload));
       } catch (parseError) {
         console.log("json payload not valid");

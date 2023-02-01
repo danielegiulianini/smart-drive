@@ -2,7 +2,6 @@
 const Trip = require("../models/trips");
 const { now, subtractSeconds } = require("../utils/time.utils");
 const mongoose = require("mongoose");
-//todo: remove all the preceding $ from property names!
 
 //computes all the things (ENTRY POINT for close trip event)
 const computeAndAssignScores = async (tripId) => {
@@ -13,7 +12,6 @@ const computeAndAssignScores = async (tripId) => {
   RETURNING A WARNING!!! So, casting here.*/
   tripId = mongoose.Types.ObjectId(tripId);
 
-  //console.log("the trip the scores are to be assigned:", trip);
   console.log("computing and assigning scores");
   const scores = await computeScores(tripId);
   console.log("scores are", scores);
@@ -25,7 +23,6 @@ const computeAndAssignScores = async (tripId) => {
   trip.rpmScore = scores.rpmScore;
   trip.feedbackConsiderationScore = scores.feedbackConsiderationScore;
   trip.speedScore = scores.speedScore;
-  //new feedbacks can be assigned here...
 
   trip.totalScore =
     0.6 * scores.rpmScore +
@@ -58,55 +55,7 @@ const computeSpeedScore = async (tripId) => {
 //joining here scores computation that can be computed with a single query performance reason)
 const computeRpmScore = async (tripId) => {
   console.log("computing RPM score for tripId", tripId);
-  //, windowsSizeInSeconds) => {
-  //const dateStart = subtractSeconds(now(), windowsSizeInSeconds); //new Date(Date.now() - slidingWindowSizeinSeconds);
   const windowsSizeInSeconds = 30;
-
-  /*const AAtrip = await Trip.findOne({
-    _id: tripId,
-  });
-  console.log("in computeRpmScore, trying to retrieve trip returns ", AAtrip);
-
-  const tripMetrics0 = await Trip.aggregate([
-    { $match: { _id: tripId } }, //filter only data of requested trip
-  ]);
-  console.log("in computeRpmScore, after oth stage", tripMetrics0);
-
-  const tripMetrics2 = await Trip.aggregate([
-    { $match: { _id: mongoose.Types.ObjectId(tripId) } }, //filter only data of requested trip
-    { $unwind: "$measurements" },
-  ]);
-  console.log("in computeRpmScore, after 1st stage", tripMetrics2);
-
-  const tripMetrics3 = await Trip.aggregate([
-    { $match: { _id: tripId } }, //filter only data of requested trip
-    { $unwind: "$measurements" },
-    {
-      $group: {
-        //1st grouping (in temporal window) for getting individual (window) metric
-        _id: {
-          year: { $year: "$measurements.timestamp" }, //group by expression
-          dayOfYear: { $dayOfYear: "$measurements.timestamp" }, //group by expression
-          hour: { $hour: "$measurements.timestamp" }, //group by expression
-          interval: {
-            $subtract: [
-              { $second: "$measurements.timestamp" },
-              {
-                $mod: [
-                  { $second: "$measurements.timestamp" },
-                  windowsSizeInSeconds,
-                ],
-              },
-            ],
-          },
-        },
-        //summary fields
-        // count: { $sum: 1 },
-        computedRpmScore: { $stdDevPop: "$measurements.rpm" },
-      },
-    },
-  ]);
-  console.log("in computeRpmScore, after 2nd stage", tripMetrics3);*/
 
   const tripMetrics = await Trip.aggregate([
     { $match: { _id: tripId } }, //filter only data of requested trip
@@ -217,8 +166,6 @@ const computeFeedbackConsiderationScoreOffline = async (tripId) => {
     },
   ]);
 
-  console.log("la feedbackConsMetric: ");
-  console.log(feedbackConsMetric[0]);
 
   const notMoreThan = (value, threshold) => {
     return value > threshold ? threshold : value;

@@ -1,6 +1,8 @@
 //generate some stats data from data acquisition (numeri singoli che riassumono tutto il trip)
 const Trip = require("../models/trips");
 const mongoose = require("mongoose");
+
+
 //triggered by (new data publishing event) or by the conclusion of a trip
 //all the aggregated info ENTRY POINT
 const computeAndUpdateStats = async (tripId, fromTimestamp) => {
@@ -19,7 +21,7 @@ const computeAndUpdateStats = async (tripId, fromTimestamp) => {
     {
       _id: tripId,
     },
-    stats /*{ TO BE CHECKED
+    stats /*{ 
       maxRpm: stats.maxRpm,
       avgRpm: stats.avgRpm,
       maxKph: stats.maxKph,
@@ -40,10 +42,6 @@ const computeStats = async (tripId, fromTimestamp) => {
     computeDistanceAndTimeTraveledStats(tripId),
     computeEngineStats(tripId, fromTimestamp),
   ]).then(([durationStats, engineStats]) => {
-    console.log("the engine stats");
-    console.log(engineStats);
-    console.log("the duration stats");
-    console.log(durationStats);
     return Object.assign(durationStats, engineStats);
   });
 };
@@ -62,8 +60,6 @@ const computeDistanceAndTimeTraveledStats = async (tripId) => {
     Trip.findOne({ _id: tripId })
       //sorting here?
       .then((trip) => {
-        //console.log("[in computeDistanceAndTimeTraveledStats] the trips is: ");
-        //console.log(trip);
         if (trip.measurements.length > 0) {
           const odometerAvailable =
             trip.measurements[trip.measurements.length - 1].odometer &&
@@ -112,12 +108,9 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
 
   //adding match stage (as third) in query to filter values by timestamp if provided
   if (fromTimestamp) {
-    console.log("SPLICING...");
     queryStages.splice(2, 0, {
       $match: { "measurements.timestamp": { $gte: fromTimestamp } },
     });
-  } else {
-    console.log("NOT SPLICING...");
   }
 
   const queryStages2 = [
@@ -125,17 +118,7 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
     { $unwind: "$measurements" },
   ];
   const myStatsFistStage = await Trip.aggregate(queryStages2);
-  /*console.log(
-    "in computeEngineStats, le myBasicEngineStats dopo first stage",
-    myStatsFistStage
-  );*/
-  //console.log("the resulting query stage:");
-  //console.log(queryStages);
   const myBasicEngineStats = await Trip.aggregate(queryStages);
-  console.log(
-    "in computeEngineStats, le myBasicEngineStats complete",
-    myBasicEngineStats
-  );
 
   //all in one query mongoose
   let statsDocs = await Promise.all([
@@ -146,10 +129,6 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
   ]).then(([basicEngineStats]) => {
     console.log("the engine stats");
     console.log(basicEngineStats);
-    //console.log("the speed composition stats");
-    //console.log(speedCompositionStats);
-    //console.log("the rpm composition stats");
-    // console.log(rpmCompositionStats);
     return Object.assign(
       basicEngineStats
       //speedCompositionStats, needed for trips charts (but abandoned because of time lack)
@@ -157,8 +136,6 @@ const computeEngineStats = async (tripId, fromTimestamp) => {
     );
   });
 
-  //console.log("le stats ritornano:");
-  //console.log(statsDocs);
   return statsDocs.length > 0 ? statsDocs[0] : null;
 };
 
@@ -227,7 +204,6 @@ const computeSpeedLimitDeviationComposition = async (tripId, fromTimestamp) => {
   );
 };
 
-//pairSpeedWithSpeedLimit()
 
 module.exports = {
   computeEngineStats,

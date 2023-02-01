@@ -4,8 +4,6 @@ const TripStatsService = require("../services/trips.stats");
 const { sortByProperty } = require("../utils/arrays.utils");
 const { now, subtractSeconds } = require("../utils/time.utils");
 
-//const moment = require("moment");
-
 //this writes to db
 const getAndAssignFeedback = async (tripId, measurementPayload) => {
   const newFeedbacks = await getFeedbacks(tripId, measurementPayload);
@@ -20,34 +18,12 @@ const getAndAssignFeedback = async (tripId, measurementPayload) => {
   return newFeedbacks ? newFeedbacks[0] : null;
 };
 
-//const millis_in_seconds = 1000;
 
 //feedbacks are given analyzing either scores or exact measurements
 const getFeedbacks = async (tripId, measurementPayload) => {
   let feedbacks = [];
 
   const trip = await Trip.findById(tripId);
-  /* measurement:
-     timestamp: { type: Date },
-      rpm: { type: Number },
-      engineLoad: { type: Number },
-      speed: { type: Number },
-      odometerValue: { type: Number },
-
-      //>these for future extensions
-      acceleration: {
-        x: { type: Number },
-        y: { type: Number },
-        z: { type: Number },
-      },
-      position: {
-        longitude: { type: Number },
-        latitude: { type: Number },
-      },
-      fuelRate: {
-        type: Number,
-      },
-      */
 
   //se velocità è sopra ad un limite e ho già dato tempo di adattarsi al feedback... allora
   //oppure se la media delle velocità è > X e l'ultimo consiglio risale da X secs fa ...
@@ -55,23 +31,11 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   const rpmWindowInSeconds = 10;
   const engStats = await TripStatsService.computeEngineStats(
     tripId,
-    /*moment()
-      .subtract(rpmWindowInSeconds, "seconds")
-      .utcOffset(0, false) //ignoring time zone
-      .toDate()*/
     subtractSeconds(now(), rpmWindowInSeconds)
   );
   if (engStats.avgRpm > 3000) {
     feedbacks.push({ text: "Be smoother with the throttle.", priority: 2 });
   }
-  /*
-  or based on single measurement: 
-  if (measurementPayload.rpm > 10) {
-    feedbacks.push({ text: "", priority: 2 });
-  } else if (measurementPayload.rpm > 5) {
-    //speed
-  }*/
-
   //3. =========================== reduce unnecessary emissions (idling) ===============
   //(spegni il motore se è da più di 10 secondi che sei fermo (v=0))
   //const idleWindowInSeconds = 10;
@@ -98,10 +62,6 @@ const getFeedbacks = async (tripId, measurementPayload) => {
     trip.measurements.filter(
       (measurement) =>
         measurement.timestamp >
-        /* moment()
-          .subtract(notRestingWindowInSeconds, "seconds") //THIS IS NEEDED OR NOT???
-          .utcOffset(0, false)
-          .toDate()*/
         now()
     ).length * samplingPeriodInSeconds;
 

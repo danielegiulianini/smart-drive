@@ -317,4 +317,5 @@ describe("a stats calculator", () => {
       let stats = await TripsStatsService.computeEngineStats(emptyTrip._id); //AndUpdateStats(savedTrip._id);
 
       console.log("stats obtained for empty trip:");
-      console.log(stats);*/
+      console.log(stats);
+      */

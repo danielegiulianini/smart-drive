@@ -2,8 +2,6 @@
 const Trip = require("../models/trips");
 const { now } = require("../utils/time.utils");
 
-//const moment = require("moment");
-
 const addTrip = async (trip) => {
   //params sent by frontend must not contain _id for not overriding trips already in the DB.
   //here handling the case it contains it too
@@ -11,7 +9,7 @@ const addTrip = async (trip) => {
 
   //db.nomeCollezione.find([[objSel],[objProj]])
   return Trip.findOne({
-    _id: trip._id, //here id is null?
+    _id: trip._id,
   })
     .then((result) => {
       if (result) {
@@ -28,21 +26,18 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   //- if there's no trips open? discard
   //- it there is: update it
 
-  console.log(
-    "in addMeasurements: userId is" + vin + "and the measurement params:"
-  );
   console.log(newMeasurementParams);
 
   const currentTrip = await Trip.findOne({
     $and: [
       { userId: newMeasurementParams.userId },
-      //{ vehicleIdentificationNumber: vin }, //returning the trip boiund to this vehicleIdentificationNumber
+      //{ vehicleIdentificationNumber: vin }, //returning the trip bound to this vehicleIdentificationNumber
       { endTimestamp: null }, //returning both: 1. documents with existing endTImestamp but set to null and 2. without it
     ],
   });
 
   if (currentTrip) {
-    newMeasurementParams.timestamp = now(); //moment().utcOffset(0, true).toDate(); //new Date();//NOT USING TIME ZONE SINCE MONGODB DOES NOT USE IT (in default endTimestamp)
+    newMeasurementParams.timestamp = now(); 
     currentTrip.measurements.push(newMeasurementParams);
 
     //must set timestamp of measurement
@@ -56,7 +51,7 @@ const addMeasurement = async (vin, newMeasurementParams) => {
 //handle closing trip (invoked by HTTP)  by adding the endTimestamp
 const close = async (tripId) => {
   console.log("closing trip " + tripId);
-  // if it was already closed? override it? (no need for atomicity of findOneAndUpdate since is very
+  //(no need for atomicity of findOneAndUpdate since is very
   // rare to access (reand and write) the same trip from different frontends)
   const tripToEnd = await Trip.findOne({
     _id: tripId,
@@ -72,20 +67,13 @@ const close = async (tripId) => {
       await tripToEnd.save();
     }
   }
-  //if trips has no mesurements can delete it... after cloising it
+  //if trips has no mesurements could delete it... after closing it
   return tripToEnd;
 };
 
-//no possibility to edit or delete trip externally ...
-/*const remove = async (userId) => {
-  return Trip.deleteOne({
-    _id: userId,
-  });
-};*/
 
 //read-only:
 const list = async (query) => {
-  //await Trip.deleteMany(query); //for testing
 
   return Trip.find(query);
 };
@@ -101,6 +89,5 @@ module.exports = {
   addTrip,
   get,
   addMeasurement,
-  //remove,
   close,
 };

@@ -44,23 +44,6 @@ afterEach(async () => {
   await dropCollections();
 });
 
-/*
-//THIS IS IMPORTANT (for demo: actually not) 
-
-
-//notes:
-//one specification for score type...
-//ripropongo la formula con js ... (qui posso riusare la funzione che scrive su db o no ...)
-//check persistance too
-//dati per almeno 2 finestre temporali...
-
-//speed
-
-//rpm
-
-//feedback consideration
-*/
-
 //adapted from: https://stackoverflow.com/questions/7343890/standard-deviation-javascript
 function getStandardDeviation(numbersArr) {
   // CALCULATE AVERAGE
@@ -121,7 +104,6 @@ describe("A score calculator", () => {
       /*const tripWithoutFeedbacks = await createFakeTripWithMeasurements([]); //measurements are not needed
       let scores = await ScoresService.computeScores(tripWithoutFeedbacks._id);
 
-      //istanzio la formula per il caso specifico
       expect(scores.feedbackConsiderationScore).toBeDefined();
       expect(scores.feedbackConsiderationScore).toBeGreaterThanOrEqual(0);
       expect(scores.feedbackConsiderationScore).toBeCloseTo(
@@ -213,9 +195,6 @@ describe("A score calculator", () => {
           0
         );
 
-        /*expect(ScoresService.feedbackConsiderationScore).toBeCloseTo(
-          scores.feedbackConsiderationScore
-        );*/
       }
     });
   });
