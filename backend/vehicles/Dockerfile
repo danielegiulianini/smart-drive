@@ -1,10 +1,10 @@
 FROM node:18.8.0-alpine
 
-#ARG NAME #TO BE USED to pass port when refactoring dockerfile between services!
+#ARG NAME #TO BE USED when refactoring dockerfile between services!
 ARG PORT
 
 # Create microservice directory #TO BE REFACTORED BY LEVERAGING DOCKER S ARG!
-WORKDIR /usr/src/users
+WORKDIR /usr/src/trips
 
 VOLUME /var/log/nginx
 
@@ -21,4 +21,5 @@ COPY . .
 
 #could use "npm start" too as CMD (after setting "start" script in scripts section of micros' package.json)
 CMD [ "npm", "run", "dev" ]   
+
 #CMD [ "node", "index.js" ]
