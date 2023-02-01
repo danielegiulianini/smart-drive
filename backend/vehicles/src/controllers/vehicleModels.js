@@ -1,5 +1,4 @@
 //redirecting here to external service
-//è UN PROBLEMA SE ALCUNE NON HA NNO IL PARAMS??? a questo ci vpensa il check null della validation del middleware!
 const { setResponseWithGetJsonDataFrom } = require("../utils/axiosUtils");
 
 //get years

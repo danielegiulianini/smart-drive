@@ -1,5 +1,3 @@
-//import { createClient } from "@supabase/supabase-js";
-
 createClient = require("@supabase/supabase-js");
 
 const supabase = createClient.createClient(
@@ -12,16 +10,6 @@ const extractUserIdFromTokenAndPutItToBody = async (req, res, next) => {
   let error = "";
   console.log("auth middleware in action");
   if (req.headers.authorization) {
-    //retrieve access_token from request
-    /*let access_token = req.headers.authorization;
-    supabase.auth.api.getUser(access_token).catch((err) => {
-      req.body.tokenUserId = null;
-      error = err;
-    });
-    if (req.body.tokenUserId) {
-      next();
-      return;
-    }*/
 
     access_token = req.headers.authorization;
     supabase.auth

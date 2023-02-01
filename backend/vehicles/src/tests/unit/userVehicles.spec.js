@@ -14,15 +14,6 @@ afterEach(async () => {
 const UserVehicleService = require("../../services/userVehicles");
 const UserVehicle = require("../../models/userVehicles");
 
-//fixtures
-/*  _id: //the so-called vehicleIdentificationNumber
-    vehicleModelId:
-    pictureUri:
-    userId:
-    createdAt: 
-    updatedAt:
-*/
-
 const fakeUserVehicleData = {
   _id: "KM8JU3AC6DU588418", //vin
   vehicleModelId: 351215,

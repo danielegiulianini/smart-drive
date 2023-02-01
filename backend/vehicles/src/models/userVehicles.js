@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-//- tours reference UserVehicle so cannot embed in users
-//- diventa complicato gestire un array di veicoli con possibilmente delle statistiche associate innestato in user
 const userVehicleSchema = mongoose.Schema({
   _id: {
     //the so-called vehicleIdentificationNumber
@@ -30,8 +28,3 @@ const userVehicleSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("UserVehicles", userVehicleSchema);
-
-/*vehicleIdentificationNumber: {
-      type: String,
-      required: true,
-    },*/

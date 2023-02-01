@@ -8,9 +8,10 @@ const app = express();
 
 app.use("/api/v1", routes); //same prefix as real APIs
 
-//this is a specification of  how frontend must ask data to this microservice
-//THIS SPECIICATION MUST BE RUN AFTER RUNNING ALL THE DEPENDENCIES OF VehiclesModels microservice (mongo-vehicle
+//this is a showcase of how frontend must ask data to this microservice (not a specification)
+//THIS suite MUST BE RUN AFTER RUNNING ALL THE DEPENDENCIES OF VehiclesModels microservice (mongo-vehicle
 //better would be as part of a github pipeline)
+
 //I ask a vehicle for which I know... the response... and match against it
 //to be completed... abandoned since it requires to ls
 //...this file only wants to show the format of responses sent from vehicles microservice, so inspect it

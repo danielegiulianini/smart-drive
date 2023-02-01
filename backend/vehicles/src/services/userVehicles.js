@@ -48,18 +48,6 @@ const get = async (vin) => {
 };
 
 //get all the associations (possibly with filter on userId (query param))
-/*const list = async (userId) => {
-  console.log(`Getting vehicles.`);
-  //if not providing filter it returns all the vehicles
-  return UserVehicle.find(
-    userId
-      ? {
-          userId: userId,
-        }
-      : {}
-  );
-};*/
-
 const list = async (query) => {
   console.log(`Getting vehicles.`);
   //if not providing filter it returns all the vehicles

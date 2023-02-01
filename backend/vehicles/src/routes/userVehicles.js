@@ -5,9 +5,6 @@ const router = express.Router();
 const AuthMiddleware = require("./../middlewares/auth");
 const UserVehiclesController = require("../controllers/userVehicles");
 
-//TODO: instead of the controller's handler (directly) could bind to the path an action method that
-//does some prints (so removing them from tha handlers)
-
 //router.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody);
 
 //get all the associations
