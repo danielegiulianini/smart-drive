@@ -13,6 +13,8 @@ VOLUME /var/log/nginx
 # where available (npm@5+)
 COPY package*.json ./
 
+RUN npm config set unsafe-perm=true
+
 RUN npm install
 # If building for production: RUN npm ci --only=production
 

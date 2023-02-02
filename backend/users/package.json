@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npm install && npm update && nodemon -L index.js",
+    "dev": "npm install && nodemon -L index.js",
     "test": "jest --runInBand --detectOpenHandles",
     "start": "node index.js"
   },
@@ -16,7 +16,6 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "find-config": "^1.0.0",
-    "firebase-admin": "^11.0.1",
     "moment": "^2.29.4",
     "mongoose": "^6.5.3",
     "mqtt": "^4.3.7",
