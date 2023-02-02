@@ -38,7 +38,7 @@ export default {
     TheAppHeader,
     TheAppSidebar,
     TheAppFooter,
-    UserBadge,
+    UserBadge,TheAppMobileNavbar,
   },
   mixins: [badges],
 };
