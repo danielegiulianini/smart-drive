@@ -17,12 +17,12 @@ const list = async (query) => {
     "limit"
   );
 
-  return (
-    await Profile.find(selection)
-      .sort({ [orderByColumn]: orderByDirection }) //ECMAScript 2015 (ES6)'s Computed property names
-      //.skip(limit * page)
-      .limit(limit)
-  );
+
+
+  return await Profile.find(selection)
+    .sort({ [orderByColumn]: orderByDirection }) //ECMAScript 2015 (ES6)'s Computed property names
+    //.skip(limit * page)
+    .limit(limit);
 };
 
 const add = async (profile) => {

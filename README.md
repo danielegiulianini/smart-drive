@@ -2,9 +2,22 @@
 
 ## Introduction
 
-A responsive, mobile-first web app for the automatic management of data and events from your vehicle's Control Unit by which to monitor your driving style and receive info for its maintainance.
+A responsive, mobile-first web app for the automatic management of data and events from your vehicle's Control Unit by OBD-II interface, by which to monitor your driving style and receive info for its maintainance, in order to reduce emissions.
 
 ## Features
+Features provided by the web app are:
+
+- user signup
+- vehicles registration
+- user' driving Style scoring
+- real-time acoustic driving assistant 
+- trips tracking
+- progress tracking
+- trips statistics generation
+- real-time dashboard (telemetry)
+- custom, eco-driving badges assignment
+- community leaderboard
+- real-time notification system
 
 ## How to deploy
 
