@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue";
 export default defineConfig({
   plugins: [vue()],
   server: {
-    //host: true,
+    host: true, //fundamental for deploying in container with docker
     port: 8000, //should read it from docker-compose's env (shared with backend)
   },
   commonjsOptions: {
