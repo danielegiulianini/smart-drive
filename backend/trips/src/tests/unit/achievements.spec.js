@@ -59,7 +59,7 @@ describe("An achievements calculator", () => {
       const assignedAchievements = await AchievementsService.getAchievements(
         userId
       );
-      expect(assignedAchievements).toContain("trip_first");
+      expect(assignedAchievements).toContain("trip_1");
     });
   });
 
