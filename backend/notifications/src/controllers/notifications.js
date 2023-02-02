@@ -26,12 +26,6 @@ const create = async (req, res) => {
     read: req.body.isRead,
   };
 
-  console.log("la req ottenuta by notifications' create: ");
-  console.log(req.body);
-
-  console.log("i params ottenuti by notifications' create:");
-  console.log(params);
-
   ProfileService.add(params)
     .then((notification) => res.status(201).json(notification)) //todo actions to be refactored since reused
     .catch((err) => res.status(400).json(err));

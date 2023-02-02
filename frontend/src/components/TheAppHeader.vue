@@ -26,7 +26,12 @@
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
         <li class="nav-item dropdown">
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown"  @click="onNotificationIconPressed">
+          <a
+            class="nav-link nav-icon"
+            href="#"
+            data-bs-toggle="dropdown"
+            @click="onNotificationIconPressed"
+          >
             <i class="bi bi-bell"></i>
             <span
               class="badge bg-primary badge-number"
@@ -222,10 +227,6 @@ export default {
       );
       Promise.all(
         this.lastNotifications.map((notification) => {
-          console.log(
-            "la notification che sto settando a read is: ",
-            notification
-          );
           return axios.post(`${notificationRestEndpoint}/${notification._id}`, {
             isRead: "true",
           });
@@ -234,31 +235,30 @@ export default {
     },
     onSignout() {
       this.$store.dispatch("logout").then(() => {
-        console.log(
-          "redirecting to login page!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!00000"
-        );
         return this.$router.push("login");
       }); //redirecting to home (or login module) after logout
     },
+
+    delay(t, val) {
+      return new Promise(function (resolve) {
+        if (t <= 0) {
+          resolve(val);
+        } else {
+          setTimeout(resolve.bind(null, val), t);
+        }
+      });
+    },
   },
-  mounted() {
-    console.log(
-      "this is from app header!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    );
-  },
+  mounted() {},
   watch: {
     getUser(newValue) {
-      console.log(
-        "attaching user handler now!>>>>>>>>>>>>>>>>>>>>>>>>>>",
-        newValue
-      );
-      //must not trigger watcher edit to getUser are due to logout
-
+      //must not trigger watcher if a modification to getUser is due to logout
       if (this.getUser) {
         //1.fetching some user details with axios
         const loggedInUserId = this.$store.getters.getUser.id;
         axios
           .get(`users/${loggedInUserId}`)
+          .then((userRes) => this.delay(100, userRes)) //wait for user to be added to users micro after supabase signup
           .then((userRes) => {
             console.log("data coming from users (in header)", userRes);
 
@@ -290,21 +290,6 @@ export default {
     },
     getSocket(newValue) {
       if (this.getSocket) {
-        console.log(
-          "attaching socket handler now!>>>>>>>>>>>>>>>>>>>>>>>>>>",
-          newValue
-        );
-        //3. bindind io for notifications
-        console.log(
-          "from header:this.$store is: ",
-          this.$store //this.$store.state.users.socket
-        );
-        console.log(
-          "from header:this.$store.getters.getSocket is: ",
-          this.$store.getters.getSocket //this.$store.state.users.socket
-        );
-        console.log("the users from header comp is: ", this.$store.state.users);
-
         //I must wait for the socket to be ready before binding observer to it
         newValue.on("notification", this.onNewNotification);
       }

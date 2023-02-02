@@ -17,6 +17,7 @@ import PageNotFound from "../views/PageNotFound.vue";
 import NotificationsPage from "../views/NotificationsPage.vue";
 
 const routes = [
+  { path: "/", name: "home", component: UserLoginFormPage },
   {
     path: "/profile",
     name: "Profile",
@@ -117,7 +118,7 @@ router.beforeEach((to, from, next) => {
     console.log("store.getters.isLoggedIn returns ", store.getters.isLoggedIn);
     if (!store.getters.isLoggedIn || !store.getters.getSocket) {
       console.log("user not logged in");
-      next({ name: "login" });  //could save destination in login page (for not restarting each time from profile)
+      next({ name: "login" }); //could save destination in login page (for not restarting each time from profile)
     } else {
       console.log("user logged in");
 

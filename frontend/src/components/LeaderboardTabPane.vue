@@ -97,7 +97,7 @@
                         <span
                           class="card-text text-bf"
                           style="font-size: 300%"
-                          >{{ score[scoreSorting] ? score[scoreSorting].toFixed(2) : "" }}</span
+                          >{{ score[scoreSorting] ? score[scoreSorting].toFixed(2) : "0" }}</span
                         ><!-- to be added: .toFixed(2) -->
                         <p
                           class="card-text text-muted"

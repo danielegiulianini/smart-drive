@@ -144,7 +144,7 @@ export default {
       xp: 0,
       level: "",
       scoresTrend: [],
-      totalScore: "",
+      totalScore: 0,
       rpmScore: "",
       speedScore: "",
       feedbackConsiderationScore: "",
@@ -198,7 +198,9 @@ export default {
         console.log("data coming from users micro", userRes);
 
         const userDetail = userRes.data;
-        this.totalScore = userDetail.ecoScore;
+        this.totalScore = userDetail.ecoScore ?  userDetail.ecoScore  : 0;
+        console.log("dafter assignment ecoscore is", this.totalScore);
+
         this.speedScore = userDetail.speedScore;
         this.rpmScore = userDetail.rpmScore;
         this.feedbackConsiderationScore = userDetail.feedbackConsiderationScore;

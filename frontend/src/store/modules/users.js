@@ -1,6 +1,5 @@
 import axios from "axios";
 import { createClient } from "@supabase/supabase-js";
-import store from "..";
 import io from "https://cdn.socket.io/4.5.4/socket.io.esm.min.js"; //import io from "socket.io-client" does not work
 
 // Create a single supabase client for interacting with your database
@@ -48,7 +47,6 @@ const actions = {
 
     //Geting the currently signed-in user
     supabase.auth.onAuthStateChange((event, session) => {
-      console.log("printing (event; session) in onAuthStateChange");
       console.log(event, session);
 
       if (session && session.user) {
@@ -75,11 +73,9 @@ const actions = {
       email: params.email,
       password: params.password,
     });
-    console.log("[users module] the error during login:", { error });
-    console.log("[users module] the user:", { user });
-    console.log("[users module] the session:", { session });
+    
     if (error) {
-      throw error; //throwing the error to allow login form to access it (as supabase doesn't throw it!)
+      throw error; //throwing the error to allow login form to access the error and didplay error message (as supabase doesn't throw it!)
     } else {
       commit("setUser", user);
       commit("setSession", session);
@@ -91,7 +87,7 @@ const actions = {
             query: { token: session.access_token },
           })
         );
-        console.log("thesocket is:", getters.getSocket);
+        console.log("the socket is:", getters.getSocket);
       }
 
       return (axios.defaults.headers.common["Authorization"] =

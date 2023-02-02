@@ -8,8 +8,8 @@ const options = ["retryWrites=true", "w=majority"];
 /*
  * URI Format : mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]
  * Source: https://docs.mongodb.com/manual/reference/connection-string/
-include port in connection string (if defined).
-if not defined: enable dns lookup with +srv
+ * include port in connection string (if defined).
+ * if not defined: enable dns lookup with +srv
  */
 
 function getConnectionUri(

@@ -13,7 +13,7 @@ COPY vite.config.js ./
 
 RUN npm install
 
-# Bundle microservice source
+# Bundle microservice source (must include a .dockerignore)
 COPY . .
 
 CMD [ "npm", "run", "dev" ]   
