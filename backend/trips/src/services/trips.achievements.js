@@ -211,7 +211,7 @@ const getAchievements = async (userId) => {
   } else if (totalTrips >= 5) {
     achievementsEvents.push("trips_5");
   } else if (totalTrips == 1) {
-    achievementsEvents.push("trip_1");
+    achievementsEvents.push("trips_1");
   }
 
   return achievementsEvents;
