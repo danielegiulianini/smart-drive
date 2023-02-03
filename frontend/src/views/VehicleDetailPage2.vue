@@ -481,10 +481,11 @@ export default {
           this.statistics.tripDuration = this.computeMinMaxAvgSum(
             vehicleTripsSortedByTimestamp.map((trip) => trip.duration)
           );
+          const thisRef = this;
           this.statistics.estimatedTripCost = this.computeMinMaxAvgSum(
             vehicleTripsSortedByTimestamp.map((trip) =>
-              getTripCostFromAnnualCost(
-                this.overview.fuelCost08,
+              thisRef.getTripCostFromAnnualCost(
+                thisRef.overview.fuelCost08,
                 trip.distanceTraveled
               )
             )

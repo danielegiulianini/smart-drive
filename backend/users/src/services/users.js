@@ -2,6 +2,7 @@ const Profile = require("../models/users");
 const { omit } = require("../utils/jsObjectUtils");
 
 const list = async (query) => {
+
   //add filtering, sorting, paginating
   const orderByColumn = query.order_by_column || "created_at";
   const orderByDirection = query.order_by_direction || "desc";
@@ -39,6 +40,8 @@ const add = async (profile) => {
 };
 
 const get = async (userId) => {
+
+  
   console.log(`Getting profile by ID: ${userId}`);
   return Profile.findById(userId);
 };

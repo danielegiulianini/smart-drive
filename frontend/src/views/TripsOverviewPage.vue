@@ -131,6 +131,8 @@ export default {
             trip.globalScore = trip.totalScore;
 
             if (trip.vehicleIdentificationNumber) {
+
+              console.log("trips is ", trip)
               //redundant if used for testing (when a trip could not have its vin)
               //============================= vehicles info =============================
               return (

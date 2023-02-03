@@ -2,15 +2,6 @@
   <section
     class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4"
   >
-    <!--FOR DEBUGGING ====-->
-    current active breakpoint:
-    <div class="d-block d-sm-none">xs</div>
-    <div class="d-none d-sm-block d-md-none">sm</div>
-    <div class="d-none d-md-block d-lg-none">md</div>
-    <div class="d-none d-lg-block d-xl-none">lg</div>
-    <div class="d-none d-xl-block">xl</div>
-    <!--==================-->
-
     <div class="container">
       <div class="row justify-content-center">
         <div
@@ -24,7 +15,7 @@
                   Login to your account
                 </h5>
                 <p class="text-center small">
-                  Enter your username and password to start using the web app
+                  Enter your username and password to start using smart-drive app
                 </p>
               </div>
 

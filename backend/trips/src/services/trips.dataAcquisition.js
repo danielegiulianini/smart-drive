@@ -74,7 +74,6 @@ const close = async (tripId) => {
 
 //read-only:
 const list = async (query) => {
-
   return Trip.find(query);
 };
 

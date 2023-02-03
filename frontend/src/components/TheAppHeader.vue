@@ -24,7 +24,7 @@
       <a href="#" class="logo d-flex align-items-center">
         <img src="/src/assets/style/img/webappLogo/favicon-32x32.png" alt="" />
         <!--to remove title in xs: <span class="d-none d-sm-block ps-2">DriveSmart</span>-->
-        <span class="ps-2">DriveSmart</span>
+        <span class="ps-2">SmartDrive</span>
       </a>
     </div>
     <!-- End Logo -->
@@ -198,6 +198,7 @@ export default {
     },
     //====================== user-related======================
     firstNameInitial() {
+      console.log("executing firstNameInitial ....")
       return this.userFirstName ? this.userFirstName.charAt(0) : "";
     },
     actualPictureUri() {
@@ -256,16 +257,17 @@ export default {
       });
     },
   },
-  mounted() {console.log("il this.route.name: " + this.$route.name)},
+  mounted() {
+    console.log("il this.route.name: " + this.$route.name);
+  },
   watch: {
     getUser(newValue) {
       //must not trigger watcher if a modification to getUser is due to logout
       if (this.getUser) {
         //1.fetching some user details with axios
         const loggedInUserId = this.$store.getters.getUser.id;
-        axios
-          .get(`users/${loggedInUserId}`)
-          .then((userRes) => this.delay(100, userRes)) //wait for user to be added to users micro after supabase signup
+        this.delay(400, "") //wait for letting signup' POST be processed by uses microservice
+          .then(() => axios.get(`users/${loggedInUserId}`))
           .then((userRes) => {
             console.log("data coming from users (in header)", userRes);
 
@@ -278,7 +280,7 @@ export default {
           //2.fetching unseen notifications with axios
           .then(() =>
             axios.get(
-              `${notificationRestEndpoint}?userId=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
+              `${notificationRestEndpoint}?recipient=${loggedInUserId}&isRead=false&limit=${countOfNotificationsToDisplay}`
             )
           ) //filtering and sorting
           .then((notificationRes) => {
@@ -290,7 +292,7 @@ export default {
           })
           .catch((err) => console.error(err)) //a more user-friendly message here...
           .finally(() => {
-            console.log("nel finally");
+            console.log("in the finally");
             this.isLoading = false;
           });
       }
