@@ -90,17 +90,26 @@ export default {
     kph(newKph, oldKph) {
       const a = this;
 
-      if (newKph > 200) {
+     /* if (newKph > 200) {
         this.kph = 200;
+      }*/
+      let fixedKph = newKph;
+      if (fixedKph > 200) {
+        fixedKph = 200;
       }
+
       const TEXTUAL_UPDATE_DURATION_IN_SECONDS = 3;
+      
       //this call is needed to refresh the chart
-      this.chart.updateSeries([this.kphInPercentage]);
+      this.chart.updateSeries([fixedKph / maxKph * 100]);
+      //[this.kphInPercentage]);
       var zero = { val: oldKph };
+
+
       //from, to
       gsap.to(zero, {
         duration: TEXTUAL_UPDATE_DURATION_IN_SECONDS,
-        val: newKph,
+        val: fixedKph,
         onUpdate: countNumber,
       });
 

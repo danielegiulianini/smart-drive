@@ -18,14 +18,13 @@ export default {
   },
   data() {
     return {
-      tweened: this.odometer,
+      tweened: this.odometer/1000,
     };
   },
   mounted() {},
   watch: {
     odometer(newOdometer) {
-      console.log("odometer changed!!")
-      gsap.to(this, { duration: 0.5, tweened: Number(newOdometer) || 0 });
+      gsap.to(this, { duration: 0.5, tweened: Number(newOdometer/1000) || 0 });
     },
   },
 };

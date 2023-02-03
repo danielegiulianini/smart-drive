@@ -33,7 +33,10 @@ export default {
   },
   computed: {
     rpmInPercentage() {
-      return (this.rpm / maxRpm) * 100;
+      let percentage = (this.rpm / maxRpm) * 100;
+      if (percentage > 100) {
+        percentage = 100;
+      }
     },
   },
   mounted() {
@@ -95,11 +98,15 @@ export default {
   watch: {
     rpm(newRpm, oldRpm) {
       const a = this;
-      const TEXTUAL_UPDATE_DURATION_IN_SECONDS = 3
+      const TEXTUAL_UPDATE_DURATION_IN_SECONDS = 3;
       this.chart.updateSeries([this.rpmInPercentage]);
       var zero = { val: oldRpm };
       //from, to
-      gsap.to(zero, { duration: TEXTUAL_UPDATE_DURATION_IN_SECONDS, val: newRpm, onUpdate: countNumber });
+      gsap.to(zero, {
+        duration: TEXTUAL_UPDATE_DURATION_IN_SECONDS,
+        val: newRpm,
+        onUpdate: countNumber,
+      });
 
       //removing decimals
       function countNumber() {
