@@ -14,7 +14,7 @@
       <!-- End Home Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link" @click="this.$router.push('/profile')">
+        <a class="nav-link" @click="this.$router.push('/profile') " :class="{ collapsed: $route.name != 'Profile' }">
           <i class="bi bi-person-circle"></i>
           <span>Profile</span>
         </a>
@@ -22,7 +22,7 @@
       <!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" @click="this.$router.push('/score')">
+        <a class="nav-link" @click="this.$router.push('/score') " :class="{ collapsed: $route.name != 'Score' }">
           <i class="bi bi-speedometer"></i>
           <span>Driving Score</span>
         </a>
@@ -30,7 +30,7 @@
       <!-- End score Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" @click="this.$router.push('/garage')">
+        <a class="nav-link" @click="this.$router.push('/garage')" :class="{ collapsed: $route.name != 'Garage' }">
           <i class="bi bi-car-front"></i>
           <span>Garage</span>
         </a>
@@ -38,7 +38,7 @@
       <!-- End Garage Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" @click="this.$router.push('/trips')">
+        <a class="nav-link" @click="this.$router.push('/trips')" :class="{ collapsed: $route.name != 'Trips' }">
           <i class="fa fa-road" aria-hidden="true"></i>
           <span>Trips</span>
         </a>
@@ -143,6 +143,11 @@ this navbar in: xs, sm, md, lg.
   color: #899bbd;
   font-weight: 600;
   margin: 10px 0 5px 15px;
+}
+
+/*me */
+.nav-link.activated {
+  background: #f6f9ff;
 }
 
 .sidebar-nav .nav-link {
