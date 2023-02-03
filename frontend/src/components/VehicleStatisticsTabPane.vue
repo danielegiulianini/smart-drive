@@ -7,9 +7,13 @@
     aria-labelledby="profile-tab"
   >
     <!-- START OF CARD WRAPPed by tab-pane-->
-    <div class="card p-2 m-2" style="box-shadow: none">
+    <div class="card p-2 m-2" style="box-shadow: none"           v-if="statistics.tripsCount > 0"
+>
       <div class="card-body">
-        <div class="accordion accordion-flush" id="accordionFlushExample">
+        <div
+          class="accordion accordion-flush"
+          id="accordionFlushExample"
+        >
           <div class="accordion-item">
             <h2 class="accordion-header" id="flush-headingOne">
               <button
@@ -116,7 +120,7 @@
                 ></TripDetailItem>
 
                 <TripDetailItem
-                label="avg trip distance (km)"
+                  label="avg trip distance (km)"
                   :itemValue="statistics.tripDistance.avg"
                 ></TripDetailItem>
                 <TripDetailItem
@@ -171,8 +175,17 @@
             </div>
           </div>
         </div>
+        
       </div>
     </div>
+    <div
+          v-else
+          class="d-flex flex-column justify-content-center align-items-center"
+          style="height: 300px"
+        >
+          <h1 style="font-size: 150%">Still no statistics</h1>
+          <p class="text-muted">Drive with the app to see your statistics.</p>
+        </div>
     <!-- card wrapping row-->
   </div>
 </template>
