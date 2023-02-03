@@ -210,11 +210,11 @@ export default {
     sortedUsersToDisplay() {
       //mapping filter from string to function
       let sortBy = {};
-      sortBy["totalScore"] = (a, b) => a.ecoScore - b.ecoScore;
-      sortBy["rpmScore"] = (a, b) => a.rpmScore - b.rpmScore;
-      sortBy["speedScore"] = (a, b) => a.speedScore - b.speedScore;
+      sortBy["totalScore"] = (a, b) => b.ecoScore - a.ecoScore;
+      sortBy["rpmScore"] = (a, b) => b.rpmScore - a.rpmScore;
+      sortBy["speedScore"] = (a, b) => b.speedScore - a.speedScore;
       sortBy["feedbackConsiderationScore"] = (a, b) =>
-        a.feedbackConsiderationScore - b.feedbackConsiderationScore;
+        b.feedbackConsiderationScore - a.feedbackConsiderationScore;
       //const sortByXp = (a, b) => a.feedbackConsiderationScore - b.feedbackConsiderationScore;
 
       return this.users.sort(sortBy[this.scoreSorting]);
