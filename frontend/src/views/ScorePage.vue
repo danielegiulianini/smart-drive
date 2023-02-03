@@ -99,7 +99,7 @@
           <!-- end of col with circluar progress bar -->
 
           <div class="col-lg-6">
-            <div class="card nested-card mb-2">
+            <div class="card nested-card mb-2 h-100">
               <div class="card-body">
                 <h5 class="card-title pb-0 mb-0">Score trend</h5>
                 <!-- score trend Chart -->
@@ -121,7 +121,7 @@
           </div>
 
           <div class="col-lg-6">
-            <div class="card nested-card mb-2">
+            <div class="card nested-card mb-2 h-100">
               <div class="card-body">
                 <h5 class="card-title pb-0 mb-0">Driving skills</h5>
 
