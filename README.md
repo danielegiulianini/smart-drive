@@ -47,7 +47,7 @@ Steps to deploy and use smart-drive web application are:
     docker-compose -f docker-compose.prod.yml up --build
 ```
 
-4.	connect with a browser to the address "localhost://8000" by typing it into to the search bar
+4.	connect with a browser to the address "http://localhost:8000" by typing it into to the search bar
 
 5.	when you want to stop containers execution, deleting them together with allocated resources, type:
 ```bash
