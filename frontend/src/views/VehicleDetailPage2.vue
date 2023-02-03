@@ -372,7 +372,7 @@ export default {
   },
   mounted() {
     //manually joining userVehicles and vehicleModels here assigning to data properties
-    console.log("l'id is: ", this._id);
+
     //1. fetching user vehicle
     axios
       .get(`vehicles/userVehicles/${this._id}`)

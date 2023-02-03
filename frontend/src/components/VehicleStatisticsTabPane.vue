@@ -7,13 +7,13 @@
     aria-labelledby="profile-tab"
   >
     <!-- START OF CARD WRAPPed by tab-pane-->
-    <div class="card p-2 m-2" style="box-shadow: none"           v-if="statistics.tripsCount > 0"
->
+    <div
+      class="card p-2 m-2"
+      style="box-shadow: none"
+      v-if="statistics.tripsCount > 0"
+    >
       <div class="card-body">
-        <div
-          class="accordion accordion-flush"
-          id="accordionFlushExample"
-        >
+        <div class="accordion accordion-flush" id="accordionFlushExample">
           <div class="accordion-item">
             <h2 class="accordion-header" id="flush-headingOne">
               <button
@@ -63,38 +63,49 @@
                   <TripDetailItem
                     label="min safety score"
                     :itemValue="statistics.speedScore.min"
+                    v-if="statistics.speedScore.min"
                   ></TripDetailItem>
                   <TripDetailItem
                     label="max aggressiveness score"
                     :itemValue="statistics.rpmScore.max"
+                    v-if="statistics.rpmScore.max"
                   ></TripDetailItem>
 
                   <TripDetailItem
                     label="avg aggressiveness score"
                     :itemValue="statistics.rpmScore.avg"
+                    v-if="statistics.rpmScore.avg"
+
                   ></TripDetailItem>
                   <TripDetailItem
                     label="min aggressiveness score"
                     :itemValue="statistics.rpmScore.min"
+                    v-if="statistics.rpmScore.min"
+
                   ></TripDetailItem>
                   <TripDetailItem
                     label="max feedback score"
                     :itemValue="statistics.feedbackConsiderationScore.max"
+                    v-if="statistics.feedbackConsiderationScore.max"
+
                   ></TripDetailItem>
 
                   <TripDetailItem
                     label="avg feedback score"
                     :itemValue="statistics.feedbackConsiderationScore.avg"
+                    v-if="statistics.feedbackConsiderationScore.avg"
+
                   ></TripDetailItem>
                   <TripDetailItem
                     label="min feedback score"
                     :itemValue="statistics.feedbackConsiderationScore.min"
+                    v-if="statistics.feedbackConsiderationScore.min"
                   ></TripDetailItem>
                 </ul>
               </div>
             </div>
           </div>
-          <div class="accordion-item">
+             <!--<div class="accordion-item">
             <h2 class="accordion-header" id="flush-headingTwo">
               <button
                 class="accordion-button collapsed fw-bold"
@@ -134,7 +145,8 @@
                 ></TripDetailItem>
               </ul>
             </div>
-          </div>
+          </div>-->
+          <!--
           <div class="accordion-item">
             <h2 class="accordion-header" id="flush-headingThree">
               <button
@@ -171,21 +183,19 @@
                   :itemValue="statistics.estimatedTripCost.max"
                 ></TripDetailItem>
               </ul>
-              <!--end first col-->
             </div>
-          </div>
+          </div>-->
         </div>
-        
       </div>
     </div>
     <div
-          v-else
-          class="d-flex flex-column justify-content-center align-items-center"
-          style="height: 300px"
-        >
-          <h1 style="font-size: 150%">Still no statistics</h1>
-          <p class="text-muted">Drive with the app to see your statistics.</p>
-        </div>
+      v-else
+      class="d-flex flex-column justify-content-center align-items-center"
+      style="height: 300px"
+    >
+      <h1 style="font-size: 150%">Still no statistics</h1>
+      <p class="text-muted">Drive with the app to see your statistics.</p>
+    </div>
     <!-- card wrapping row-->
   </div>
 </template>
