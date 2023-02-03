@@ -57,9 +57,12 @@ export default {
             },
             {}
           );
-          //this.$router.push("Profile").then(() => this.$router.go()) 
+          //this.$router.push("Profile").then(() => this.$router.go())
           //pro of this: it updates profile page data (otherwise not updated)
           //cons: it requires authentication
+        })
+        .then(() => {
+          this.$router.go();
         })
         .catch((err) => {
           //a mapping (to a more user-friendly error) could be added here (leveraging status codes returned by servers)
