@@ -4,9 +4,16 @@
     id="header"
     class="header fixed-top d-flex align-items-center"
     v-if="
+      /* old:
       !$route.name ||
       !(
-        $route.name == '' ||
+        $route.name == '' ||  //to remove if adapting home page
+        $route.name == 'signup' ||
+        $route.name == 'login' ||
+        $route.name == 'not-found'
+      )*/
+      !(
+        $route.name == 'home' ||
         $route.name == 'signup' ||
         $route.name == 'login' ||
         $route.name == 'not-found'
@@ -249,7 +256,7 @@ export default {
       });
     },
   },
-  mounted() {},
+  mounted() {console.log("il this.route.name: " + this.$route.name)},
   watch: {
     getUser(newValue) {
       //must not trigger watcher if a modification to getUser is due to logout
