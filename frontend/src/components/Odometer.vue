@@ -18,13 +18,27 @@ export default {
   },
   data() {
     return {
-      tweened: this.odometer/1000,
+      tweened: this.odometer,
     };
   },
   mounted() {},
   watch: {
-    odometer(newOdometer) {
-      gsap.to(this, { duration: 0.5, tweened: Number(newOdometer/1000) || 0 });
+    odometer(newOdometer, oldOdometer) {
+      const a = this;
+
+      var zero = { val: oldOdometer/1000 };
+
+      gsap.to(zero, {
+        duration: 0.5,
+        val: newOdometer/1000,
+        onUpdate: countNumber,
+      });
+
+      //removing decimals
+      function countNumber() {
+        var final = gsap.utils.snap(1, zero.val);
+        a.tweened = final;
+      }
     },
   },
 };

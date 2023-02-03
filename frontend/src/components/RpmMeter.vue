@@ -37,6 +37,7 @@ export default {
       if (percentage > 100) {
         percentage = 100;
       }
+      return percentage;
     },
   },
   mounted() {
