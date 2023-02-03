@@ -111,21 +111,21 @@
             >
               <ul class="list-group list-group-flush">
                 <TripDetailItem
-                  label="max total score"
+                  label="max trip distance (km)"
                   :itemValue="statistics.tripDistance.max"
                 ></TripDetailItem>
 
                 <TripDetailItem
-                  label="avg total score"
+                label="avg trip distance (km)"
                   :itemValue="statistics.tripDistance.avg"
                 ></TripDetailItem>
                 <TripDetailItem
-                  label="max total score"
+                  label="max trip duration (')"
                   :itemValue="statistics.tripDistance.max"
                 ></TripDetailItem>
 
                 <TripDetailItem
-                  label="avg total score"
+                  label="avg trip duration (')"
                   :itemValue="statistics.tripDistance.avg"
                 ></TripDetailItem>
               </ul>
