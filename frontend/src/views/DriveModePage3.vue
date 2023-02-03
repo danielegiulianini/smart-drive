@@ -195,7 +195,7 @@ export default {
       console.log("feedback arrived");
 
       if (this.acousticFeedbackEnabled) {
-        speak(drivingFeedback.feedback.text)
+        this.speak(drivingFeedback.feedback.text)
       } else {
         console.log("not speaking as acoustic feedback disabled");
       }
