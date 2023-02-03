@@ -59,7 +59,7 @@ export default {
     const loggedInUserId = this.$store.getters.getUser.id;
     //fetching notifications
     axios
-      .get(`${notificationRestEndpoint}?userId=${loggedInUserId}`)
+      .get(`${notificationRestEndpoint}?recipient=${loggedInUserId}`)
       .then((result) => {
         console.log(
           "data coming from notifications (in NotificationPage)",
