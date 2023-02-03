@@ -38,8 +38,6 @@
                 ></button>
               </div>-->
           <div class="modal-body">
-            lo year (in edit vehicle modal) by object is: {{initialVehicle.year}}
-            lo year by string is: {{year}}
             <EditVehicleForm v-bind:initialVehicle="initialVehicle" :year="year"></EditVehicleForm>
           </div>
           <!--<div class="modal-footer">
