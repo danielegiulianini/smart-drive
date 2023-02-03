@@ -56,9 +56,6 @@ export default {
       type: Object,
     },
   },
-  mounted() {
-    console.log("il initialUser passed is", this.initialUser);
-  },
 };
 </script>
 

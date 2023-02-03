@@ -38,6 +38,13 @@ export default {
           //maybe a mapping (to a more user-friendly error) could be added here
           //possible errors: network-related
           console.log("error happened while posting new vehicle");
+          this.$notification.show(
+            "Error",
+            {
+              body: "Errors in vehicle edit!",
+            },
+            {}
+          );
           this.overallError = err;
         })
         .finally(() => (this.isSubmitting = false));

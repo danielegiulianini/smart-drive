@@ -41,7 +41,6 @@ export default {
       console.log("axios post in user edit");
       this.isSubmitting = true;
       const loggedInUser = this.$store.getters.getUser;
-      console.log("lo url posted: ")
       axios
         .post(`vehicles/userVehicles/${vehicle._id}`, {
           pictureUri: vehicle.pictureUri,
