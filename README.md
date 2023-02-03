@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A responsive, mobile-first web app for the automatic management of data and events from your vehicle's Control Unit by OBD-II interface, by which to monitor your driving style and receive info for its maintainance, in order to reduce emissions.
+A responsive, mobile-first app that acts as a support for the optimization of the user's driving style in terms of polluting emissions, safety, comfort by applying gamification principles and an infrastrcture for processing of the data acquired from the vehicle control unit by means of OBD-II standard.
 
 ## Features
 Features provided by the web app are:
