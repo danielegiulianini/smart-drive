@@ -22,7 +22,7 @@
       </div>
     </th>
     <!-- <td class="d-none d-sm-table-cell text-center km">15</td>-->
-    <td class="d-none d-sm-table-cell text-center xp">{{ xp }}</td>
+    <td class="d-none d-sm-table-cell text-center xp">{{ xp ? xp.toFixed(2) : xp }}</td>
     <td class="d-none d-sm-table-cell text-center badgesCount">
       {{ badgesCount }}
     </td>

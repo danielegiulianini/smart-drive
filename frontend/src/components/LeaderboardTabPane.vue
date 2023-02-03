@@ -98,7 +98,7 @@
                           class="card-text text-bf"
                           style="font-size: 300%"
                           >{{ score[scoreSorting] ? score[scoreSorting].toFixed(2) : "0" }}</span
-                        ><!-- to be added: .toFixed(2) -->
+                        >
                         <p
                           class="card-text text-muted"
                           style="line-height: 50%; font-size: 85%"
@@ -129,10 +129,10 @@
                     km
                   </th> VERY INTERESTING THIS!-->
                   <th class="d-none d-sm-table-cell text-center" scope="col">
-                    # Badges
+                    XP
                   </th>
                   <th class="d-none d-sm-table-cell text-center" scope="col">
-                    XP
+                    # Badges
                   </th>
                   <th scope="col" class="text-center">score</th>
                 </tr>
@@ -245,7 +245,6 @@ export default {
       return rank;
     },
     timeSince(date) {
-      console.log("la date to which say timeSince", date);
       var seconds = Math.floor((new Date() - date) / 1000);
 
       var interval = seconds / 31536000;
