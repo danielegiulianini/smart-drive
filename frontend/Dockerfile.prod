@@ -18,4 +18,4 @@ RUN npm ci
 # Bundle microservice source
 COPY . .
 
-CMD [ "npm", "run", "preview" ]
+CMD [ "npm", "run", "serve" ]
