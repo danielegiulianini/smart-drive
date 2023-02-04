@@ -4,7 +4,7 @@ const router = express.Router();
 const AuthMiddleware = require("./../middlewares/auth");
 const ImageController = require("../controllers/images");
 
-//routes' base url: images/
+//routes' base url: images
 
 var path = require("path");
 
@@ -15,13 +15,11 @@ const imagesDestinationFolder = path.join(
   require("./../config/images.config")
 );
 
-
-router.get(function (req, res, next) {
+router.route("/:id").get(function (req, res, next) {
   console.log("get request for image arrived!");
   console.log(req.originalUrl);
   next();
 }, express.static(imagesDestinationFolder));
-
 
 router
   //.use(AuthMiddleware.extractUserIdFromTokenAndPutItToBody) //set up middleware for post too because with supabase you have set it already
@@ -32,6 +30,4 @@ router
     next();
   }, ImageController.storeImage);
 
-
 module.exports = router;
-

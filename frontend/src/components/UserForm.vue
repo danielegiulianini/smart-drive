@@ -274,7 +274,8 @@ export default {
       return isValid;
     },
     onImageInput: function ({ formData, imageUrl }) {
-      this.user.pictureUri = imageUrl;
+      console.log("image inputted with url", imageUrl)
+      this.user.profilePictureUri = imageUrl;
     },
     onImageRemoved: function () {
       this.user.pictureUri = "";
@@ -310,6 +311,7 @@ export default {
     },
     profilePictureUri: function (value) {
       //here the prop
+      console.log("setting profile image!!0===000000000>")
       this.user.profilePictureUri = value;
     },
     city: function (value) {

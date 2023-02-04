@@ -197,7 +197,7 @@ export default {
     },
   },
   emits: ["imageUploaded", "imageRemoved"],
-  watch: {
+  watch: {  //watcher for user edit
     initialImage: function (value) {
       console.log("tttttttttttttttttttchaning image");
       //here the prop

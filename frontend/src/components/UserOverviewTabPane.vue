@@ -18,7 +18,7 @@
                   city: this.city,
                   country: this.country,
                   email: this.email,
-                  actualPictureUri: this.actualPictureUri,
+                  profilePictureUri: this.actualPictureUri,
                 }"
               ></UserEditModal>
             </div>

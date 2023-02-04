@@ -15,10 +15,10 @@ Features provided by the web app are:
 - trips tracking, measurements will be gathered into spatio-temporal units called trips, enriched with driving scores and statistics.
 - progress tracking, as a mean to encourage app usage.
 - trips statistics generation, to monitor every drive. 
-- real-time dashboard (telemetry) while driving as a counterpart of vehicle's dashboard.
+- real-time dashboard (telemetry) while driving, as a counterpart of vehicle's dashboard.
 - custom, eco-driving badges assignment, rewarding partial goals concerning app use and consideration, as well as good practice in terms of eco-driving.
-- community leaderboard, by which the usare can compare his behaviour against other users and see where he needs to improve most.
-- real-time notification system to be informed of the main app events.
+- community leaderboard, by which the user can compare his behaviour against other users and see where he needs to improve most.
+- real-time notification system to inform the user of the main app events.
 
 ## How to deploy
 
