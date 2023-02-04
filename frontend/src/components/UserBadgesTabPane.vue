@@ -21,11 +21,11 @@
             class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
             style=""
           >
-            <li>
-              <a class="dropdown-item" href="#" route>
-                <router-link to="allBadges">See all</router-link>
-              </a>
-            </li>
+            <router-link to="allBadges">
+              <li>
+                <a class="dropdown-item" href="#" route> See all </a>
+              </li></router-link
+            >
             <!--<li><a class="dropdown-item" href="#">This Month</a></li>
               <li><a class="dropdown-item" href="#">This Year</a></li>-->
           </ul>
@@ -40,8 +40,7 @@
               <UserBadge
                 :key="badge.id"
                 :name="
-                  badges.find((badgeDetail) => badgeDetail.id == badge.id)
-                    .name
+                  badges.find((badgeDetail) => badgeDetail.id == badge.id).name
                 "
                 :description="
                   badges.find((badgeDetail) => badgeDetail.id == badge.id)
@@ -90,12 +89,11 @@ export default {
   },
   mixins: [badges],
   mounted() {},
-  watch:{
+  watch: {
     myBadges: {
       deep: true,
-      handler(myBadges) {
-      }
-    }
-  }
+      handler(myBadges) {},
+    },
+  },
 };
 </script>
