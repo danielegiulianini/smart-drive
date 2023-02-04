@@ -495,8 +495,8 @@ export default {
             //2. take the last location of trips
             const lastMeasurement =
               lastTrip.measurements[lastTrip.measurements.length - 1];
-            this.lastLocation.lat = lastMeasurement.position.latitude;
-            this.lastLocation.lng = lastMeasurement.position.longitude;
+            this.lastLocation.lat = lastMeasurement.position?.latitude;
+            this.lastLocation.lng = lastMeasurement.position?.longitude;
             this.lastLocation.timestamp = lastMeasurement.timestamp;
           }
         }

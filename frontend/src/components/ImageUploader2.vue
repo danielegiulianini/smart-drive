@@ -123,6 +123,11 @@ export default {
         this.invalidImageMessage = `${file.name} is not an image`;
         valid = false;
       }
+      const maxImageSizeInMiB = 1.5;
+      if (file.size / 1024 / 1024 > maxImageSizeInMiB){// in MiB){
+        this.invalidImageMessage = `Image is too big, max size is 2 MiB`;
+        valid = false;
+      }
       return valid;
     },
     addImage(file) {
@@ -197,7 +202,8 @@ export default {
     },
   },
   emits: ["imageUploaded", "imageRemoved"],
-  watch: {  //watcher for user edit
+  watch: {
+    //watcher for user edit
     initialImage: function (value) {
       console.log("tttttttttttttttttttchaning image");
       //here the prop

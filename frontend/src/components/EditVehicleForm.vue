@@ -58,6 +58,9 @@ export default {
             {}
           );
         })
+        .then(() => {
+          this.$router.go();
+        })
         .catch((err) => {
           //maybe a mapping (to a more user-friendly error) could be added here
           //possible errors: network-related
