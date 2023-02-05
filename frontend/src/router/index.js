@@ -19,12 +19,14 @@ import NotificationsPage from "../views/NotificationsPage.vue";
 const routes = [
   { path: "/", name: "home", component: UserLoginFormPage },
   {
-    path: "/profile",
+    path: "/profile/:newBadge?",
     name: "Profile",
     meta: {
       requiresAuth: true,
     },
     component: ProfilePage,
+    props: true,
+
   },
   {
     path: "/garage",

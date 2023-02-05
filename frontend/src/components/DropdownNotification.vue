@@ -73,7 +73,7 @@ export default {
     onNotificationClicked() {
       console.log("otif clicked")
       if (this.notification.subject.includes("achievement")){
-        this.$router.push({name:"Profile", params: {title: 'true' }});
+        this.$router.push({path:"/profile/newBadge" });
       }
     }
   },
