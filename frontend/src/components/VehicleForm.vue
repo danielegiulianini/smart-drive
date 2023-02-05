@@ -14,21 +14,12 @@
 
       <div class="p-lg-5 p-4 pt-0" style="padding-bottom: 20%">
         <!-- Error alert -->
-        <div
-          class="alert alert-danger alert-dismissible fade show"
-          v-if="overallError"
-          role="alert"
-        >
+        <div class="alert alert-danger alert-dismissible fade show" v-if="myOverallError" role="alert">
           <h4 class="alert-heading">Error happened!</h4>
           <p>
-            {{ overallError }}
+            {{ myOverallError }}
           </p>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-          ></button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         <!-- END Error alert -->
 
@@ -37,127 +28,68 @@
           <div class="d-flex justify-content-between align-items-center">
             <label for="yourName" class="form-label">Your vehicle Image</label>
           </div>
-          <ImageUploader2
-            :initial-image="getUserImage"
-            @imageUploaded="onImageInput"
-            @imageRemoved="onImageRemoved"
-          ></ImageUploader2>
+          <ImageUploader2 :initial-image="getUserImage" @imageUploaded="onImageInput" @imageRemoved="onImageRemoved">
+          </ImageUploader2>
 
           <div class="col-12">
-            <label for="yourName" class="form-label"
-              >Your Vehicle year of made</label
-            >
+            <label for="yourName" class="form-label">Your Vehicle year of made</label>
             <div class="is-loading">
-              <select
-                class="form-select"
-                id="floatingSelect"
-                aria-label="Floating label select example"
-                v-model="vehicle.year"
-                @input="onYearInput"
-                required
-              >
+              <select class="form-select" id="floatingSelect" aria-label="Floating label select example"
+                v-model="vehicle.year" @input="onYearInput" required>
                 <option selected :value="this.vehicle.year">
                   {{ this.vehicle.year ? this.vehicle.year : "Choose..." }}
                 </option>
 
-                <option
-                  v-for="(item, index) in domain.years"
-                  :key="item.value"
-                  :value="item.value"
-                >
+                <option v-for="(item, index) in domain.years" :key="item.value" :value="item.value">
                   {{ item.text }}
                 </option>
               </select>
               <div class="invalid-feedback">Please, enter your year!</div>
-              <div
-                v-if="isLoading.years"
-                class="spinner-border spinner-border-sm input-spinner"
-              ></div>
+              <div v-if="isLoading.years" class="spinner-border spinner-border-sm input-spinner"></div>
             </div>
           </div>
           <div class="col-12">
             <label for="yourMake" class="form-label">Your vehicle make</label>
             <div class="is-loading">
-              <select
-                class="form-select"
-                id="floatingSelect3"
-                aria-label="Floating label select example"
-                :class="{ disabled: !vehicle.year }"
-                @input="onMakeInput"
-                v-model="vehicle.make"
-                required
-              >
+              <select class="form-select" id="floatingSelect3" aria-label="Floating label select example"
+                :class="{ disabled: !vehicle.year }" @input="onMakeInput" v-model="vehicle.make" required>
                 <option selected :value="vehicle.make">
                   {{ vehicle.make ? vehicle.make : "Choose..." }}
                 </option>
-                <option
-                  v-for="(item, index) in domain.makes"
-                  :key="item.value"
-                  :value="item.value"
-                >
+                <option v-for="(item, index) in domain.makes" :key="item.value" :value="item.value">
                   {{ item.value }}
                 </option>
               </select>
               <div class="invalid-feedback">Please choose a valid make.</div>
-              <div
-                v-if="isLoading.makes"
-                class="spinner-border spinner-border-sm input-spinner"
-              ></div>
+              <div v-if="isLoading.makes" class="spinner-border spinner-border-sm input-spinner"></div>
             </div>
           </div>
           <div class="col-12">
-            <label for="yourUsername" class="form-label"
-              >Your vehicle Model</label
-            >
+            <label for="yourUsername" class="form-label">Your vehicle Model</label>
             <div class="is-loading">
-              <select
-                class="form-select"
-                id="floatingSelect4"
-                aria-label="Floating label select example"
-                @input="onModelInput"
-                v-model="vehicle.model"
-                :class="{ disabled: !vehicle.make }"
-                required
-              >
+              <select class="form-select" id="floatingSelect4" aria-label="Floating label select example"
+                @input="onModelInput" v-model="vehicle.model" :class="{ disabled: !vehicle.make }" required>
                 <option selected :value="vehicle.model">
                   {{ vehicle.model ? vehicle.model : "Choose..." }}
                 </option>
-                <option
-                  v-for="(item, index) in domain.models"
-                  :value="item.value"
-                >
+                <option v-for="(item, index) in domain.models" :value="item.value">
                   {{ item.text }}
                 </option>
               </select>
               <div class="invalid-feedback">Please choose a vehicle model.</div>
-              <div
-                v-if="isLoading.models"
-                class="spinner-border spinner-border-sm input-spinner"
-              ></div>
+              <div v-if="isLoading.models" class="spinner-border spinner-border-sm input-spinner"></div>
             </div>
           </div>
           <div class="col-12">
-            <label for="yourUsername" class="form-label"
-              >Your vehicle Series</label
-            >
+            <label for="yourUsername" class="form-label">Your vehicle Series</label>
             <div class="is-loading">
-              <select
-                class="form-select"
-                id="floatingSelect4"
-                aria-label="Floating label select example"
-                :class="{ disabled: !vehicle.model }"
-                @input="onSeriesInput"
-                v-model="vehicle.series"
-                required
-              >
+              <select class="form-select" id="floatingSelect4" aria-label="Floating label select example"
+                :class="{ disabled: !vehicle.model }" @input="onSeriesInput" v-model="vehicle.series" required>
                 <option selected :value="vehicle.series">
                   {{ this.vehicle.series ? getSeriesFromModelId : "Choose..." }}
                 </option>
                 <!-- no disabled as it would disable (required) validation!-->
-                <option
-                  v-for="(item, index) in domain.series"
-                  :value="item.value"
-                >
+                <option v-for="(item, index) in domain.series" :value="item.value">
                   {{ item.text }}
                 </option>
               </select>
@@ -165,28 +97,15 @@
                 Please choose some other vehicle details.
               </div>
 
-              <div
-                v-if="isLoading.series"
-                class="spinner-border spinner-border-sm input-spinner"
-              ></div>
+              <div v-if="isLoading.series" class="spinner-border spinner-border-sm input-spinner"></div>
             </div>
           </div>
           <div class="col-12" v-if="!edit">
             <!-- v-if="!vehicle._id"> in edit form you cannot edit your vin since it's the key in DB-->
-            <label for="yourPassword" class="form-label"
-              >Your vehicle Identification Number (VIN)</label
-            >
+            <label for="yourPassword" class="form-label">Your vehicle Identification Number (VIN)</label>
             <div class="input-group has-validation">
-              <input
-                type="text"
-                name="username"
-                class="form-control"
-                id="yourVin"
-                :class="{ disabled: !vehicle._id }"
-                v-model="vehicle._id"
-                required
-                pattern="[a-zA-Z0-9]{9}[a-zA-Z0-9-]{2}[0-9]{6}"
-              />
+              <input type="text" name="username" class="form-control" id="yourVin" :class="{ disabled: !vehicle._id }"
+                v-model="vehicle._id" required pattern="[a-zA-Z0-9]{9}[a-zA-Z0-9-]{2}[0-9]{6}" />
               <div class="invalid-feedback">
                 Please specify your vehicle' VIN.
               </div>
@@ -194,24 +113,11 @@
           </div>
           <div class="pt-3 d-grid gap-2 d-flex justify-content-between">
             <!-- this closes wrapping modal!-->
-            <button
-              class="btn btn-secondary w-50"
-              type="button"
-              data-bs-dismiss="modal"
-            >
-              Close</button
-            ><button
-              class="btn btn-primary w-50"
-              data-bs-dismiss="modal"
-              type="button"
-              @click.prevent="onNewVehicleSubmit"
-            >
-              <span
-                v-if="isSubmitting"
-                class="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="false"
-              ></span>
+            <button class="btn btn-secondary w-50" type="button" data-bs-dismiss="modal">
+              Close</button><button class="btn btn-primary w-50" data-bs-dismiss="modal" type="button"
+              @click.prevent="onNewVehicleSubmit">
+              <span v-if="isSubmitting" class="spinner-border spinner-border-sm" role="status"
+                aria-hidden="false"></span>
               {{ submitButtonName }}
             </button>
           </div>
@@ -261,6 +167,7 @@ export default {
       modelDisabled: true,
       seriesDisabled: true,
       vinDisabled: true,
+      myOverallError: this.overallError,
       domain: {
         years: [],
         makes: [],
@@ -314,9 +221,9 @@ export default {
 
       return this.domain.series.length > 0 && this.vehicle.series
         ? this.domain.series.filter(
-            //getting the textual version of this value
-            (item) => item.value == this.vehicle.series
-          )[0].text
+          //getting the textual version of this value
+          (item) => item.value == this.vehicle.series
+        )[0].text
         : "";
     },
   },
@@ -334,7 +241,7 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-          this.overallError = err;
+          this.myOverallError = err;
         })
         .finally(() => (this.isLoading.years = false));
     },
@@ -498,6 +405,10 @@ export default {
       //here the prop
       this.vehicle.retired = value;
     },
+    overallError: function (value) {
+      //here the prop
+      this.myOverallError = value;
+    },
   },
   mounted() {
     this.getYears();
@@ -526,7 +437,7 @@ select.disabled {
   /*pointer-events: none;*/
 }
 
-select > option.disabled {
+select>option.disabled {
   color: -internal-light-dark(graytext, rgb(170, 170, 170));
 }
 </style>

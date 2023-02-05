@@ -22,8 +22,7 @@ const dbUtil = require("./src/utils/mongooseUtils");
 
 async function startServer() {
   console.log("Connecting to db...");
-  //await dbUtil.connect(dbConfig);
-  await dbUtil.connectWithRetry();
+  await dbUtil.connect(dbConfig);
 
   console.log("Db Connected!");
 
