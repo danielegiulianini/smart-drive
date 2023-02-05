@@ -1,5 +1,5 @@
 <template>
-  <li class="notification-item">
+  <li class="notification-item" @click="onNotificationClicked">
     <i class="bi" :class="contextualClass"></i>
     <!--bi-exclamation-circle text-warning"></i>-->
     <div>
@@ -70,6 +70,12 @@ export default {
       }
       return Math.floor(seconds) + " seconds";
     },
+    onNotificationClicked() {
+      console.log("otif clicked")
+      if (this.notification.subject.includes("achievement")){
+        this.$router.push({name:"Profile", params: {title: 'true' }});
+      }
+    }
   },
 };
 </script>
@@ -88,11 +94,12 @@ export default {
   font-size: 24px;
 }
 
- .notification-item h4 {
+.notification-item h4 {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 5px;
 }
+
 .notification-item p {
   font-size: 13px;
   margin-bottom: 3px;
