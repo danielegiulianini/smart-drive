@@ -337,7 +337,7 @@ export default {
           this.isDefined(this.aggressivenessScore) &&
           this.isDefined(this.safetyScore) &&
           this.isDefined(this.feedbackConsiderationScore) &&
-          this.isDefined(this.idlingScore)
+          this.isDefined(this.idlingScore) && this.xp > 0
         ) {
 
           //wait for chart and tooltip to be in dom (reactively)
