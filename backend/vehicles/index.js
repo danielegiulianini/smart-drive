@@ -22,7 +22,9 @@ const dbUtil = require("./src/utils/mongooseUtils");
 
 async function startServer() {
   console.log("Connecting to db...");
-  await dbUtil.connect(dbConfig);
+  //await dbUtil.connect(dbConfig);
+  await dbUtil.connectWithRetry();
+
   console.log("Db Connected!");
 
   console.log("Setting up routes ...");
@@ -37,4 +39,7 @@ async function startServer() {
   );
 }
 
-startServer();
+//needed for letting mongo container complete init (compose' "depends_on: mongodb" 
+//waits until mongodb starts and NOT until it's ready) before this service is started
+const delayInMillis  = 5000;  
+setTimeout(startServer, delayInMillis);

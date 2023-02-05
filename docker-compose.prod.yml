@@ -59,6 +59,8 @@ services:
       - mongodb-users
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
+
 
   vehicles:
     build:
@@ -72,6 +74,8 @@ services:
       - mongodb-vehicles
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
+
 
   images:
     build:
@@ -85,6 +89,7 @@ services:
       - mongodb-images
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
 
   trips:
     build:
@@ -99,6 +104,7 @@ services:
       - mongodb-trips
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
 
   notifications:
     build:
@@ -113,6 +119,7 @@ services:
       - mongodb-notifications
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
 
   #-------------------------------------------------------------------------------------------
   #--DBs
