@@ -20,7 +20,7 @@
           <button class="nav-link w-100" id="profile-tab" @click.prevent="setActive('badges')"
             :class="{ active: isActive('badges') }" type="button" role="tab" aria-controls="profile"
             aria-selected="false">
-            Badges <span class="badge badge-secondary" v-if="newBadge">New</span>
+            Badges <span class="badge badge-pill badge-success" v-if="newBadge">New</span>
           </button>
         </li>
         <li class="nav-item flex-fill" role="presentation">

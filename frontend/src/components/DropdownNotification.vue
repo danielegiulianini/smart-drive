@@ -71,7 +71,6 @@ export default {
       return Math.floor(seconds) + " seconds";
     },
     onNotificationClicked() {
-      console.log("otif clicked")
       if (this.notification.subject.includes("achievement")){
         this.$router.push({path:"/profile/newBadge" });
       }
@@ -108,5 +107,6 @@ export default {
 
 .notification-item:hover {
   background-color: #f6f9ff;
+  cursor:pointer;
 }
 </style>
