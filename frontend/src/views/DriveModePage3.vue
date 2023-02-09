@@ -74,7 +74,6 @@
     </div>
     <!-- end of row-->
 
-
     <div class="button-row p-3 text-center">
       <AppDriveButton
         @click="onDriveButtonClicked"
@@ -133,7 +132,7 @@ export default {
       fuelTankLevel: 0,
       _id: "", //future Trip's ID
       hasUserRegisteredAVehicle: false,
-
+      voice: "",
       //for navigation
       to: "",
     };
@@ -195,15 +194,14 @@ export default {
       console.log("feedback arrived");
 
       if (this.acousticFeedbackEnabled) {
-        this.speak(drivingFeedback.feedback.text)
+        this.speak(drivingFeedback.feedback.text);
       } else {
         console.log("not speaking as acoustic feedback disabled");
       }
     },
     speak(text) {
       console.log("speaking!");
-      EasySpeech.speak({ text: text });
-
+      EasySpeech.speak({ text: text, voice: this.voice });
     },
     displayTripCloseConfirmationModal() {
       this.$refs.closeTripModal.modalToggle(); //bad quality code (using refs to call method) for lack of time to refactor all modals
@@ -232,7 +230,14 @@ export default {
   mounted() {
     EasySpeech.detect();
     EasySpeech.init()
-      .catch((e) => console.error("no speech synthesis:", error.message))
+      .then(() => {
+        this.voice = EasySpeech.voices()[104]; //choosing UK voice
+        if (this.acousticFeedbackEnabled) {
+          this.speak("welcome");
+        }
+      })
+      .catch((e) => console.error("no speech synthesis:", e.message));
+
     if ("speechSynthesis" in window) {
       console.log("speech supported");
     } else {
