@@ -28,12 +28,12 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   //se velocità è sopra ad un limite e ho già dato tempo di adattarsi al feedback... allora
   //oppure se la media delle velocità è > X e l'ultimo consiglio risale da X secs fa ...
   //1. =========================== rpm ========================================
-  const rpmWindowInSeconds = 10;
+  const rpmWindowInSeconds = 50;
   const engStats = await TripStatsService.computeEngineStats(
     tripId,
     subtractSeconds(now(), rpmWindowInSeconds)
   );
-  if (engStats.avgRpm > 3000) {
+  if (engStats.avgRpm > 4000) {
     feedbacks.push({ text: "Be smoother with the throttle.", priority: 2 });
   }
   //3. =========================== reduce unnecessary emissions (idling) ===============
@@ -57,7 +57,7 @@ const getFeedbacks = async (tripId, measurementPayload) => {
   const notRestingWindowInSeconds = 60 * 60;
   const restBreakDurationInSecondsNeeded = 60; //rest needed:  1 minute
 
-  const samplingPeriodInSeconds = 5; //here assuming to control microncontroller sampling period
+  const samplingPeriodInSeconds = 30; //here assuming to control microncontroller sampling period
   const nonRestDuration =
     trip.measurements.filter(
       (measurement) =>
