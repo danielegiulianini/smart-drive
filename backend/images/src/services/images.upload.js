@@ -1,5 +1,4 @@
 const { Image } = require("../models/images");
-const { ok, badRequest } = require("../utils/actionsResponses");
 
 const supportedMimeTypes = [
   "image/jpeg",
@@ -18,7 +17,11 @@ function imageRelativeUrlFromFile(file) {
 
 function imageCompleteUrlFromFile(file) {
   const baseMicroserviceUrl = "api/v1/images/"; //when updating this must update routes/index.js and index.js in root too
-  return baseMicroserviceUrl + imageRelativeUrlFromFile(file);
+  const relativeUrl = imageRelativeUrlFromFile(file);
+  return {
+    completeUrl: baseMicroserviceUrl + relativeUrl,
+    relativeUrl: relativeUrl,
+  };
 }
 
 const multer = require("multer");
@@ -31,8 +34,9 @@ var storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     console.log(file);
-    file.url = imageCompleteUrlFromFile(file);
-    cb(null, imageRelativeUrlFromFile(file)); //instead of file.originalname
+    const url = imageCompleteUrlFromFile(file);
+    file.url = url.completeUrl;
+    cb(null, url.relativeUrl); //instead of file.originalname
   },
 });
 var upload = multer({ storage: storage });

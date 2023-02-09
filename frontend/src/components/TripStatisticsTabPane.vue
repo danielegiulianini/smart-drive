@@ -39,7 +39,7 @@ export default {
         avgRpm: "avg RPM",
         avgKph: "avg KPH",
         maxRpm: "max RPM",
-        maxKph: "max RPM",
+        maxKph: "min RPM",
       },
     };
   },
