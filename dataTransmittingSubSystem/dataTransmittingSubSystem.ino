@@ -9,17 +9,17 @@
 #define __BAUD_RATE 9600
 
 #ifndef STASSID
-#define STASSID "politenet2.0" //"AndroidAP2C3A" //"politenet2.0" //
-#define STAPSK "hfip0676zy%$56zs24DL" //"cniu9651" //"hfip0676zy%$56zs24DL" // 
+#define STASSID "AndroidAP2C3A" //"politenet2.0" //
+#define STAPSK "cniu9651" //"hfip0676zy%$56zs24DL" // 
 #endif
 
 const char* ssid     = STASSID;
 const char* password = STAPSK;
 
-const char* mqtt_server = "192.168.8.100"; //"192.168.43.214";//"192.168.8.100";//(for politenet);//"http://192.168.43.214";//for smartphone"broker.hivemq.com";//for local dev: see it with ipconfig (it changes from network to network)
+const char* mqtt_server = "192.168.43.214"; //"192.168.8.100"; //"192.168.43.214";//"192.168.8.100";//(for politenet);//"http://192.168.43.214";//for smartphone"broker.hivemq.com";//for local dev: see it with ipconfig (it changes from network to network)
 const int brokerPort = 1883;
 
-const char* userId = "a45c2a4a-0966-423a-a17b-020bd4293e48";//"9f90d20c-ca51-4813-b64e-7f63533fd2e0";
+const char* userId = "a45c2a4a-0966-423a-a17b-020bd4293e48";//"f899524a-9975-45a1-83c8-aaf2ffe054ac"; //of g@g "39ff2f49-88a5-4aed-813b-1ee78b4fd63c"; //d@g;"a45c2a4a-0966-423a-a17b-020bd4293e48";//l@g 
 
 int status = WL_IDLE_STATUS;
 WiFiClient wifiClient;
@@ -57,7 +57,7 @@ void setup() {
   //bool BlockingElm327::init(Stream & stream, const bool & debug, const uint16_t &timeout);
   myElm.init(myNode, true, 4000);
 
-  char vin[18] = "5TEWN72N63Z275910";//"1C4BJWKGXDL508578";
+  char vin[18] = "5TEWN72N63Z275910";//of l@g;"4NUDT13S962700984";//of g@g JH4KA4650JC000403"; //of d@g
   strcpy(publishingTopic, String(String("vehicles/") + String(vin)).c_str()); //PubSubClient wants topic as a char[]
 }
 
@@ -73,7 +73,7 @@ void loop() {
     }
   }
   client.loop();
-  delay(500);
+  delay(1000);
 }
 
 void initMQTT() {

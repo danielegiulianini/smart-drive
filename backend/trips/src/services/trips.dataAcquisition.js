@@ -37,7 +37,7 @@ const addMeasurement = async (vin, newMeasurementParams) => {
   });
 
   if (currentTrip) {
-    newMeasurementParams.timestamp = now(); 
+    newMeasurementParams.timestamp = now();
     currentTrip.measurements.push(newMeasurementParams);
 
     //must set timestamp of measurement
@@ -71,7 +71,6 @@ const close = async (tripId) => {
   return tripToEnd;
 };
 
-
 //read-only:
 const list = async (query) => {
   return Trip.find(query);
@@ -79,6 +78,9 @@ const list = async (query) => {
 
 //single trip
 const get = async (tripId) => {
+  // await Trip.deleteOne({ _id: tripId });
+ // await Trip.remove({ endTimestamp: { $exists: false } });
+
   console.log(`Getting trip by ID: ${tripId}`);
   return Trip.findById(tripId);
 };
