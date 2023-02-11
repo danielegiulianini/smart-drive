@@ -20,8 +20,8 @@ class UsersPerformanceTest(HttpUser):
         # list
         self.client.get("/")
         # get
-        self.client.get("/"+ self.trip["_id"], name="/trips/:id")
+        self.client.get("/"+ self.trip["_id"], name="api/v1/trips/:id")
 
     def on_stop(self):
         # close trip
-        self.client.post("/"+self.trip["_id"], json={"sensorId": "bar"},  name="/trips/:id")        # required data only
+        self.client.post("/"+self.trip["_id"], json={"sensorId": "bar"},  name="api/v1/trips/:id")        # required data only
