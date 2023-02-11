@@ -7,3 +7,5 @@
 
 /* Jest test coverage directory */
 coverage/
+
+**/__pycache__
