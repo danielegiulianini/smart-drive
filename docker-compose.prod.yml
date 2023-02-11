@@ -52,8 +52,6 @@ services:
       dockerfile: Dockerfile.prod
       args:
         - "PORT=${USERS_MICROSERVICE_INTERNAL_PORT}"
-    volumes:
-      - ./backend/users:/usr/src/users #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
     ports:
       - 8085:${USERS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
@@ -61,6 +59,8 @@ services:
       - mongodb-users
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
+
 
   vehicles:
     build:
@@ -68,14 +68,14 @@ services:
       dockerfile: Dockerfile.prod
       args:
         - "PORT=${VEHICLES_MICROSERVICE_INTERNAL_PORT}"
-    volumes:
-      - ./backend/vehicles:/usr/src/vehicles #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
     ports:
       - 8086:${VEHICLES_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - mongodb-vehicles
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
+
 
   images:
     build:
@@ -83,14 +83,13 @@ services:
       dockerfile: Dockerfile.prod
       args:
         - "PORT=${IMAGES_MICROSERVICE_INTERNAL_PORT}"
-    volumes:
-      - ./backend/images:/usr/src/images #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
     ports:
       - 8087:${IMAGES_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
       - mongodb-images
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
 
   trips:
     build:
@@ -98,8 +97,6 @@ services:
       dockerfile: Dockerfile.prod
       args:
         - "PORT=${TRIPS_MICROSERVICE_INTERNAL_PORT}"
-    volumes:
-      - ./backend/trips:/usr/src/trips #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
     ports:
       - 8089:${TRIPS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
@@ -107,6 +104,7 @@ services:
       - mongodb-trips
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
 
   notifications:
     build:
@@ -114,8 +112,6 @@ services:
       dockerfile: Dockerfile.prod
       args:
         - "PORT=${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT}"
-    volumes:
-      - ./backend/notifications:/usr/src/notifications #for nodemon (DEV ONLY) PATH DEPENDENT ENTRY (this entry must be updated if moving docker-compose)
     ports:
       - ${NOTIFICATIONS_MICROSERVICE_EXTERNAL_PORT}:${NOTIFICATIONS_MICROSERVICE_INTERNAL_PORT} #actually, in PRODUCTION no need to expose to outside anything apart from reverse-proxy!
     depends_on:
@@ -123,6 +119,7 @@ services:
       - mongodb-notifications
     networks:
       - backend
+    restart: unless-stopped #needed for restarting in case mongodb service is not ready (depends_on does not guarantee it's ready but only it's started)
 
   #-------------------------------------------------------------------------------------------
   #--DBs

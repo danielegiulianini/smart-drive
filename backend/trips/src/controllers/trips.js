@@ -33,7 +33,7 @@ const close = async (req, res) => {
     //2.compute and assing statistics
     //3.check and assing achievements
     const tripScore = await scoresService.computeAndAssignScores(tripId);
-    if (tripScore.totalScore > 0) {
+    if (tripScore.totalScore >= 0) {
       publisher.publish(scoreUpdatedEventsTopicPrefix + trip.userId, {
         totalScore: tripScore.totalScore,
         speedScore: tripScore.speedScore,

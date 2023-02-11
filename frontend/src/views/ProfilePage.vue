@@ -8,50 +8,25 @@
     <!-- End Page Title -->
     <!-- start of actual content:-->
     <section class="section dashboard">
-      <ul
-        class="nav nav-tabs nav-tabs-bordered d-flex"
-        id="borderedTabJustified"
-        role="tablist"
-      >
+      <ul class="nav nav-tabs nav-tabs-bordered d-flex" id="borderedTabJustified" role="tablist">
         <li class="nav-item flex-fill" role="presentation">
-          <button
-            class="nav-link w-100"
-            id="home-tab"
-            @click.prevent="setActive('overview')"
-            :class="{ active: isActive('overview') }"
-            type="button"
-            role="tab"
-            aria-controls="home"
-            aria-selected="true"
-          >
+          <button class="nav-link w-100" id="home-tab" @click.prevent="setActive('overview')"
+            :class="{ active: isActive('overview') }" type="button" role="tab" aria-controls="home"
+            aria-selected="true">
             Overview
           </button>
         </li>
         <li class="nav-item flex-fill" role="presentation">
-          <button
-            class="nav-link w-100"
-            id="profile-tab"
-            @click.prevent="setActive('badges')"
-            :class="{ active: isActive('badges') }"
-            type="button"
-            role="tab"
-            aria-controls="profile"
-            aria-selected="false"
-          >
-            Badges
+          <button class="nav-link w-100" id="profile-tab" @click.prevent="setActive('badges')"
+            :class="{ active: isActive('badges') }" type="button" role="tab" aria-controls="profile"
+            aria-selected="false">
+            Badges <span class="badge badge-pill badge-success" v-if="newBadge">New</span>
           </button>
         </li>
         <li class="nav-item flex-fill" role="presentation">
-          <button
-            class="nav-link w-100"
-            id="contact-tab"
-            @click.prevent="setActive('leaderboard')"
-            :class="{ active: isActive('leaderboard') }"
-            type="button"
-            role="tab"
-            aria-controls="contact"
-            aria-selected="false"
-          >
+          <button class="nav-link w-100" id="contact-tab" @click.prevent="setActive('leaderboard')"
+            :class="{ active: isActive('leaderboard') }" type="button" role="tab" aria-controls="contact"
+            aria-selected="false">
             Leaderboard
           </button>
         </li>
@@ -61,38 +36,17 @@
                 <div class="tab-content pt-2" id="bordered-justified-contactssss">-->
       <div class="card" style="box-shadow: none">
         <div class="tab-content pt-0" id="bordered-justified-contactssss">
-          <UserOverviewTabPaneVue
-            :isActive="isActive('overview')"
-            :email="email"
-            :firstName="firstName"
-            :surname="surname"
-            :city="city"
-            :country="country"
-            :actualPictureUri="actualPictureUri"
-            :createdAt="createdAt"
-            :xp="xp"
-            :level="level"
-          ></UserOverviewTabPaneVue>
-          <BadgesTabPane
-            :isActive="isActive('badges')"
-            :myBadges="achievements"
-          ></BadgesTabPane>
-          <LeaderboardTabPane
-            :isActive="isActive('leaderboard')"
-            :actual-picture-uri="actualPictureUri"
-            :score="{
-              totalScore: totalScore,
-              rpmScore: rpmScore,
-              feedbackConsiderationScore: feedbackConsiderationScore,
-              speedScore: speedScore,
-            }"
-            :level="level"
-            :scores-trend="scoresTrend"
-            :users="users"
-            :firstName="firstName"
-            :surname="surname"
-            :country="country"
-          ></LeaderboardTabPane>
+          <UserOverviewTabPaneVue :isActive="isActive('overview')" :email="email" :firstName="firstName"
+            :surname="surname" :city="city" :country="country" :actualPictureUri="actualPictureUri"
+            :createdAt="createdAt" :xp="xp" :level="level"></UserOverviewTabPaneVue>
+          <BadgesTabPane :isActive="isActive('badges')" :myBadges="achievements"></BadgesTabPane>
+          <LeaderboardTabPane :isActive="isActive('leaderboard')" :actual-picture-uri="actualPictureUri" :score="{
+            totalScore: totalScore,
+            rpmScore: rpmScore,
+            feedbackConsiderationScore: feedbackConsiderationScore,
+            speedScore: speedScore,
+          }" :level="level" :scores-trend="scoresTrend" :users="users" :firstName="firstName" :surname="surname"
+            :country="country"></LeaderboardTabPane>
         </div>
         <!--</div>-->
       </div>
@@ -126,6 +80,11 @@ export default {
     UserOverviewTabPaneVue,
     BadgesTabPane,
     Spinner,
+  },
+  props: {
+    newBadge: {
+      required: false
+    }
   },
   data() {
     return {
@@ -187,10 +146,10 @@ export default {
       }, leaderboardRefreshPeriodInMilliseconds); //refreshing leaderboard every 5 seconds},
     },
   },
-  created() {},
+  created() { },
   mounted() {
     //manually joining here
-    const loggedInUserId = this.$store.getters.getUser.id; 
+    const loggedInUserId = this.$store.getters.getUser.id;
     //1. fetching user vehicle
     axios
       .get(`users/${loggedInUserId}`)
@@ -198,7 +157,7 @@ export default {
         console.log("data coming from users micro", userRes);
 
         const userDetail = userRes.data;
-        this.totalScore = userDetail.ecoScore ?  userDetail.ecoScore  : 0;
+        this.totalScore = userDetail.ecoScore ? userDetail.ecoScore : 0;
         console.log("dafter assignment ecoscore is", this.totalScore);
 
         this.speedScore = userDetail.speedScore;
@@ -242,8 +201,8 @@ export default {
     this.periodicallyRefreshLeaderboard();
   },
   watch: {
-    getUser(newVal){
-      if(!newVal){
+    getUser(newVal) {
+      if (!newVal) {
         clearInterval(this.intervalId);
       }
     },

@@ -16,7 +16,7 @@ if not defined: enable dns lookup with +srv
 */
 
 function getConnectionUri(port, username, password, host, defaultAuthDb, options){
-    return `mongodb${port ? '' : '+srv'}://${username}:${password}@${host}${port ? ':' + port : ''}/${defaultAuthDb}?${options.join('&')}`;
+    return `mongodb${port ? '' : '+srv'}://${username}:${password}@${host}${port ? ':' + port : ''}/${defaultAuthDb}?${options.join('&')}&authSource=admin`;
 }
 connectionUri = getConnectionUri(port, username, password, host, defaultAuthDb, options);
 
