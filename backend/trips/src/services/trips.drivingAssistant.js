@@ -33,7 +33,7 @@ const getFeedbacks = async (tripId, measurementPayload) => {
     tripId,
     subtractSeconds(now(), rpmWindowInSeconds)
   );
-  if (engStats.avgRpm > 4000) {
+  if (engStats.avgRpm > 5000) {
     feedbacks.push({ text: "Be smoother with the throttle.", priority: 2 });
   }
   //3. =========================== reduce unnecessary emissions (idling) ===============
