@@ -201,7 +201,13 @@ export default {
     },
     speak(text) {
       console.log("speaking!");
-      EasySpeech.speak({ text: text, voice: this.voice });
+      console.log("lo status: ", EasySpeech.status());
+      if (
+        EasySpeech.status().status == "speak complete" ||
+        EasySpeech.status().status == "init complete" ||
+        EasySpeech.status().startsWith("voices loaded")
+      ) //with this I can increase frequency of sending by nodemcu...
+        EasySpeech.speak({ text: text, voice: this.voice });
     },
     displayTripCloseConfirmationModal() {
       this.$refs.closeTripModal.modalToggle(); //bad quality code (using refs to call method) for lack of time to refactor all modals

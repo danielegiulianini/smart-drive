@@ -51,7 +51,7 @@ String EmulatedElmFirmware::getResponseToCmdOrQuery(String cmdAsString, VehicleS
     }
     else if (getPid(cmdAsString).startsWith(String(OBD_ENGINE_SPEED_PID)))
     { // else if (getPid(cmdAsString) == String(OBD_ENGINE_SPEED_PID)) {
-      int encondedRpm = int(vehicleData.rpm);
+      long encondedRpm = long(vehicleData.rpm);
       encondedRpm *= 4;
       response = "41 " + String(OBD_ENGINE_SPEED_PID) + " " + String(encondedRpm, HEX) + OBD_TERMINATOR; // for rpm computation: https://www.obdsol.com/knowledgebase/obd-software-development/reading-real-time-data/
     }

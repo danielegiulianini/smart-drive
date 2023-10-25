@@ -79,7 +79,7 @@ const list = async (query) => {
 //single trip
 const get = async (tripId) => {
   // await Trip.deleteOne({ _id: tripId });
- // await Trip.remove({ endTimestamp: { $exists: false } });
+  //await Trip.remove({ endTimestamp: { $exists: false } });
 
   console.log(`Getting trip by ID: ${tripId}`);
   return Trip.findById(tripId);

@@ -243,7 +243,8 @@ export default {
     },
     onSignout() {
       this.$store.dispatch("logout").then(() => {
-        return this.$router.push("login");
+        console.log("redirecting to login")
+        return this.$router.push("/login");
       }); //redirecting to home (or login module) after logout
     },
 
