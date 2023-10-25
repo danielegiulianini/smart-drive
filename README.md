@@ -43,7 +43,7 @@ Steps to deploy and use smart-drive web application are:
     cd smart-drive
 ```
 
-3.	build, create and start service containers (possibly with the --build option to recompoile Docker images):
+3.	build, create and start service containers (possibly with the --build option to recompile Docker images):
 ```bash
     docker-compose -f docker-compose.prod.yml up --build
 ```
