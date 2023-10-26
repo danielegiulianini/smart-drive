@@ -58,3 +58,40 @@ Steps to deploy and use smart-drive web application are the following:
 ```bash
     docker-compose down
 ```
+
+#### Edge Node
+Steps to deploy the SW for the edge node (on a NodeMCU board) (working with Arduino IDE 1.8.19) are:
+
+0. Connect the NodeMCU board: connect your NodeMCU board to your computer using a USB cable.
+1. Open and configure the Arduino IDE:
+open the Arduino IDE.
+Go to "File" → "Preferences".
+In the "Additional Boards Manager URLs" field, enter the following URL: http://arduino.esp8266.com/stable/package_esp8266com_index.json
+Click "OK" to save the preferences.
+2. Install the necessary packages:
+go to "Tools" → "Board" → "Boards Manager".
+In the Boards Manager, search for "esp8266" and select the package named "esp8266 by ESP8266 Community".
+Click on "Install" to install the package.
+3. Select the NodeMCU board:
+go to "Tools" → "Board" and select "NodeMCU 1.0 (ESP-12E Module)" from the list.
+4. Select the port: go to Tools > Port and choose the port to which your NodeMCU board is connected. If you're not sure, you can check your system's device manager or the Arduino IDE's port list.
+5. Open the sketch: click on File > Open and open [this file]().
+6. Upload the code:
+    verify the code by clicking on the "Verify" button (checkmark symbol) to check for any errors.        
+    Click on the "Upload" button (right arrow symbol) to compile and upload the code to the NodeMCU board.
+7. Monitor the output: to observe the output or debug messages, open the Serial Monitor in Arduino IDE by going to "Tools" → "Serial Monitor".
+Make sure the baud rate is set to the same value as in the code.
+
+#### ECU
+Steps to deploy the emulated ECU SW on a Arduino UNO board (working with Arduino IDE 1.8.19) are:
+
+0. Prepare the circuit: deploy your Arduino UNO board following [this file]().
+1. Connect the Arduino UNO board: connect your Arduino UNO board to your computer using a USB cable.
+2. Open Arduino IDE: Launch a new instance of the Arduino IDE (wrt that of NodeMCU previously started, as to visualize the messages coming from the two different serial monitors).
+3. Select the board: go to Tools > Board and select "Arduino Uno" from the list of available boards.
+4. Select the port: go to Tools > Port and choose the port to which your Arduino Uno board is connected. If you're not sure, you can check your system's device manager or the Arduino IDE's port list.
+5. Open the sketch: click on File > Open and open [this file]().
+6. Upload the code: once the code is successfully verified, click on the "Upload" button (right arrow icon) or go to Sketch > Upload to transfer the code to your Arduino UNO board. The status bar will show the progress, and the onboard LED on the Arduino will blink rapidly while uploading.
+7. Monitor the output: to observe the output or debug  messages, open the Serial Monitor in Arduino IDE by going to "Tools" → "Serial Monitor".
+Make sure the baud rate is set to the same value as in the code.
+8. Use your emulated car: use the potentiometers as the emulated throttle/break (follow [this file]() to map between each other) and visualize your dashboard through the lcd or similar. 
