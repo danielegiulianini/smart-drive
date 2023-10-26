@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A responsive, mobile-first app that acts as a support for the optimization of the user's driving style in terms of polluting emissions, safety, comfort by applying gamification principles, and an infrastructure for processing the data acquired from the vehicle control unit by means of OBD-II standard and a NodeMCU board.
+A responsive, mobile-first app that acts as a support for the optimization of the user's driving style in terms of polluting emissions, safety, comfort by applying gamification principles, and an infrastructure for processing the data acquired from the vehicle control unit by means of OBD-II standard and a low-cost NodeMCU board.
 
 ## Features
 Features provided by the web app are:
@@ -22,15 +22,19 @@ Features provided by the web app are:
 
 ## How to deploy
 
-### Prerequisites
+### Running with emulated ECU
 
+#### Global prerequisites
 - Git
 - Docker
-- browser
+- web browser with support for socket.io
+- NodeMCU board
+- Arduino IDE
+- Arduino UNO board
 
-### Steps
+#### Backend & Frontend
 
-Steps to deploy and use smart-drive web application are:
+Steps to deploy and use smart-drive web application are the following:
 
 1. clone the repo into the desired folder:
 
