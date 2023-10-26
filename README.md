@@ -95,3 +95,34 @@ Steps to deploy the emulated ECU SW on a Arduino UNO board (working with Arduino
 7. Monitor the output: to observe the output or debug  messages, open the Serial Monitor in Arduino IDE by going to "Tools" → "Serial Monitor".
 Make sure the baud rate is set to the same value as in the code.
 8. Use your emulated car: use the potentiometers as the emulated throttle/break (follow [this file]() to map between each other) and visualize your dashboard through the lcd or similar. 
+
+### Running with real ECU
+
+#### Global prerequisites
+- Git
+- Docker
+- web browser with support for socket.io
+- NodeMCU board
+- Arduino IDE
+- real ECU (your car contains one)
+- OBD-II scanner (ex., ELM 327)
+
+#### Backend & Frontend
+Like described [before](#backend-&-frontend).
+
+#### Edge Node
+Like described [before](#edge-node).
+
+#### ECU
+1. Identify the OBD-II Port: locate the OBD-II port in your vehicle, which is usually located under the dashboard, near the steering column. It may be covered with a protective cap.
+2. Connect the Scanner: plug the OBD-II scanner's connector into the OBD-II port in your vehicle. Ensure it is firmly connected and properly aligned.
+3. Turn on the Ignition: start your car's ignition by turning the key to the "ON" position. However, do not start the engine unless specifically instructed by the scanner manufacturer.
+4. Connect your NodeMCU board to your OBD-II scanner: bind the two devices by bluetooth, wifi, or wire, depending on your specific OBD-II scanner type.
+5. Use your app: after having signed up and logged in, navigate to the drive mode page to access your real-time dashboard, track your data and receive your customized driving tips.
+5. Disconnect the Scanner: once you have ended using the app, disconnect the OBD-II scanner from the vehicle's port.
+
+> [!NOTE]  
+> Please note that this subsystem has not been extensively tested on a real car yet.
+
+> [!WARNING]  
+> Remember, it's essential to be cautious while using an OBD-II scanner and to prioritize safety.
