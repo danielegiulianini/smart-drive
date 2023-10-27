@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A responsive, mobile-first app that acts as a support for the optimization of the user's driving style in terms of polluting emissions, safety, comfort by applying gamification principles, and an infrastructure for processing the data acquired from the vehicle control unit by means of OBD-II standard and a low-cost NodeMCU board.
+A responsive, mobile-first app that acts as a support for the optimization of the user's driving style in terms of polluting emissions, safety, comfort by applying gamification principles, and an infrastructure for processing the data acquired from the vehicle control unit by means of [OBD-II](https://scholar.google.com/scholar?hl=it&as_sdt=0%2C5&q=obd-II&btnG=) standard and a low-cost [NodeMCU](https://it.wikipedia.org/wiki/NodeMCU) board.
 
 ## Features
 Features provided by the web app are:
@@ -43,11 +43,14 @@ The HW technologies used (but the code can be deployed to other target boards as
 
 * [Arduino UNO](https://store.arduino.cc/products/arduino-uno-rev3)
 * [NodeMCU 0.9](https://it.wikipedia.org/wiki/NodeMCU)
-* ELM327
+
+Also, a OBD-II scanner could be used if you want to test it on a real car (see [How to deploy section](#how-to-deploy) for the details):
+* ELM327 OBD-II scanner
 
 ## How to deploy
+While the backend and frontend software 
 
-### Running with emulated ECU
+### Running with emulated Engine Control Unit (ECU)
 
 #### Global prerequisites
 - Git
@@ -99,8 +102,8 @@ In the Boards Manager, search for "esp8266" and select the package named "esp826
 Click on "Install" to install the package.
 3. Select the NodeMCU board:
 go to "Tools" → "Board" and select "NodeMCU 1.0 (ESP-12E Module)" from the list.
-4. Select the port: go to Tools > Port and choose the port to which your NodeMCU board is connected. If you're not sure, you can check your system's device manager or the Arduino IDE's port list.
-5. Open the sketch: click on File > Open and open [this file](dataTransmittingSubSystem/dataTransmittingSubSystem.ino).
+4. Select the port: go to "Tools" > "Port" and choose the port to which your NodeMCU board is connected. If you're not sure, you can check your system's device manager or the Arduino IDE's port list.
+5. Open the sketch: click on "File" > "Open" and open [this file](dataTransmittingSubSystem/dataTransmittingSubSystem.ino).
 6. Upload the code:
     verify the code by clicking on the "Verify" button (checkmark symbol) to check for any errors.        
     Click on the "Upload" button (right arrow symbol) to compile and upload the code to the NodeMCU board.
@@ -113,13 +116,13 @@ Steps to deploy the emulated ECU SW on a Arduino UNO board (working with Arduino
 0. Prepare the circuit: deploy your Arduino UNO board following [this file](vehicleSimulatorSubSystem/vehicleSimulatorSubSystem.ino).
 1. Connect the Arduino UNO board: connect your Arduino UNO board to your computer using a USB cable.
 2. Open Arduino IDE: Launch a new instance of the Arduino IDE (wrt that of NodeMCU previously started, as to visualize the messages coming from the two different serial monitors).
-3. Select the board: go to Tools > Board and select "Arduino Uno" from the list of available boards.
-4. Select the port: go to Tools > Port and choose the port to which your Arduino Uno board is connected. If you're not sure, you can check your system's device manager or the Arduino IDE's port list.
-5. Open the sketch: click on File > Open and open [this file](vehicleSimulatorSubSystem/vehicleSimulatorSubSystem.ino).
+3. Select the board: go to "Tools" > "Board" and select "Arduino Uno" from the list of available boards.
+4. Select the port: go to "Tools" > "Port" and choose the port to which your Arduino Uno board is connected. If you're not sure, you can check your system's device manager or the Arduino IDE's port list.
+5. Open the sketch: click on "File" > "Open" and open [this file](vehicleSimulatorSubSystem/vehicleSimulatorSubSystem.ino).
 6. Upload the code: once the code is successfully verified, click on the "Upload" button (right arrow icon) or go to Sketch > Upload to transfer the code to your Arduino UNO board. The status bar will show the progress, and the onboard LED on the Arduino will blink rapidly while uploading.
 7. Monitor the output: to observe the output or debug  messages, open the Serial Monitor in Arduino IDE by going to "Tools" → "Serial Monitor".
 Make sure the baud rate is set to the same value as in the code.
-8. Use your emulated car: use the potentiometers as the emulated throttle/break (follow [this file](vehicleSimulatorSubSystem/vehicleSimulatorSubSystem.ino) to map between each other) and visualize your dashboard through the lcd or similar. 
+8. Use your emulated car: use the potentiometers as the emulated throttle/break (follow [this file](vehicleSimulatorSubSystem/vehicleSimulatorSubSystem.ino) to map between each other) and visualize your dashboard through the LCD or similar. 
 
 ### Running with real ECU
 
