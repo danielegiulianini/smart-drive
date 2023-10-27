@@ -1,5 +1,14 @@
 # smart-drive
 
+<!-- TABLE OF CONTENTS -->
+  ## Table of Contents ##
+  <ol>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#Features">Features</a></li>
+    <li><a href="#technologies">Technologies</a></li>
+    <li><a href="#how-to-deploy">How to deploy</a></li>
+  </ol>
+
 ## Introduction
 
 A responsive, mobile-first app that acts as a support for the optimization of the user's driving style in terms of polluting emissions, safety, comfort by applying gamification principles, and an infrastructure for processing the data acquired from the vehicle control unit by means of [OBD-II](https://scholar.google.com/scholar?hl=it&as_sdt=0%2C5&q=obd-II&btnG=) standard and a low-cost [NodeMCU](https://it.wikipedia.org/wiki/NodeMCU) board.
@@ -42,7 +51,7 @@ Features provided by the web app are:
 The HW technologies used (but the code can be deployed to other target boards as well, with or without modifications depending on them) are:
 
 * [Arduino UNO](https://store.arduino.cc/products/arduino-uno-rev3)
-* [NodeMCU 0.9](https://it.wikipedia.org/wiki/NodeMCU)
+* [NodeMCU 1.0](https://it.wikipedia.org/wiki/NodeMCU)
 
 Also, a OBD-II scanner could be used if you want to test it on a real car (see [How to deploy section](#how-to-deploy) for the details):
 * ELM327 OBD-II scanner
@@ -50,7 +59,7 @@ Also, a OBD-II scanner could be used if you want to test it on a real car (see [
 ## How to deploy
 
 The system has been designed to be deployed and run onto (at least 2) different execution scenario: 
-- with a emulated Engine Control Unit (ECU) to ease development 
+- with emulated car, Engine Control Unit (ECU), OBD-scanner, to ease development;
 - with a real ECU.
 
 > [!NOTE]  
@@ -140,6 +149,8 @@ Make sure the baud rate is set to the same value as in the code.
 - Arduino IDE
 - real ECU (your car contains one)
 - OBD-II scanner (ex., ELM 327)
+- n. 3 x potentiometers
+- n. 1 x LCD
 
 #### <a id="backend-&-frontend2"></a>  Backend & Frontend
 Like described [before](#backend-&-frontend).
