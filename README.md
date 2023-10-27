@@ -74,6 +74,8 @@ The system has been designed to be deployed and run onto (at least 2) different 
 - NodeMCU board
 - Arduino IDE
 - Arduino UNO board
+- n. 3 x potentiometers
+- n. 1 x LCD 16x2
 
 #### Backend & Frontend
 
@@ -149,8 +151,7 @@ Make sure the baud rate is set to the same value as in the code.
 - Arduino IDE
 - real ECU (your car contains one)
 - OBD-II scanner (ex., ELM 327)
-- n. 3 x potentiometers
-- n. 1 x LCD
+
 
 #### <a id="backend-&-frontend2"></a>  Backend & Frontend
 Like described [before](#backend-&-frontend).
