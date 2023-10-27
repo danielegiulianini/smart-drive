@@ -51,8 +51,10 @@ Also, a OBD-II scanner could be used if you want to test it on a real car (see [
 
 The system has been designed to be deployed and run onto (at least 2) different execution scenario: 
 - with a emulated Engine Control Unit (ECU) to ease development 
-- with a real ECU 
-Note that the modifications only affects the ECU component as all the SW components have been designed to be *interoperable* by adopting a *microservices architecture*.
+- with a real ECU.
+
+> [!NOTE]  
+> Note that the modifications only affects the ECU component as all the SW components have been designed to be *interoperable* by adopting a *microservices architecture*.
 
 ### Running with emulated ECU
 
@@ -107,7 +109,7 @@ Click on "Install" to install the package.
 3. Select the NodeMCU board:
 go to "Tools" → "Board" and select "NodeMCU 1.0 (ESP-12E Module)" from the list.
 4. Select the port: go to "Tools" > "Port" and choose the port to which your NodeMCU board is connected. If you're not sure, you can check your system's device manager or the Arduino IDE's port list.
-5. Open the sketch: click on "File" > "Open" and open [this file](dataTransmittingSubSystem/dataTransmittingSubSystem.ino).
+5. Open the sketch: click on "File" > "Open" and open the file dataTransmittingSubSystem/dataTransmittingSubSystem.ino.
 6. Upload the code:
     verify the code by clicking on the "Verify" button (checkmark symbol) to check for any errors.        
     Click on the "Upload" button (right arrow symbol) to compile and upload the code to the NodeMCU board.
@@ -122,7 +124,7 @@ Steps to deploy the emulated ECU SW on a Arduino UNO board (working with Arduino
 2. Open Arduino IDE: Launch a new instance of the Arduino IDE (wrt that of NodeMCU previously started, as to visualize the messages coming from the two different serial monitors).
 3. Select the board: go to "Tools" > "Board" and select "Arduino Uno" from the list of available boards.
 4. Select the port: go to "Tools" > "Port" and choose the port to which your Arduino Uno board is connected. If you're not sure, you can check your system's device manager or the Arduino IDE's port list.
-5. Open the sketch: click on "File" > "Open" and open [this file](vehicleSimulatorSubSystem/vehicleSimulatorSubSystem.ino).
+5. Open the sketch: click on "File" > "Open" and open the file vehicleSimulatorSubSystem/vehicleSimulatorSubSystem.ino.
 6. Upload the code: once the code is successfully verified, click on the "Upload" button (right arrow icon) or go to "Sketch" > "Upload" to transfer the code to your Arduino UNO board. The status bar will show the progress, and the onboard LED on the Arduino will blink rapidly while uploading.
 7. Monitor the output: to observe the output or debug  messages, open the Serial Monitor in Arduino IDE by going to "Tools" → "Serial Monitor".
 Make sure the baud rate is set to the same value as in the code.
@@ -139,10 +141,10 @@ Make sure the baud rate is set to the same value as in the code.
 - real ECU (your car contains one)
 - OBD-II scanner (ex., ELM 327)
 
-#### Backend & Frontend
+#### <a id="backend-&-frontend2"></a>  Backend & Frontend
 Like described [before](#backend-&-frontend).
 
-#### Edge Node
+#### <a id="edge-node2"></a> Edge Node
 Like described [before](#edge-node).
 
 #### ECU
