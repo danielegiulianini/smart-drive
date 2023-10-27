@@ -39,7 +39,7 @@ Features provided by the web app are:
 
 ## Hardware
 
-The HW technologies used (but the code can be deployed, with or without modifications depending on the target board, to others as well) are:
+The HW technologies used (but the code can be deployed to other target boards as well, with or without modifications depending on them) are:
 
 * [Arduino UNO](https://store.arduino.cc/products/arduino-uno-rev3)
 * [NodeMCU 0.9](https://it.wikipedia.org/wiki/NodeMCU)
