@@ -74,7 +74,7 @@ The system has been designed to be deployed and run onto (at least 2) different 
 - NodeMCU board
 - Arduino IDE
 - Arduino UNO board
-- n. 3 x potentiometers
+- n. 3 x potentiometers (1 for emulating throttle, 1 for emulated breaking and 1 for LCD)
 - n. 1 x LCD 16x2
 
 #### Backend & Frontend
