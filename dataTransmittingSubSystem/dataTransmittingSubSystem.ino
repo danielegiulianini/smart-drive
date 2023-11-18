@@ -9,17 +9,17 @@
 #define __BAUD_RATE 9600
 
 #ifndef STASSID
-#define STASSID "AndroidAP2C3A" //"politenet2.0" //
-#define STAPSK "cniu9651" //"hfip0676zy%$56zs24DL" // 
+#define STASSID "AndroidAP2C3A" //fill it with your network name
+#define STAPSK "cniu9651" //fill it with your network PW
 #endif
 
 const char* ssid     = STASSID;
 const char* password = STAPSK;
 
-const char* mqtt_server = "192.168.43.214"; //"192.168.8.100"; //"192.168.43.214";//"192.168.8.100";//(for politenet);//"http://192.168.43.214";//for smartphone"broker.hivemq.com";//for local dev: see it with ipconfig (it changes from network to network)
+const char* mqtt_server = "192.168.43.214"; //for local dev: see it with ipconfig (it changes from network to network)
 const int brokerPort = 1883;
 
-const char* userId = "a45c2a4a-0966-423a-a17b-020bd4293e48";//"f899524a-9975-45a1-83c8-aaf2ffe054ac"; //of g@g "39ff2f49-88a5-4aed-813b-1ee78b4fd63c"; //d@g;"a45c2a4a-0966-423a-a17b-020bd4293e48";//l@g 
+const char* userId = "a45c2a4a-0966-423a-a17b-020bd4293e48";
 
 int status = WL_IDLE_STATUS;
 WiFiClient wifiClient;
