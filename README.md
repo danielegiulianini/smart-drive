@@ -9,6 +9,9 @@
     <li><a href="#how-to-deploy">How to deploy</a></li>
   </ol>
 
+## Demo
+https://github.com/danielegiulianini/smart-drive/assets/64785035/30cedddb-0643-4151-bbe7-3a34b6f4b1f7
+
 ## Introduction
 
 A responsive, mobile-first app that acts as a support for the optimization of the user's driving style in terms of polluting emissions, safety, comfort by applying gamification principles, and an infrastructure for processing the data acquired from the vehicle control unit by means of [OBD-II](https://scholar.google.com/scholar?hl=it&as_sdt=0%2C5&q=obd-II&btnG=) standard and a low-cost [NodeMCU](https://it.wikipedia.org/wiki/NodeMCU) board.
