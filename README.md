@@ -3,6 +3,7 @@
 <!-- TABLE OF CONTENTS -->
   ## Table of Contents ##
   <ol>
+    <li><a href="#demo">Demo</a></li>
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#Features">Features</a></li>
     <li><a href="#technologies">Technologies</a></li>
@@ -11,6 +12,9 @@
 
 ## Demo
 https://github.com/danielegiulianini/smart-drive/assets/64785035/30cedddb-0643-4151-bbe7-3a34b6f4b1f7
+
+> [!NOTE]  
+> The demo doesn’t show the driving assistant and real-time dashboard.
 
 ## Introduction
 
