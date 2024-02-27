@@ -36,6 +36,16 @@ Features provided by the web app are:
 - community leaderboard, by which the user can compare his behaviour against other users and see where he needs to improve most.
 - real-time notification system to inform the user of the main app events.
 
+## System architecture
+The high-level architecture of the system is made up of three main components, as illustrated in the image:
+
+![system architecture](.img/architecture.png)
+
+- A microservices-based backend for processing user and vehicle data.
+- A mobile-first, responsive frontend enabling seamless interaction with the app both inside and outside the car.
+- A subsystem responsible for retrieving data from the car's control unit and communication with the backend.
+
+
 # Technologies
 
 ## Software
