@@ -10,10 +10,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY vite.config.js ./
 
-RUN npm ci 
-#--only=production 
-# If building for production: 
-#otherwise: npm install
+RUN npm ci
 
 # Bundle microservice source
 COPY . .

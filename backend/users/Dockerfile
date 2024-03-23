@@ -1,9 +1,6 @@
 FROM node:18.8.0-alpine
 
-#ARG NAME #TO BE USED to pass port when refactoring dockerfile between services!
-ARG PORT
-
-# Create microservice directory #TO BE REFACTORED BY LEVERAGING DOCKER S ARG!
+# Create microservice directory
 WORKDIR /usr/src/users
 
 VOLUME /var/log/nginx
@@ -16,11 +13,8 @@ COPY package*.json ./
 RUN npm config set unsafe-perm=true
 
 RUN npm install
-# If building for production: RUN npm ci --only=production
 
 # Bundle microservice source
 COPY . .
 
-#could use "npm start" too as CMD (after setting "start" script in scripts section of micros' package.json)
-CMD [ "npm", "run", "dev" ]   
-#CMD [ "node", "index.js" ]
+CMD [ "npm", "run", "dev" ]

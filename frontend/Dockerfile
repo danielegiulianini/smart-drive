@@ -1,5 +1,4 @@
 FROM node:lts
-#18.8.0-alpine
 
 ARG PORT
 

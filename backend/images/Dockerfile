@@ -1,9 +1,6 @@
 FROM node:18.8.0-alpine
 
-#ARG NAME #TO BE USED when refactoring dockerfile between services!
-ARG PORT
-
-# Create microservice directory #TO BE REFACTORED BY LEVERAGING DOCKER above mentioned ARG!
+# Create microservice directory
 WORKDIR /usr/src/images
 
 VOLUME /var/log/nginx
@@ -14,11 +11,8 @@ VOLUME /var/log/nginx
 COPY package*.json ./
 
 RUN npm install
-# If building for production: RUN npm ci --only=production
 
 # Bundle microservice source
 COPY . .
 
-CMD [ "npm", "run", "dev" ]   
-
-#CMD [ "node", "index.js" ] or npm start
+CMD [ "npm", "run", "dev" ]
